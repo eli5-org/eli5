@@ -2,7 +2,7 @@ try:
     from inspect import getfullargspec
 except ImportError:
     # python 2
-    from inspect import getargspec as getfullargspec
+    from inspect import getargspec as getfullargspec  # type: ignore
 
 import attr
 
@@ -35,7 +35,7 @@ def attrs(class_):
     these = {}
     for idx, arg in enumerate(init_args.args[1:]):
         attrib_kwargs = {}
-        if idx >= defaults_shift:
+        if idx >= defaults_shift and init_args.defaults:
             attrib_kwargs['default'] = init_args.defaults[idx - defaults_shift]
         these[arg] = attr.ib(**attrib_kwargs)
     return attr.s(class_, these=these, init=False, slots=True, **attrs_kwargs)  # type: ignore
