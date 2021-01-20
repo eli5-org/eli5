@@ -12,7 +12,6 @@ except ImportError:
     from singledispatch import singledispatch  # type: ignore
 
 
-
 def attrs(class_):
     """ Like attr.s with slots=True,
     but with attributes extracted from __init__ method signature.
