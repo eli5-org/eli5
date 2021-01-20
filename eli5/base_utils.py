@@ -1,4 +1,8 @@
-import inspect
+try:
+    from inspect import getfullargspec
+except ImportError:
+    # python 2
+    from inspect import getargspec as getfullargspec
 
 import attr
 
@@ -6,6 +10,7 @@ try:
     from functools import singledispatch
 except ImportError:
     from singledispatch import singledispatch  # type: ignore
+
 
 
 def attrs(class_):
@@ -25,7 +30,7 @@ def attrs(class_):
         if method in class_.__dict__:
             # Allow to redefine a special method (or else attr.s will do it)
             attrs_kwargs[kw_name] = False
-    init_args = inspect.getfullargspec(class_.__init__)
+    init_args = getfullargspec(class_.__init__)
     defaults_shift = len(init_args.args) - len(init_args.defaults or []) - 1
     these = {}
     for idx, arg in enumerate(init_args.args[1:]):
