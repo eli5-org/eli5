@@ -185,6 +185,7 @@ def test_check_booster_args():
     _, is_regression = _check_booster_args(booster, is_regression=False)
     assert is_regression == False
     
+
 def test_explain_lightgbm_booster(boston_train):
     xs, ys, feature_names = boston_train
     booster = lightgbm.train(
@@ -198,6 +199,7 @@ def test_explain_lightgbm_booster(boston_train):
     for expl in format_as_all(res, booster):
         assert 'LSTAT' in expl
         
+
 def test_explain_prediction_reg_booster(boston_train):
     X, y, feature_names = boston_train
     booster = lightgbm.train(
@@ -208,14 +210,21 @@ def test_explain_prediction_reg_booster(boston_train):
         X[0], feature_names, booster, explain_prediction,
         reg_has_intercept=True)
 
+
 def test_explain_prediction_booster_multitarget(newsgroups_train):
     docs, ys, target_names = newsgroups_train
     vec = CountVectorizer(stop_words='english', dtype=np.float64)
     xs = vec.fit_transform(docs)
     clf = lightgbm.train(
-        params={'objective': 'multiclass', 'verbose_eval': -1, 'max_depth': 2,'n_estimators':100,
-                         'min_child_samples':1, 'min_child_weight':1,
-                'num_class': len(target_names)},
+        params={
+            'objective': 'multiclass',
+            'verbose_eval': -1,
+            'max_depth': 2,
+            'min_child_samples': 1,
+            'min_child_weight': 1,
+            'num_class': len(target_names),
+        },
+        num_boost_round=100,
         train_set=lightgbm.Dataset(xs.toarray(), label=ys))
     
     doc = 'computer graphics in space: a new religion'
@@ -232,15 +241,21 @@ def test_explain_prediction_booster_multitarget(newsgroups_train):
     assert sorted(t.proba for t in top_target_res.targets) == sorted(
         t.proba for t in res.targets)[-2:]
 
+
 def test_explain_prediction_booster_binary(
         newsgroups_train_binary_big):
     docs, ys, target_names = newsgroups_train_binary_big
     vec = CountVectorizer(stop_words='english', dtype=np.float64)
     xs = vec.fit_transform(docs)
-    explain_kwargs = {}
     clf = lightgbm.train(
-        params={'objective': 'binary', 'verbose_eval': -1, 'max_depth': 2,'n_estimators':100,
-                         'min_child_samples':1, 'min_child_weight':1},
+        params={
+            'objective': 'binary',
+            'verbose_eval': -1,
+            'max_depth': 2,
+            'min_child_samples': 1,
+            'min_child_weight': 1,
+        },
+        num_boost_round=100,
         train_set=lightgbm.Dataset(xs.toarray(), label=ys))
     
     get_res = lambda **kwargs: explain_prediction(
@@ -261,6 +276,7 @@ def test_explain_prediction_booster_binary(
     flt_pos_features = get_all_features(flt_res.targets[0].feature_weights.pos)
     assert 'graphics' in flt_pos_features
     assert 'computer' not in flt_pos_features
+
 
 def test_lgb_n_targets():
     clf = LGBMClassifier(min_data=1)
