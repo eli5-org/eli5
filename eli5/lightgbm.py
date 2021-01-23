@@ -209,9 +209,15 @@ def _check_booster_args(lgb, is_regression=None):
     if isinstance(lgb, lightgbm.Booster):
         booster = lgb
         if is_regression is None:
-            objective = booster.params.get('objective')
-            if objective:
-                is_regression = objective.startswith('reg')
+            if 'num_class' in booster.params:
+                is_regression = True
+            else:
+                objective = booster.params.get('objective')
+                # know classification objectives which don't require num_class
+                is_regression = objective not in {
+                    'binary', 'cross_entropy', 'xentropy',
+                    'cross_entropy_lambda', 'cross_entropy_lambda',
+                }
     else:
         booster = lgb.booster_
         _is_regression = isinstance(lgb, lightgbm.LGBMRegressor)
