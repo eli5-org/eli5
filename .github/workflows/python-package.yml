@@ -16,7 +16,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['2.7', '3.5', '3.6', '3.7', '3.8', '3.9']
         tox-env: ['py']
         include:
             - python-version: '3.6'
@@ -24,17 +23,27 @@ jobs:
             - python-version: '3.6'
               tox-env: 'docs'
             - python-version: '2.7'
+              tox-env: 'py'
+            - python-version: '2.7'
               tox-env: 'py27-extra'
+            - python-version: '3.5'
+              tox-env: 'py'
             - python-version: '3.5'
               tox-env: 'py35-nodeps'
             - python-version: '3.5'
               tox-env: 'py35-extra'
             - python-version: '3.6'
+              tox-env: 'py'
+            - python-version: '3.6'
               tox-env: 'py36-extra'
+            - python-version: '3.7'
+              tox-env: 'py'
+            - python-version: '3.8'
+              tox-env: 'py38'
             - python-version: '3.8'
               tox-env: 'py38-nodeps'
-            - python-version: '3.8'
-              tox-env: 'py38-extra'
+            - python-version: '3.9'
+              tox-env: 'py39-nodeps'
 
     steps:
     - uses: actions/checkout@v2
