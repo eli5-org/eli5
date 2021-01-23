@@ -10,7 +10,7 @@ and :func:`eli5.explain_prediction` for ``lightgbm.LGBMClassifer``, ``lightgbm.L
 .. _LightGBM: https://github.com/Microsoft/LightGBM
 
 :func:`eli5.explain_weights` uses feature importances. Additional
-arguments for LGBMClassifier , LGBMClassifier and lightgbm.Booster:
+arguments for LGBMClassifier, LGBMClassifier and lightgbm.Booster:
 
 * ``importance_type`` is a way to get feature importance. Possible values are:
 
@@ -21,12 +21,13 @@ arguments for LGBMClassifier , LGBMClassifier and lightgbm.Booster:
   - 'weight' - the same as 'split', for better compatibility with
     :ref:`library-xgboost`.
 
-``target_names`` arguement is ignored for ``lightgbm.LGBMClassifer`` / ``lightgbm.LGBMRegressor``, but used for ``lightgbm.Booster``. ``target`` argument is ignored.
+``target_names`` argument is ignored for ``lightgbm.LGBMClassifer`` / ``lightgbm.LGBMRegressor``, but used for ``lightgbm.Booster``. ``targets`` argument is ignored.
 
 .. note::
     Top-level :func:`eli5.explain_weights` calls are dispatched
     to :func:`eli5.lightgbm.explain_weights_lightgbm` for
-    ``lightgbm.LGBMClassifer`` and ``lightgbm.LGBMRegressor``.
+    ``lightgbm.LGBMClassifer``, ``lightgbm.LGBMRegressor``
+    and ``lightgbm.Booster``.
 
 For :func:`eli5.explain_prediction` eli5 uses an approach based on ideas from
 http://blog.datadive.net/interpreting-random-forests/ :

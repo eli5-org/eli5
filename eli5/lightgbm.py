@@ -40,7 +40,7 @@ def explain_weights_lightgbm(lgb,
 
     ``target_names`` arguement is ignored for ``lightgbm.LGBMClassifer`` / ``lightgbm.LGBMRegressor``, 
     but used for ``lightgbm.Booster``. 
-    ``target`` argument is ignored.
+    ``targets`` argument is ignored.
     
     Parameters
     ----------
