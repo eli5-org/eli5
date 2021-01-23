@@ -4,9 +4,9 @@ from functools import partial
 import re
 from typing import Any, Dict, List, Tuple, Optional, Pattern
 
-import numpy as np  # type: ignore
-import scipy.sparse as sp  # type: ignore
-from xgboost import (  # type: ignore
+import numpy as np
+import scipy.sparse as sp
+from xgboost import (
     XGBClassifier,
     XGBRegressor,
     Booster,
@@ -218,7 +218,7 @@ def explain_prediction_xgboost(
 
 
 def _check_booster_args(xgb, is_regression=None):
-    # type: (Any, bool) -> Tuple[Booster, bool]
+    # type: (Any, Optional[bool]) -> Tuple[Booster, Optional[bool]]
     if isinstance(xgb, Booster):
         booster = xgb
     else:

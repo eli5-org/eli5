@@ -3,8 +3,8 @@ from __future__ import absolute_import
 from itertools import groupby
 from typing import List, Optional, Tuple
 
-import numpy as np  # type: ignore
-from jinja2 import Environment, PackageLoader  # type: ignore
+import numpy as np
+from jinja2 import Environment, PackageLoader
 
 from eli5 import _graphviz
 from eli5.base import (Explanation, TargetExplanation, FeatureWeights,
@@ -104,7 +104,8 @@ def format_as_html(explanation,  # type: Explanation
             abs(fw.weight) for fw in explanation.feature_importances.importances)
         if explanation.feature_importances else 0,
         target_weight_range=max_or_0(
-            get_weight_range(t.feature_weights) for t in targets),
+            get_weight_range(t.feature_weights) for t in targets 
+        if t.feature_weights is not None),
         other_weight_range=max_or_0(
             get_weight_range(other)
             for other in weighted_spans_others if other),
@@ -143,22 +144,26 @@ def render_targets_weighted_spans(
         targets,  # type: List[TargetExplanation]
         preserve_density,  # type: Optional[bool]
     ):
-    # type: (...) -> List[str]
+    # type: (...) -> List[Optional[str]]
     """ Return a list of rendered weighted spans for targets.
     Function must accept a list in order to select consistent weight
     ranges across all targets.
     """
     prepared_weighted_spans = prepare_weighted_spans(
         targets, preserve_density)
-    return [
-        '<br/>'.join(
-            '{}{}'.format(
-                '<b>{}:</b> '.format(pws.doc_weighted_spans.vec_name)
-                if pws.doc_weighted_spans.vec_name else '',
-                render_weighted_spans(pws))
-            for pws in pws_lst)
-        if pws_lst else None
-        for pws_lst in prepared_weighted_spans]
+
+    def _fmt_pws(pws):
+        # type: (PreparedWeightedSpans) -> str
+        name = ('<b>{}:</b> '.format(pws.doc_weighted_spans.vec_name)
+                if pws.doc_weighted_spans.vec_name else '')
+        return '{}{}'.format(name, render_weighted_spans(pws))
+
+    def _fmt_pws_list(pws_lst):
+        # type: (List[PreparedWeightedSpans]) -> str
+        return '<br/>'.join(_fmt_pws(pws) for pws in pws_lst)
+
+    return [_fmt_pws_list(pws_lst) if pws_lst else None
+            for pws_lst in prepared_weighted_spans]
 
 
 def render_weighted_spans(pws):

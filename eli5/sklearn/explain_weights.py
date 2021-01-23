@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from singledispatch import singledispatch
 
-import numpy as np  # type: ignore
+import numpy as np
 
-from sklearn.base import BaseEstimator, RegressorMixin  # type: ignore
-from sklearn.pipeline import Pipeline  # type: ignore
-from sklearn.linear_model import (   # type: ignore
+from sklearn.base import BaseEstimator, RegressorMixin
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import (
     ElasticNet,  # includes Lasso, MultiTaskElasticNet, etc.
     ElasticNetCV,
     HuberRegressor,
@@ -28,8 +27,8 @@ from sklearn.linear_model import (   # type: ignore
     SGDRegressor,
     TheilSenRegressor,
 )
-from sklearn.multiclass import OneVsRestClassifier  # type: ignore
-from sklearn.svm import (  # type: ignore
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.svm import (
     LinearSVC,
     LinearSVR,
     SVC,
@@ -39,8 +38,8 @@ from sklearn.svm import (  # type: ignore
     OneClassSVM,
 )
 # TODO: see https://github.com/scikit-learn/scikit-learn/pull/2250
-from sklearn.naive_bayes import BernoulliNB, MultinomialNB    # type: ignore
-from sklearn.ensemble import (  # type: ignore
+from sklearn.naive_bayes import BernoulliNB, MultinomialNB
+from sklearn.ensemble import (
     GradientBoostingClassifier,
     GradientBoostingRegressor,
     AdaBoostClassifier,
@@ -50,13 +49,14 @@ from sklearn.ensemble import (  # type: ignore
     ExtraTreesClassifier,
     ExtraTreesRegressor,
 )
-from sklearn.tree import (  # type: ignore
+from sklearn.tree import (
     DecisionTreeClassifier,
     DecisionTreeRegressor,
 )
 
 from eli5.base import (
     Explanation, TargetExplanation, FeatureImportances)
+from eli5.base_utils import singledispatch
 from eli5._feature_weights import get_top_features
 from eli5.utils import argsort_k_largest_positive, get_target_display_names
 from eli5.sklearn.unhashing import handle_hashing_vec, is_invhashing

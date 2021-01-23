@@ -9,6 +9,10 @@ scikit-learn 0.18+. You can install ELI5 using pip::
 
     pip install eli5
 
+or using::
+
+    conda install -c conda-forge eli5
+
 Features
 --------
 
@@ -27,11 +31,16 @@ following machine learning frameworks and packages:
   highlight text data accordingly. It also allows to debug scikit-learn
   pipelines which contain HashingVectorizer, by undoing hashing.
 
+* :ref:`library-keras` - explain predictions of image classifiers
+  via Grad-CAM visualizations.
+
 * :ref:`library-xgboost` - show feature importances and explain predictions
   of XGBClassifier, XGBRegressor and xgboost.Booster.
 
 * :ref:`library-lightgbm` - show feature importances and explain predictions
-  of LGBMClassifier , LGBMRegressor and lightgbm.Booster.
+  of LGBMClassifier, LGBMRegressor and lightgbm.Booster.
+ 
+* :ref:`library-catboost` - show feature importances of CatBoostClassifier and CatBoostRegressor. 
 
 * :ref:`library-lightning` - explain weights and predictions of lightning
   classifiers and regressors.
@@ -132,8 +141,8 @@ Architecture
 In ELI5 "explanation" is separated from output format:
 :func:`eli5.explain_weights` and :func:`eli5.explain_prediction`
 return :class:`~.Explanation` instances; then functions from
-:mod:`eli5.formatters` can be used to get HTML, text, dict/JSON
-or pandas DataFrame representation of the explanation.
+:mod:`eli5.formatters` can be used to get HTML, text, dict/JSON,
+pandas DataFrame, or PIL image representation of the explanation.
 
 It is not convenient to do that all when working interactively in IPython
 notebooks, so there are :func:`eli5.show_weights` and

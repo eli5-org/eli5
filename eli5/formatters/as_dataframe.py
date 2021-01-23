@@ -1,15 +1,15 @@
 from itertools import chain
-from singledispatch import singledispatch
 from typing import Any, Dict, List, Optional
 import warnings
 
-import pandas as pd  # type: ignore
+import pandas as pd
 
 import eli5
 from eli5.base import (
     Explanation, FeatureImportances, TargetExplanation,
     TransitionFeatureWeights,
 )
+from eli5.base_utils import singledispatch
 
 
 def explain_weights_df(estimator, **kwargs):
@@ -140,6 +140,7 @@ def _targets_to_df(targets):
     columns = ['target', 'feature', 'weight', 'std', 'value']
     df_data = {f: [] for f in columns}  # type: Dict[str, List[Any]]
     for target in targets:
+        assert target.feature_weights is not None
         for fw in chain(target.feature_weights.pos,
                         reversed(target.feature_weights.neg)):
             df_data['target'].append(target.target)

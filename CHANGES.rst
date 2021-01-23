@@ -1,6 +1,45 @@
 Changelog
 =========
 
+0.10.1 (2019-08-29)
+-------------------
+
+* Don't include typing dependency on Python 3.5+
+  to fix installation on Python 3.7
+
+0.10.0 (2019-08-21)
+-------------------
+
+* Keras image classifiers: explaining predictions with Grad-CAM
+  (GSoC-2019 project by @teabolt).
+
+0.9.0 (2019-07-05)
+------------------
+
+* CatBoost support: show feature importances of CatBoostClassifier,
+  CatBoostRegressor and catboost.CatBoost.
+* Test fixes: fixes for scikit-learn 0.21+, use xenial base on Travis
+* Catch exceptions from improperly installed LightGBM
+
+0.8.2 (2019-04-04)
+------------------
+
+* fixed scikit-learn 0.21+ support (randomized linear models are removed
+  from scikit-learn);
+* fixed pandas.DataFrame + xgboost support for PermutationImportance;
+* fixed tests with recent numpy;
+* added conda install instructions (conda package is maintained by community);
+* tutorial is updated to use xgboost 0.81;
+* update docs to use pandoc 2.x.
+
+0.8.1 (2018-11-19)
+------------------
+
+* fixed Python 3.7 support;
+* added support for XGBoost > 0.6a2;
+* fixed deprecation warnings in numpy >= 1.14;
+* documentation, type annotation and test improvements.
+
 0.8 (2017-08-25)
 ----------------
 

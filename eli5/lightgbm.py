@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division
 from collections import defaultdict
-from typing import DefaultDict, Any, Tuple
+from typing import DefaultDict, Any, Tuple, Optional
 
-import numpy as np  # type: ignore
-import lightgbm  # type: ignore
+import numpy as np
+import lightgbm
 
 from eli5.explain import explain_weights, explain_prediction
 from eli5._feature_importances import get_feature_importance_explanation
@@ -299,7 +299,7 @@ def _get_prediction_feature_weights(booster, X, n_targets):
 
     res = []
     for target in range(n_targets):
-        feature_weights = defaultdict(float)  # type: DefaultDict[str, float]
+        feature_weights = defaultdict(float)  # type: DefaultDict[Optional[str], float]
         for info, leaf_id in zip(tree_info[:, target], pred_leafs[:, target]):
             leaf_index, split_index = _get_leaf_split_indices(
                 info['tree_structure']

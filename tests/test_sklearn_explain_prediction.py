@@ -379,7 +379,7 @@ def test_explain_linear_binary(newsgroups_train_binary, clf):
 
 def test_explain_one_class_svm():
     X = np.array([[0, 0], [0, 1], [5, 3], [93, 94], [90, 91]])
-    clf = OneClassSVM(kernel='linear', random_state=42).fit(X)
+    clf = OneClassSVM(kernel='linear').fit(X)
     res = explain_prediction(clf, X[0])
     assert res.targets[0].score < 0
     for expl in format_as_all(res, clf):
@@ -474,7 +474,8 @@ def test_explain_linear_regression_multitarget(reg):
 @pytest.mark.parametrize(['clf'], [
     [DecisionTreeClassifier(random_state=42)],
     [ExtraTreesClassifier(random_state=42)],
-    [GradientBoostingClassifier(learning_rate=0.075, random_state=42)],
+    [GradientBoostingClassifier(learning_rate=0.075, random_state=42),],
+    [GradientBoostingClassifier(learning_rate=0.075, random_state=42, init='zero'),],
     [RandomForestClassifier(random_state=42)],
 ])
 def test_explain_tree_clf_multiclass(clf, iris_train):

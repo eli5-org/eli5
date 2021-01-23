@@ -3,9 +3,8 @@
 Dispatch module. Explanation functions for conctere estimator classes
 are defined in submodules.
 """
-from singledispatch import singledispatch
-
 from eli5.base import Explanation
+from eli5.base_utils import singledispatch
 
 
 @singledispatch
@@ -120,7 +119,7 @@ def explain_prediction(estimator, doc, **kwargs):
     target_names : list[str] or {'old_name': 'new_name'} dict, optional
         Names of targets or classes. This argument can be used to provide
         human-readable class/target names for estimators which don't expose
-        clss names themselves. It can be also used to rename estimator-provided
+        class names themselves. It can be also used to rename estimator-provided
         classes before displaying them.
 
         This argument may be supported or not, depending on estimator type.

@@ -8,4 +8,5 @@ py.test --doctest-modules \
         --ignore tests/test_sklearn_vectorizers.py \
         --ignore tests/test_utils.py \
         --ignore eli5/lightning.py \
+        --ignore eli5/sklearn_crfsuite \
         --cov=eli5 --cov-report=html --cov-report=term "$@"

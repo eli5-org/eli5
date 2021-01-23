@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-__version__ = '0.8'
+__version__ = '0.10.1'
 
 from .formatters import (
     format_as_html,
@@ -19,7 +19,6 @@ try:
 except ImportError:
     pass  # IPython is not installed
 
-
 try:
     from .formatters.as_dataframe import (
         explain_weights_df, explain_weights_dfs,
@@ -29,6 +28,13 @@ try:
 except ImportError:
     pass  # pandas not available
 
+try:
+    from .formatters import (
+        format_as_image
+    )
+except ImportError:
+    # Pillow or matplotlib not available
+    pass
 
 try:
     from .lightning import (
@@ -39,7 +45,6 @@ except ImportError as e:
     # lightning is not available
     pass
 
-
 try:
     from .sklearn_crfsuite import (
         explain_weights_sklearn_crfsuite
@@ -47,7 +52,6 @@ try:
 except ImportError as e:
     # sklearn-crfsuite is not available
     pass
-
 
 try:
     from .xgboost import (
@@ -64,7 +68,6 @@ except Exception as e:
     else:
         raise
 
-
 try:
     from .lightgbm import (
         explain_weights_lightgbm,
@@ -72,4 +75,24 @@ try:
     )
 except ImportError:
     # lightgbm is not available
+    pass
+except OSError:
+    # improperly installed lightgbm
+    pass
+
+try:
+    from .catboost import (
+        explain_weights_catboost
+    )
+except ImportError:
+    # catboost is not available
+    pass
+
+
+try:
+    from .keras import (
+        explain_prediction_keras
+    )
+except ImportError:
+    # keras is not available
     pass

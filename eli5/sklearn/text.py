@@ -1,8 +1,11 @@
 from __future__ import absolute_import
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Union, Callable, Dict, List, Optional, Set, Tuple
 
-from sklearn.feature_extraction.text import VectorizerMixin  # type: ignore
-from sklearn.pipeline import FeatureUnion  # type: ignore
+from sklearn.pipeline import FeatureUnion
+try:
+    from sklearn.feature_extraction.text import _VectorizerMixin as VectorizerMixin
+except ImportError:  # Changed in scikit-learn 0.22
+    from sklearn.feature_extraction.text import VectorizerMixin
 
 from eli5.base import (
     DocWeightedSpans, WeightedSpans, FeatureWeights, FeatureWeight,
@@ -38,6 +41,7 @@ def add_weighted_spans(doc, vec, vectorized, target_expl):
     if vec is None or vectorized:
         return
 
+    assert target_expl.feature_weights is not None
     weighted_spans = get_weighted_spans(doc, vec, target_expl.feature_weights)
     if weighted_spans:
         target_expl.weighted_spans = weighted_spans
@@ -49,7 +53,7 @@ FoundFeatures = Dict[Tuple[str, int], float]
 def _get_doc_weighted_spans(doc,
                             vec,
                             feature_weights,  # type: FeatureWeights
-                            feature_fn=None   # type: Callable[[str], str]
+                            feature_fn=None   # type: Optional[Callable[[str], str]]
                             ):
     # type: (...) -> Optional[Tuple[FoundFeatures, DocWeightedSpans]]
     if isinstance(vec, InvertableHashingVectorizer):
@@ -85,7 +89,7 @@ def _get_doc_weighted_spans(doc,
 
 
 def _get_feature_weights_dict(feature_weights,  # type: FeatureWeights
-                              feature_fn        # type: Callable[[str], str]
+                              feature_fn        # type: Optional[Callable[[str], str]]
                               ):
     # type: (...) -> Dict[str, Tuple[float, Tuple[str, int]]]
     """ Return {feat_name: (weight, (group, idx))} mapping. """

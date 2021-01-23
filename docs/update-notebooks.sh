@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# pandoc is required to convert to rst
+
 # scikit-learn text processing tutorial
 jupyter nbconvert \
         --to rst \
@@ -7,10 +9,10 @@ jupyter nbconvert \
         '../notebooks/Debugging scikit-learn text classification pipeline.ipynb' \
         > source/_notebooks/debug-sklearn-text.rst
 
-sed -i '' 's/InvertableHashingVectorizer\./:class:`~.InvertableHashingVectorizer`/g' \
+sed -i '' 's/``InvertableHashingVectorizer``/:class:`~.InvertableHashingVectorizer`/g' \
     source/_notebooks/debug-sklearn-text.rst
 
-sed -i '' 's/eli5.show\\_weights/:func:`eli5.show_weights`/g' \
+sed -i '' 's/``eli5.show_weights``/:func:`eli5.show_weights`/g' \
     source/_notebooks/debug-sklearn-text.rst
 
 # sklearn-crfsuite tutorial
@@ -52,9 +54,9 @@ jupyter nbconvert \
         --stdout \
         '../notebooks/xgboost-titanic.ipynb' \
         > source/_notebooks/xgboost-titanic.rst
-sed -i '' 's/eli5.show\\_weights/:func:`eli5.show_weights`/g' \
+sed -i '' 's/``eli5.show_weights``/:func:`eli5.show_weights`/g' \
     source/_notebooks/xgboost-titanic.rst
-sed -i '' 's/eli5.show\\_prediction/:func:`eli5.show_prediction`/g' \
+sed -i '' 's/``eli5.show_prediction``/:func:`eli5.show_prediction`/g' \
     source/_notebooks/xgboost-titanic.rst
 
 # LIME
@@ -64,3 +66,16 @@ sed -i '' 's/eli5.show\\_prediction/:func:`eli5.show_prediction`/g' \
 #rm -r source/_notebooks/LIME
 #mv '../notebooks/LIME and synthetic data_files' 'source/_notebooks/LIME and synthetic data_files'
 #mv '../notebooks/LIME and synthetic data.rst' source/_notebooks/lime-synthetic.rst
+
+
+# Keras Grad-CAM (keras-image-classifiers)
+jupyter nbconvert \
+        --to rst \
+        '../notebooks/keras-image-classifiers.ipynb'
+mv ../notebooks/keras-image-classifiers.rst \
+    source/_notebooks/
+rm -r source/_notebooks/keras-image-classifiers_files
+mv ../notebooks/keras-image-classifiers_files/ \
+    source/_notebooks/
+sed -i 's&.. image:: keras-image-classifiers_files/&.. image:: ../_notebooks/keras-image-classifiers_files/&g' \
+    source/_notebooks/keras-image-classifiers.rst

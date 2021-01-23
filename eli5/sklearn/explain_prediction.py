@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from singledispatch import singledispatch
 from functools import partial
 
-import numpy as np  # type: ignore
-import scipy.sparse as sp  # type: ignore
-from sklearn.base import BaseEstimator  # type: ignore
-from sklearn.ensemble import (  # type: ignore
+import numpy as np
+import scipy.sparse as sp
+from sklearn.base import BaseEstimator
+from sklearn.ensemble import (
     ExtraTreesClassifier,
     ExtraTreesRegressor,
     GradientBoostingClassifier,
@@ -13,7 +12,7 @@ from sklearn.ensemble import (  # type: ignore
     RandomForestClassifier,
     RandomForestRegressor,
 )
-from sklearn.linear_model import (  # type: ignore
+from sklearn.linear_model import (
     ElasticNet,  # includes Lasso, MultiTaskElasticNet, etc.
     ElasticNetCV,
     HuberRegressor,
@@ -35,7 +34,7 @@ from sklearn.linear_model import (  # type: ignore
     SGDRegressor,
     TheilSenRegressor,
 )
-from sklearn.svm import (  # type: ignore
+from sklearn.svm import (
     LinearSVC,
     LinearSVR,
     SVC,
@@ -44,13 +43,14 @@ from sklearn.svm import (  # type: ignore
     NuSVR,
     OneClassSVM,
 )
-from sklearn.multiclass import OneVsRestClassifier  # type: ignore
-from sklearn.tree import (   # type: ignore
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.tree import (
     DecisionTreeClassifier,
     DecisionTreeRegressor
 )
 
 from eli5.base import Explanation, TargetExplanation
+from eli5.base_utils import singledispatch
 from eli5.utils import (
     get_target_display_names,
     get_binary_target_scale_label_id
@@ -184,6 +184,7 @@ def explain_prediction_linear_classifier(clf, doc,
         method='linear model',
         targets=[],
     )
+    assert res.targets is not None
 
     _weights = _linear_weights(clf, x, top, feature_names, flt_indices)
     classes = getattr(clf, "classes_", ["-1", "1"])  # OneClassSVM support
@@ -302,6 +303,7 @@ def explain_prediction_linear_regressor(reg, doc,
         targets=[],
         is_regression=True,
     )
+    assert res.targets is not None
 
     _weights = _linear_weights(reg, x, top, feature_names, flt_indices)
     names = get_default_target_names(reg)
@@ -426,6 +428,7 @@ def explain_prediction_tree_classifier(
         description=(DESCRIPTION_TREE_CLF_MULTICLASS if is_multiclass
                      else DESCRIPTION_TREE_CLF_BINARY),
     )
+    assert res.targets is not None
 
     display_names = get_target_display_names(
         clf.classes_, target_names, targets, top_targets,
@@ -524,6 +527,7 @@ def explain_prediction_tree_regressor(
         targets=[],
         is_regression=True,
     )
+    assert res.targets is not None
 
     names = get_default_target_names(reg, num_targets=num_targets)
     display_names = get_target_display_names(names, target_names, targets,
@@ -554,11 +558,12 @@ def _trees_feature_weights(clf, X, feature_names, num_targets):
     """ Return feature weights for a tree or a tree ensemble.
     """
     feature_weights = np.zeros([len(feature_names), num_targets])
+    is_grad_boost = isinstance(clf, (GradientBoostingClassifier,
+                                     GradientBoostingRegressor))
     if hasattr(clf, 'tree_'):
         _update_tree_feature_weights(X, feature_names, clf, feature_weights)
     else:
-        if isinstance(clf, (
-                GradientBoostingClassifier, GradientBoostingRegressor)):
+        if is_grad_boost:
             weight = clf.learning_rate
         else:
             weight = 1. / len(clf.estimators_)
@@ -574,7 +579,14 @@ def _trees_feature_weights(clf, X, feature_names, num_targets):
                 _update(_clfs, feature_weights)
         feature_weights *= weight
         if hasattr(clf, 'init_'):
-            feature_weights[feature_names.bias_idx] += clf.init_.predict(X)[0]
+            if clf.init_ == 'zero':
+                bias_init = 0
+            elif is_grad_boost and hasattr(clf.loss_, 'get_init_raw_predictions'):
+                bias_init = clf.loss_.get_init_raw_predictions(
+                    X, clf.init_).astype(np.float64)[0]
+            else:
+                bias_init = clf.init_.predict(X)[0]
+            feature_weights[feature_names.bias_idx] += bias_init
     return feature_weights
 
 

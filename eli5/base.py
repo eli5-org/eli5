@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from typing import Any, List, Tuple, Union, Optional
 
+import numpy as np
+
 from .base_utils import attrs
 from .formatters.features import FormattedFeatureName
 
@@ -16,15 +18,16 @@ class Explanation(object):
     """
     def __init__(self,
                  estimator,  # type: str
-                 description=None,  # type: str
-                 error=None,  # type: str
-                 method=None,  # type: str
+                 description=None,  # type: Optional[str]
+                 error=None,  # type: Optional[str]
+                 method=None,  # type: Optional[str]
                  is_regression=False,  # type: bool
-                 targets=None,  # type: List[TargetExplanation]
-                 feature_importances=None,  # type: FeatureImportances
-                 decision_tree=None,  # type: TreeInfo
+                 targets=None,  # type: Optional[List[TargetExplanation]]
+                 feature_importances=None,  # type: Optional[FeatureImportances]
+                 decision_tree=None,  # type: Optional[TreeInfo]
                  highlight_spaces=None,  # type: Optional[bool]
-                 transition_features=None,  # type: TransitionFeatureWeights
+                 transition_features=None,  # type: Optional[TransitionFeatureWeights]
+                 image=None, # type: Any
                  ):
         # type: (...) -> None
         self.estimator = estimator
@@ -37,6 +40,7 @@ class Explanation(object):
         self.decision_tree = decision_tree
         self.highlight_spaces = highlight_spaces
         self.transition_features = transition_features
+        self.image = image # if arg is not None, assume we are working with images
 
     def _repr_html_(self):
         """ HTML formatting for the notebook.
@@ -67,13 +71,16 @@ class TargetExplanation(object):
     """ Explanation for a single target or class.
     Feature weights are stored in the :feature_weights: attribute,
     and features highlighted in text in the :weighted_spans: attribute.
+
+    Spatial values are stored in the :heatmap: attribute.
     """
     def __init__(self,
-                 target,  # type: str
-                 feature_weights,  # type: FeatureWeights
-                 proba=None,  # type: float
-                 score=None,  # type: float
-                 weighted_spans=None,  # type: WeightedSpans
+                 target,  # type: Union[str, int]
+                 feature_weights=None,  # type: Optional[FeatureWeights]
+                 proba=None,  # type: Optional[float]
+                 score=None,  # type: Optional[float]
+                 weighted_spans=None,  # type: Optional[WeightedSpans]
+                 heatmap=None, # type: Optional[np.ndarray]
                  ):
         # type: (...) -> None
         self.target = target
@@ -81,6 +88,7 @@ class TargetExplanation(object):
         self.proba = proba
         self.score = score
         self.weighted_spans = weighted_spans
+        self.heatmap = heatmap
 
 
 # List is currently used for unhashed features

@@ -2,10 +2,9 @@ from __future__ import absolute_import
 from itertools import chain
 import re
 import six
-from numbers import Real
 from typing import Any, Union, List, Dict, Callable, Match, Optional
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from eli5.base import Explanation
 from .features import FormattedFeatureName
@@ -62,7 +61,7 @@ def format_signed(feature,  # type: Dict[str, Any]
 
 def should_highlight_spaces(explanation):
     # type: (Explanation) -> bool
-    hl_spaces = explanation.highlight_spaces
+    hl_spaces = bool(explanation.highlight_spaces)
     if explanation.feature_importances:
         hl_spaces = hl_spaces or any(
             _has_invisible_spaces(fw.feature)
@@ -70,7 +69,7 @@ def should_highlight_spaces(explanation):
     if explanation.targets:
         hl_spaces = hl_spaces or any(
             _has_invisible_spaces(fw.feature)
-            for target in explanation.targets
+            for target in explanation.targets if target.feature_weights is not None
             for weights in [target.feature_weights.pos, target.feature_weights.neg]
             for fw in weights)
     return hl_spaces
@@ -90,14 +89,16 @@ def has_any_values_for_weights(explanation):
     # type: (Explanation) -> bool
     if explanation.targets:
         return any(fw.value is not None
-                   for t in explanation.targets for fw in chain(
+                   for t in explanation.targets
+            if t.feature_weights is not None 
+            for fw in chain(
             t.feature_weights.pos, t.feature_weights.neg))
     else:
         return False
 
 
 def tabulate(data,  # type: List[List[Any]]
-             header=None,  # type: List[Any]
+             header=None,  # type: Optional[List[Any]]
              col_align=None,  # type: Union[str, List[str]]
              ):
     # type: (...) -> List[str]
@@ -107,7 +108,11 @@ def tabulate(data,  # type: List[List[Any]]
     """
     if not data and not header:
         return []
-    n_cols = len(data[0] if data else header)
+    if data:
+        n_cols = len(data[0])
+    else:
+        assert header is not None
+        n_cols = len(header)
     if not all(len(row) == n_cols for row in data):
         raise ValueError('data is not rectangular')
 
@@ -137,12 +142,12 @@ def tabulate(data,  # type: List[List[Any]]
 
 
 def format_weight(value):
-    # type: (Real) -> str
+    # type: (float) -> str
     return '{:+.3f}'.format(value)
 
 
 def format_value(value):
-    # type: (Optional[Real]) -> str
+    # type: (Optional[float]) -> str
     if value is None:
         return ''
     elif np.isnan(value):

@@ -2,16 +2,16 @@
 from __future__ import absolute_import
 import abc
 from functools import partial
-from typing import List, Tuple, Any, Union, Dict
+from typing import List, Tuple, Any, Union, Dict, Optional
 import six
 
-import numpy as np  # type: ignore
-from scipy.stats import itemfreq  # type: ignore
-from sklearn.base import BaseEstimator, clone  # type: ignore
-from sklearn.neighbors import KernelDensity  # type: ignore
-from sklearn.metrics import pairwise_distances  # type: ignore
-from sklearn.model_selection import GridSearchCV, KFold  # type: ignore
-from sklearn.utils import check_random_state  # type: ignore
+import numpy as np
+from scipy.stats import itemfreq
+from sklearn.base import BaseEstimator, clone
+from sklearn.neighbors import KernelDensity
+from sklearn.metrics import pairwise_distances
+from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.utils import check_random_state
 
 from eli5.utils import vstack
 from eli5.lime.utils import rbf
@@ -68,7 +68,7 @@ class MaskingTextSampler(BaseSampler):
         Default is 1, meaning individual tokens are replaced.
     """
     def __init__(self,
-                 token_pattern=None,  # type: str
+                 token_pattern=None,  # type: Optional[str]
                  bow=True,            # type: bool
                  random_state=None,
                  replacement='',      # type: str
@@ -127,7 +127,7 @@ class MaskingTextSamplers(BaseSampler):
     """
     def __init__(self,
                  sampler_params,      # type: List[Dict[str, Any]]
-                 token_pattern=None,  # type: str
+                 token_pattern=None,  # type: Optional[str]
                  random_state=None,
                  weights=None,        # type: Union[np.ndarray, List[float]]
                  ):
@@ -168,6 +168,7 @@ class MaskingTextSamplers(BaseSampler):
                               ):
         # type: (...) -> Tuple[List[str], np.ndarray, np.ndarray, TokenizedText]
         assert n_samples >= 1
+        assert self.token_pattern is not None
         text = TokenizedText(doc, token_pattern=self.token_pattern)
         all_docs = []  # type: List[str]
         similarities = []

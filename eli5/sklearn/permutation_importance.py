@@ -2,20 +2,23 @@
 from functools import partial
 from typing import List
 
-import numpy as np  # type: ignore
-from sklearn.model_selection import check_cv  # type: ignore
-from sklearn.utils.metaestimators import if_delegate_has_method  # type: ignore
-from sklearn.utils import check_array, check_random_state  # type: ignore
-from sklearn.base import (  # type: ignore
+import numpy as np
+from sklearn.model_selection import check_cv
+from sklearn.utils.metaestimators import if_delegate_has_method
+from sklearn.utils import check_array, check_random_state
+from sklearn.base import (
     BaseEstimator,
     MetaEstimatorMixin,
     clone,
     is_classifier
 )
-from sklearn.metrics.scorer import check_scoring  # type: ignore
+from sklearn.metrics import check_scoring
 
 from eli5.permutation_importance import get_score_importances
+from eli5.sklearn.utils import pandas_available
 
+if pandas_available:
+    import pandas as pd
 
 CAVEATS_CV_NONE = """
 Feature importances are computed on the same data as used for training, 
@@ -84,10 +87,12 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
 
     scoring : string, callable or None, default=None
         Scoring function to use for computing feature importances.
-        A string with scoring name (see scikit-learn docs) or
+        A string with scoring name (see scikit-learn `docs`_) or
         a scorer callable object / function with signature
         ``scorer(estimator, X, y)``.
         If ``None``, the ``score`` method of the estimator is used.
+
+        .. _docs: https://scikit-learn.org/stable/modules/model_evaluation.html#common-cases-predefined-values
 
     n_iter : int, default 5
         Number of random shuffle iterations. Decrease to improve speed,
@@ -151,6 +156,12 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
         self.cv = cv
         self.rng_ = check_random_state(random_state)
 
+    def _wrap_scorer(self, base_scorer, pd_columns):
+        def pd_scorer(model, X, y):
+            X = pd.DataFrame(X, columns=pd_columns)
+            return base_scorer(model, X, y)
+        return pd_scorer
+
     def fit(self, X, y, groups=None, **fit_params):
         # type: (...) -> PermutationImportance
         """Compute ``feature_importances_`` attribute and optionally
@@ -178,6 +189,9 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
         """
         self.scorer_ = check_scoring(self.estimator, scoring=self.scoring)
 
+        if pandas_available and isinstance(X, pd.DataFrame):
+            self.scorer_ = self._wrap_scorer(self.scorer_, X.columns)
+
         if self.cv != "prefit" and self.refit:
             self.estimator_ = clone(self.estimator)
             self.estimator_.fit(X, y, **fit_params)
@@ -200,8 +214,12 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
         cv = check_cv(self.cv, y, is_classifier(self.estimator))
         feature_importances = []  # type: List
         base_scores = []  # type: List[float]
+        weights = fit_params.pop('sample_weight', None)
+        fold_fit_params = fit_params.copy()
         for train, test in cv.split(X, y, groups):
-            est = clone(self.estimator).fit(X[train], y[train], **fit_params)
+            if weights is not None:
+                fold_fit_params['sample_weight'] = weights[train]
+            est = clone(self.estimator).fit(X[train], y[train], **fold_fit_params)
             score_func = partial(self.scorer_, est)
             _base_score, _importances = self._get_score_importances(
                 score_func, X[test], y[test])

@@ -9,6 +9,8 @@ Supported Libraries
    sklearn
    xgboost
    lightgbm
+   catboost
    lightning
    sklearn_crfsuite
+   keras
 
