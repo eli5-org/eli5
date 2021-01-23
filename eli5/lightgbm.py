@@ -20,28 +20,31 @@ all values sum to 1.
 @explain_weights.register(lightgbm.Booster)
 @explain_weights.register(lightgbm.LGBMClassifier)
 @explain_weights.register(lightgbm.LGBMRegressor)
-def explain_weights_lightgbm(lgb,
-                             vec=None,
-                             top=20,
-                             target_names=None,  # ignored
-                             targets=None,  # ignored
-                             feature_names=None,
-                             feature_re=None,
-                             feature_filter=None,
-                             importance_type='gain',
-                             ):
+def explain_weights_lightgbm(
+        lgb,
+        vec=None,
+        top=20,
+        target_names=None,
+        targets=None,  # ignored
+        feature_names=None,
+        feature_re=None,
+        feature_filter=None,
+        importance_type='gain',
+        is_regression=None,
+        ):
     """
     Return an explanation of an LightGBM estimator (via scikit-learn wrapper
     LGBMClassifier or LGBMRegressor, or via lightgbm.Booster) as feature importances.
 
     See :func:`eli5.explain_weights` for description of
-    ``top``, ``feature_names``,
+    ``top``, ``feature_names``, ``target_names``,
     ``feature_re`` and ``feature_filter`` parameters.
 
-    ``target_names`` arguement is ignored for ``lightgbm.LGBMClassifer`` / ``lightgbm.LGBMRegressor``, 
-    but used for ``lightgbm.Booster``. 
+    ``target_names`` arguement is ignored for
+    ``lightgbm.LGBMClassifer`` / ``lightgbm.LGBMRegressor``,
+    but used for ``lightgbm.Booster``.
     ``targets`` argument is ignored.
-    
+
     Parameters
     ----------
     importance_type : str, optional
@@ -52,8 +55,16 @@ def explain_weights_lightgbm(lgb,
         - 'split' - the number of times a feature is used to split the data
           across all trees
         - 'weight' - the same as 'split', for compatibility with xgboost
+
+    is_regression : bool, options
+        True if solving a regression problem and False for a classification problem.
+        Needs to be passed only if it can't be determined from other arguments.
     """
-    booster, is_regression = _check_booster_args(lgb)
+    booster, is_regression = _check_booster_args(lgb, is_regression)
+    if is_regression is None and target_names is not None:
+        is_regression = len(target_names) == 1
+    if is_regression is None:
+        raise ValueError('Please specify is_regression argument')
     coef = _get_lgb_feature_importances(booster, importance_type)
     lgb_feature_names = booster.feature_name()
     return get_feature_importance_explanation(lgb, vec, coef,
@@ -64,8 +75,9 @@ def explain_weights_lightgbm(lgb,
         top=top,
         description=DESCRIPTION_LIGHTGBM,
         num_features=coef.shape[-1],
-        is_regression=isinstance(lgb, lightgbm.LGBMRegressor),
+        is_regression=is_regression,
     )
+
 
 @explain_prediction.register(lightgbm.Booster)
 @explain_prediction.register(lightgbm.LGBMClassifier)
@@ -81,6 +93,7 @@ def explain_prediction_lightgbm(
         feature_re=None,
         feature_filter=None,
         vectorized=False,
+        is_regression=None,
         ):
     """ Return an explanation of LightGBM prediction (via scikit-learn wrapper
     LGBMClassifier or LGBMRegressor, or via lightgbm.Booster) as feature weights.
@@ -100,6 +113,10 @@ def explain_prediction_lightgbm(
     estimator. Set it to True if you're passing ``vec``,
     but ``doc`` is already vectorized.
 
+    ``is_regression`` is a flag, True if solving a regression problem
+    and False for a classification problem.
+    Needs to be passed only if it can't be determined from other arguments.
+
     Method for determining feature importances follows an idea from
     http://blog.datadive.net/interpreting-random-forests/.
     Feature weights are calculated by following decision paths in trees
@@ -111,7 +128,7 @@ def explain_prediction_lightgbm(
     Weights of all features sum to the output score of the estimator.
     """
 
-    booster, is_regression = _check_booster_args(lgb)
+    booster, is_regression = _check_booster_args(lgb, is_regression)
     lgb_feature_names = booster.feature_name()
     vec, feature_names = handle_vec(lgb, doc, vec, vectorized, feature_names,
         num_features=len(lgb_feature_names))
@@ -120,19 +137,20 @@ def explain_prediction_lightgbm(
         # them as having an intercept
         feature_names.bias_name = '<BIAS>'
     X = get_X(doc, vec, vectorized=vectorized)
-    
+
     if isinstance(lgb, lightgbm.Booster):
         prediction = lgb.predict(X)
         n_targets = prediction.shape[-1]
         if is_regression is None and target_names is None:
             # When n_targets is 1, this can be classification too.
-            # It's safer to assume regression in this case, 
-            # unless users set it as a classification problem by assigning 'target_names' input [0,1] etc.
+            # It's safer to assume regression in this case,
+            # unless users set it as a classification problem
+            # by assigning 'target_names' input [0,1] etc.
             # If n_targets > 1, it must be classification.
             is_regression = n_targets == 1
         elif is_regression is None:
             is_regression = len(target_names) == 1 and n_targets == 1
-            
+
         if is_regression:
             proba = None
         else:
@@ -144,6 +162,9 @@ def explain_prediction_lightgbm(
     else:
         proba = predict_proba(lgb, X)
         n_targets = _lgb_n_targets(lgb)
+
+    if is_regression is None:
+        raise ValueError('Please specify is_regression argument')
 
     if is_regression:
         names = ['y']
@@ -182,10 +203,15 @@ def explain_prediction_lightgbm(
         get_score_weights=get_score_weights,
      )
 
+
 def _check_booster_args(lgb, is_regression=None):
-    # type: (Any, bool) -> Tuple[lightgbm.Booster, Optional[bool]]
+    # type: (Any, Optional[bool]) -> Tuple[lightgbm.Booster, Optional[bool]]
     if isinstance(lgb, lightgbm.Booster):
         booster = lgb
+        if is_regression is None:
+            objective = booster.params.get('objective')
+            if objective:
+                is_regression = objective.startswith('reg')
     else:
         booster = lgb.booster_
         _is_regression = isinstance(lgb, lightgbm.LGBMRegressor)
@@ -196,7 +222,8 @@ def _check_booster_args(lgb, is_regression=None):
                 .format(is_regression))
         is_regression = _is_regression
     return booster, is_regression
-  
+
+
 def _lgb_n_targets(lgb):
     if isinstance(lgb, lightgbm.LGBMClassifier):
         return 1 if lgb.n_classes_ == 2 else lgb.n_classes_
@@ -286,9 +313,9 @@ def _get_leaf_split_indices(tree_structure):
 
 
 def _get_prediction_feature_weights(booster, X, n_targets):
-    """ 
-    Return a list of {feat_id: value} dicts with feature weights, 
-    following ideas from  http://blog.datadive.net/interpreting-random-forests/  
+    """
+    Return a list of {feat_id: value} dicts with feature weights,
+    following ideas from  http://blog.datadive.net/interpreting-random-forests/
     """
     dump = booster.dump_model()
     tree_info = dump['tree_info']

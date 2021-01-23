@@ -151,12 +151,12 @@ def test_explain_weights_feature_names_pandas(boston_train):
     for expl in format_as_all(res, reg):
         assert 'zz12' in expl
 
-        
+
 def test_check_booster_args():
     x, y = np.random.random((10, 2)), np.random.randint(2, size=10)
     regressor = LGBMRegressor(min_data=1).fit(x, y)
     classifier = LGBMClassifier(min_data=1).fit(x, y)
-    
+
     booster, is_regression = _check_booster_args(regressor)
     assert is_regression == True
     assert isinstance(booster, lightgbm.Booster)
@@ -170,21 +170,23 @@ def test_check_booster_args():
         _check_booster_args(classifier, is_regression=True)
     with pytest.raises(ValueError):
         _check_booster_args(regressor, is_regression=False)
-        
+
     booster = regressor.booster_
     _booster, is_regression = _check_booster_args(booster)
     assert _booster is booster
-    assert is_regression is None
+    assert is_regression == True
+    _, is_regression = _check_booster_args(booster, is_regression=False)
+    assert is_regression == False
     _, is_regression = _check_booster_args(booster, is_regression=True)
     assert is_regression == True
-    
+
     booster = classifier.booster_
     _booster, is_regression = _check_booster_args(booster)
     assert _booster is booster
-    assert is_regression is None
-    _, is_regression = _check_booster_args(booster, is_regression=False)
     assert is_regression == False
-    
+    _, is_regression = _check_booster_args(booster, is_regression=True)
+    assert is_regression == True
+
 
 def test_explain_lightgbm_booster(boston_train):
     xs, ys, feature_names = boston_train
@@ -198,7 +200,10 @@ def test_explain_lightgbm_booster(boston_train):
     res = explain_weights(booster, feature_names=feature_names)
     for expl in format_as_all(res, booster):
         assert 'LSTAT' in expl
-        
+    res = explain_weights(booster, feature_names=feature_names, is_regression=True)
+    for expl in format_as_all(res, booster):
+        assert 'LSTAT' in expl
+
 
 def test_explain_prediction_reg_booster(boston_train):
     X, y, feature_names = boston_train
@@ -226,7 +231,7 @@ def test_explain_prediction_booster_multitarget(newsgroups_train):
         },
         num_boost_round=100,
         train_set=lightgbm.Dataset(xs.toarray(), label=ys))
-    
+
     doc = 'computer graphics in space: a new religion'
     res = explain_prediction(clf, doc, vec=vec, target_names=target_names)
     format_as_all(res, clf)
@@ -236,7 +241,8 @@ def test_explain_prediction_booster_multitarget(newsgroups_train):
     religion_weights = res.targets[3].feature_weights
     assert 'religion' in get_all_features(religion_weights.pos)
 
-    top_target_res = explain_prediction(clf, doc, vec=vec, top_targets=2)
+    top_target_res = explain_prediction(
+        clf, doc, vec=vec, top_targets=2, is_regression=False)
     assert len(top_target_res.targets) == 2
     assert sorted(t.proba for t in top_target_res.targets) == sorted(
         t.proba for t in res.targets)[-2:]
@@ -257,7 +263,7 @@ def test_explain_prediction_booster_binary(
         },
         num_boost_round=100,
         train_set=lightgbm.Dataset(xs.toarray(), label=ys))
-    
+
     get_res = lambda **kwargs: explain_prediction(
         clf, 'computer graphics in space: a sign of atheism',
         vec=vec, target_names=target_names,  **kwargs)
@@ -276,6 +282,8 @@ def test_explain_prediction_booster_binary(
     flt_pos_features = get_all_features(flt_res.targets[0].feature_weights.pos)
     assert 'graphics' in flt_pos_features
     assert 'computer' not in flt_pos_features
+
+    get_res(is_regression=False)
 
 
 def test_lgb_n_targets():

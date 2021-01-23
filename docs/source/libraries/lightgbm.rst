@@ -21,7 +21,14 @@ arguments for LGBMClassifier, LGBMClassifier and lightgbm.Booster:
   - 'weight' - the same as 'split', for better compatibility with
     :ref:`library-xgboost`.
 
-``target_names`` argument is ignored for ``lightgbm.LGBMClassifer`` / ``lightgbm.LGBMRegressor``, but used for ``lightgbm.Booster``. ``targets`` argument is ignored.
+* ``is_regression`` - True if solving a regression problem
+  and False for a classification problem.
+  Needs to be passed only if it can't be determined from other arguments.
+
+``target_names`` argument is ignored for
+``lightgbm.LGBMClassifer`` / ``lightgbm.LGBMRegressor``,
+but used for ``lightgbm.Booster``.
+``targets`` argument is ignored.
 
 .. note::
     Top-level :func:`eli5.explain_weights` calls are dispatched
@@ -50,16 +57,12 @@ for ``lightgbm.LGBMClassifer``, ``lightgbm.LGBMRegressor`` and ``lightgbm.Booste
   estimator. Set it to True if you're passing ``vec``,
   but ``doc`` is already vectorized.
 
-``lightgbm.Booster`` estimator accepts one more optional argument:
-
 * ``is_regression`` - True if solving a regression problem
-  ("objective" starts with "reg")
   and False for a classification problem.
-  If not set, regression is assumed for a single target estimator
-  and proba will not be shown unless the ``target_names`` is defined as a list with length of two.
+  Needs to be passed only if it can't be determined from other arguments.
 
 .. note::
     Top-level :func:`eli5.explain_prediction` calls are dispatched
     to :func:`eli5.xgboost.explain_prediction_lightgbm` for
-    ``lightgbm.LGBMClassifer`` and ``lightgbm.LGBMRegressor``.
+    ``lightgbm.LGBMClassifer``, ``lightgbm.LGBMRegressor`` and ``lightgbm.Booster``.
 
