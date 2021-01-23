@@ -51,7 +51,7 @@ def test_sklearn_crfsuite(xseq, yseq):
     assert '<th>rainy</th><th>sunny</th>' in html_nospaces
 
     try:
-        from eli5 import format_as_dataframe, format_as_dataframes
+        from eli5 import format_as_dataframes
     except ImportError:
         pass
     else:
