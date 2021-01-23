@@ -8,6 +8,8 @@ Keras_ is "a high-level neural networks API, written in Python and capable of ru
 Keras can be used for many Machine Learning tasks, and it has support for both popular
 and experimental neural network architectures.
 
+Note: only TensorFlow 1.x is supported, recommended Keras version is 2.3.1 or earlier.
+
 .. _Keras: https://keras.io/
 
 .. _GradCAM: https://arxiv.org/abs/1610.02391/

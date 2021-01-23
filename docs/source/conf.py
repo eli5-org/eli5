@@ -33,7 +33,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         if name == '_mock_methods':
             raise AttributeError()
-        return Mock()
+        return Mock(spec=type)  # so that @X.register does not fail
 
 
 # Note that we must import all sub-modules too

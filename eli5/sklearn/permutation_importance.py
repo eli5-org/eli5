@@ -12,7 +12,7 @@ from sklearn.base import (
     clone,
     is_classifier
 )
-from sklearn.metrics.scorer import check_scoring
+from sklearn.metrics import check_scoring
 
 from eli5.permutation_importance import get_score_importances
 from eli5.sklearn.utils import pandas_available
@@ -196,7 +196,7 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
             self.estimator_ = clone(self.estimator)
             self.estimator_.fit(X, y, **fit_params)
 
-        X = check_array(X)
+        X = check_array(X, force_all_finite='allow-nan')
 
         if self.cv not in (None, "prefit"):
             si = self._cv_scores_importances(X, y, groups=groups, **fit_params)
