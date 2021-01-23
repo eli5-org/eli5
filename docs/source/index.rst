@@ -5,8 +5,8 @@ Welcome to ELI5's documentation!
    :target: https://pypi.python.org/pypi/eli5
    :alt: PyPI Version
 
-.. image:: https://travis-ci.org/TeamHG-Memex/eli5.svg?branch=master
-   :target: https://travis-ci.org/TeamHG-Memex/eli5
+.. image:: https://github.com/eli5-org/eli5/workflows/build/badge.svg?branch=master
+   :target: https://github.com/eli5-org/eli5/actions
    :alt: Build Status
 
 .. image:: https://codecov.io/github/TeamHG-Memex/eli5/coverage.svg?branch=master

@@ -26,7 +26,7 @@ setup(
     license='MIT license',
     long_description=get_long_description(),
     description="Debug machine learning classifiers and explain their predictions",
-    url='https://github.com/TeamHG-Memex/eli5',
+    url='https://github.com/eli5-org/eli5',
     zip_safe=False,
     include_package_data=True,
     packages=find_packages(exclude=['tests']),
