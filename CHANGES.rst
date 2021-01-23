@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.11.0 (2021-01-23)
+-------------------
+
+* fixed scikit-learn 0.22+ and 0.24+ support.
+* allow nan inputs in permutation importance (if model supports them).
+* fix for permutation importance with sample_weight and cross-validation.
+* doc fixes (typos, keras and TF versions clarified).
+* don't use deprecated getargspec function.
+* less type ignores, mypy updated to 0.750.
+* python 3.8 and 3.9 tested on GI, python 3.4 not tested any more.
+* tests moved to github actions.
+
 0.10.1 (2019-08-29)
 -------------------
 
