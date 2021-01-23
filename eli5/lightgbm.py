@@ -56,7 +56,7 @@ def explain_weights_lightgbm(
           across all trees
         - 'weight' - the same as 'split', for compatibility with xgboost
 
-    is_regression : bool, options
+    is_regression : bool, optional
         True if solving a regression problem and False for a classification problem.
         Needs to be passed only if it can't be determined from other arguments.
     """
