@@ -187,6 +187,12 @@ def test_check_booster_args():
     _, is_regression = _check_booster_args(booster, is_regression=True)
     assert is_regression == True
 
+    clf = LGBMClassifier(min_data=1)
+    clf.fit(np.array([[0], [1], [2]]), np.array([0, 1, 2]))
+    booster = clf.booster_
+    _booster, is_regression = _check_booster_args(booster)
+    assert is_regression == False
+
 
 def test_explain_lightgbm_booster(boston_train):
     xs, ys, feature_names = boston_train

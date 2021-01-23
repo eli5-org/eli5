@@ -209,8 +209,8 @@ def _check_booster_args(lgb, is_regression=None):
     if isinstance(lgb, lightgbm.Booster):
         booster = lgb
         if is_regression is None:
-            if 'num_class' in booster.params:
-                is_regression = True
+            if any(p in booster.params for p in ['num_class', 'num_classes']):
+                is_regression = False
             else:
                 objective = booster.params.get('objective')
                 # know classification objectives which don't require num_class
