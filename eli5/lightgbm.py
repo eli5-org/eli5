@@ -183,7 +183,7 @@ def explain_prediction_lightgbm(
      )
 
 def _check_booster_args(lgb, is_regression=None):
-    # type: (Any, bool) -> Tuple[lightgbm.Booster, bool]
+    # type: (Any, bool) -> Tuple[lightgbm.Booster, Optional[bool]]
     if isinstance(lgb, lightgbm.Booster):
         booster = lgb
     else:
