@@ -211,7 +211,7 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
 
     def _cv_scores_importances(self, X, y, groups=None, **fit_params):
         assert self.cv is not None
-        cv = check_cv(self.cv, y, is_classifier(self.estimator))
+        cv = check_cv(self.cv, y, classifier=is_classifier(self.estimator))
         feature_importances = []  # type: List
         base_scores = []  # type: List[float]
         weights = fit_params.pop('sample_weight', None)

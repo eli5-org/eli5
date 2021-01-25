@@ -83,8 +83,8 @@ def test_explain_hashing_vectorizer(newsgroups_train_binary):
 
 
 def _without_weighted_spans(res):
-    return attr.assoc(res, targets=[
-        attr.assoc(target, weighted_spans=None) for target in res.targets])
+    return attr.evolve(res, targets=[
+        attr.evolve(target, weighted_spans=None) for target in res.targets])
 
 
 def test_explain_linear_dense():

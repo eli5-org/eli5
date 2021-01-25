@@ -359,9 +359,9 @@ def _parse_tree_dump(text_dump):
 def _parse_dump_line(line):
     # type: (str) -> Tuple[int, Dict[str, Any]]
     branch_match = re.match(
-        '^(\t*)(\d+):\[([^<]+)<([^\]]+)\] '
-        'yes=(\d+),no=(\d+),missing=(\d+),'
-        'gain=([^,]+),cover=(.+)$', line)
+        r'^(\t*)(\d+):\[([^<]+)<([^\]]+)\] '
+        r'yes=(\d+),no=(\d+),missing=(\d+),'
+        r'gain=([^,]+),cover=(.+)$', line)
     if branch_match:
         tabs, node_id, feature, condition, yes, no, missing, gain, cover = \
             branch_match.groups()
@@ -377,7 +377,7 @@ def _parse_dump_line(line):
             'gain': float(gain),
             'cover': float(cover),
         }
-    leaf_match = re.match('^(\t*)(\d+):leaf=([^,]+),cover=(.+)$', line)
+    leaf_match = re.match(r'^(\t*)(\d+):leaf=([^,]+),cover=(.+)$', line)
     if leaf_match:
         tabs, node_id, value, cover = leaf_match.groups()
         depth = len(tabs)
