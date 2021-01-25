@@ -45,7 +45,7 @@ It provides support for the following machine learning frameworks and packages:
   XGBRegressor and xgboost.Booster.
 
 * LightGBM_ - show feature importances and explain predictions of
-  LGBMClassifier and LGBMRegressor.
+  LGBMClassifier, LGBMRegressor and lightgbm.Booster.
 
 * CatBoost_ - show feature importances of CatBoostClassifier,
   CatBoostRegressor and catboost.CatBoost.
