@@ -5,6 +5,6 @@
     This tutorial is intended to be run in an IPython notebook.
     It is also available as a notebook file here_.
 
-.. _here: https://github.com/TeamHG-Memex/eli5/blob/master/notebooks/keras-text-classifiers.ipynb
+.. _here: https://github.com/eli5-org/eli5/blob/master/notebooks/keras-text-classifiers.ipynb
 
 .. include:: ../_notebooks/keras-text-classifiers.rst
