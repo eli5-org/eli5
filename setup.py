@@ -40,11 +40,12 @@ setup(
         'graphviz',
         'tabulate>=0.7.7',
     ],
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*",
     extras_require={
-        ":python_version<'3.5.6'": [
+        ":python_version<'3.6.0'": [
             'singledispatch >= 3.4.0.3',
+            'typing',
         ],
-        ":python_version<'3.5'": ['typing'],
     },
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -55,7 +56,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
