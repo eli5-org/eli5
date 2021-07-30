@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from itertools import groupby
+from pkg_resources import parse_version
 from typing import List, Optional, Tuple
 
 import numpy as np
+import jinja2
 from jinja2 import Environment, PackageLoader
 
 from eli5 import _graphviz
@@ -19,9 +21,14 @@ from .trees import tree2text
 from .text_helpers import prepare_weighted_spans, PreparedWeightedSpans
 
 
+if parse_version(jinja2.__version__) < parse_version('3.0.0'):
+    jinja2_extensions = ['jinja2.ext.with_']
+else:
+    jinja2_extensions = []
+
 template_env = Environment(
     loader=PackageLoader('eli5', 'templates'),
-    extensions=['jinja2.ext.with_'])
+    extensions=jinja2_extensions)
 template_env.globals.update(dict(zip=zip, numpy=np))
 template_env.filters.update(dict(
     weight_color=lambda w, w_range: format_hsl(weight_color_hsl(w, w_range)),
