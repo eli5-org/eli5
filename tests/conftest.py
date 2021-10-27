@@ -53,7 +53,7 @@ def newsgroups_train_binary_big():
 def boston_train(size=SIZE):
     data = load_boston()
     X, y = shuffle(data.data, data.target, random_state=13)
-    X = X.astype(np.float32)
+    X = X.astype(np.float64)
     return X[:size], y[:size], data.feature_names
 
 
