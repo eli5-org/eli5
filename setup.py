@@ -32,7 +32,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=[
         'attrs > 17.1.0',
-        'jinja2',
+        'jinja2 >= 3.0.0',
         'numpy >= 1.9.0',
         'scipy',
         'six',
