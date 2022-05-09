@@ -19,8 +19,7 @@ from .trees import tree2text
 from .text_helpers import prepare_weighted_spans, PreparedWeightedSpans
 
 
-template_env = Environment(
-    loader=PackageLoader('eli5', 'templates'))
+
 #template_env = Environment(
 #    loader=PackageLoader('eli5', 'templates'),
 #    extensions=['jinja2.ext.with_'])
