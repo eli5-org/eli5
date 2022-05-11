@@ -68,8 +68,12 @@ def explain_weights_xgboost(xgb,
         - 'cover' - the average coverage of the feature when it is used in trees
     """
     booster, is_regression = _check_booster_args(xgb)
-    xgb_feature_names = booster.feature_names
-    coef = _xgb_feature_importances(booster, importance_type=importance_type)
+    xgb_feature_names = _get_booster_feature_names(booster)
+    coef = _xgb_feature_importances(
+        booster,
+        importance_type=importance_type,
+        feature_names=xgb_feature_names
+    )
     return get_feature_importance_explanation(
         xgb, vec, coef,
         feature_names=feature_names,
@@ -146,7 +150,7 @@ def explain_prediction_xgboost(
     Weights of all features sum to the output score of the estimator.
     """
     booster, is_regression = _check_booster_args(xgb, is_regression)
-    xgb_feature_names = booster.feature_names
+    xgb_feature_names = _get_booster_feature_names(booster)
     vec, feature_names = handle_vec(
         xgb, doc, vec, vectorized, feature_names,
         num_features=len(xgb_feature_names))
@@ -325,10 +329,18 @@ def _xgb_n_targets(xgb):
         raise TypeError
 
 
-def _xgb_feature_importances(booster, importance_type):
+def _get_booster_feature_names(booster):
+    # xgboost >= 1.4.0 return None when feature names are missing
+    # while previous versions returns list f0, f1, f2, ...
+    if booster.feature_names is not None:
+        return booster.feature_names
+    return ["f{}".format(i) for i in range(booster.num_features())]
+
+
+def _xgb_feature_importances(booster, importance_type, feature_names):
     fs = booster.get_score(importance_type=importance_type)
     all_features = np.array(
-        [fs.get(f, 0.) for f in booster.feature_names], dtype=np.float32)
+        [fs.get(f, 0.) for f in feature_names], dtype=np.float32)
     return all_features / all_features.sum()
 
 
