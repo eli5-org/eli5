@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.12.0 (2022-05-11)
+-------------------
+
+* use Jinja2 >= 3.0.0, please use eli5 0.11 if you'd prefer to use
+  an older version of Jinja2
+* support lightgbm.Booster
+
 0.11.0 (2021-01-23)
 -------------------
 
