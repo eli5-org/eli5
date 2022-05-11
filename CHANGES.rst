@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.13.0 (2022-05-11)
+-------------------
+
+* drop python2.7 support
+* fix newer xgboost with unnamed features
+
 0.12.0 (2022-05-11)
 -------------------
 
