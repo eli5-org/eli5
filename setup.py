@@ -35,7 +35,7 @@ setup(
         'jinja2 >= 3.0.0',
         'numpy >= 1.9.0',
         'scipy',
-        'scikit-learn >= 0.20',
+        'scikit-learn >= 0.20,<1.1.0',
         'graphviz',
         'tabulate>=0.7.7',
     ],

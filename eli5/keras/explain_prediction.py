@@ -25,8 +25,7 @@ from eli5.base import (
     TargetExplanation,
 )
 from eli5.explain import explain_prediction
-
-from .gradcam import (
+from eli5.keras.gradcam import (
     gradcam,
     gradcam_backend,
 )

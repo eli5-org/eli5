@@ -15,9 +15,8 @@ from eli5.base import (
     DocWeightedSpans,
     FeatureWeights,
 )
+from eli5.lime.textutils import TokenizedText
 from eli5.sklearn.text import _get_feature_weights_dict
-
-from .textutils import TokenizedText
 
 
 class SingleDocumentVectorizer(BaseEstimator, TransformerMixin):

@@ -7,17 +7,17 @@ from typing import (
 
 from IPython.display import HTML
 
-from .explain import (
+from eli5.explain import (
     explain_prediction,
     explain_weights,
 )
-from .formatters import (
+from eli5.formatters import (
     fields,
     format_as_html,
 )
 
 try:
-    from .formatters.image import format_as_image
+    from eli5.formatters.image import format_as_image
 except ImportError as e:
     # missing dependencies
     format_as_image = e  # type: ignore

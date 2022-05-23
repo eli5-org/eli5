@@ -1,7 +1,7 @@
 import attr
 import numpy as np
 
-from .features import FormattedFeatureName
+from eli5.formatters.features import FormattedFeatureName
 
 
 def format_as_dict(explanation):

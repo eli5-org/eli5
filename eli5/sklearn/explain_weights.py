@@ -63,6 +63,7 @@ from eli5.base import (
     TargetExplanation,
 )
 from eli5.explain import explain_weights
+from eli5.sklearn.permutation_importance import PermutationImportance
 from eli5.sklearn.treeinspect import get_tree_info
 from eli5.sklearn.unhashing import (
     handle_hashing_vec,
@@ -78,8 +79,6 @@ from eli5.sklearn.utils import (
 )
 from eli5.transform import transform_feature_names
 from eli5.utils import get_target_display_names
-
-from .permutation_importance import PermutationImportance
 
 LINEAR_CAVEATS = """
 Caveats:

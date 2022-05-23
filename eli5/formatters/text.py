@@ -11,11 +11,10 @@ from eli5.base import (
     Explanation,
     FeatureImportances,
 )
-
-from . import fields
-from .features import FormattedFeatureName
-from .trees import tree2text
-from .utils import (
+from eli5.formatters import fields
+from eli5.formatters.features import FormattedFeatureName
+from eli5.formatters.trees import tree2text
+from eli5.formatters.utils import (
     format_signed,
     format_value,
     format_weight,
@@ -23,7 +22,7 @@ from .utils import (
     replace_spaces,
     should_highlight_spaces,
 )
-from .utils import tabulate as eli5_tabulate
+from eli5.formatters.utils import tabulate as eli5_tabulate
 
 _PLUS_MINUS = "±"
 _ELLIPSIS = '…'

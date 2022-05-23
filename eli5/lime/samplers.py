@@ -23,14 +23,13 @@ from sklearn.model_selection import (
 from sklearn.neighbors import KernelDensity
 from sklearn.utils import check_random_state
 
-from eli5.lime.utils import rbf
-from eli5.utils import vstack
-
-from .textutils import (
+from eli5.lime.textutils import (
     DEFAULT_TOKEN_PATTERN,
     TokenizedText,
     generate_samples,
 )
+from eli5.lime.utils import rbf
+from eli5.utils import vstack
 
 
 class BaseSampler(BaseEstimator, abc.ABC):

@@ -13,8 +13,7 @@ from typing import (
 import numpy as np
 
 from eli5.base import Explanation
-
-from .features import FormattedFeatureName
+from eli5.formatters.features import FormattedFeatureName
 
 
 def replace_spaces(s, replacer):

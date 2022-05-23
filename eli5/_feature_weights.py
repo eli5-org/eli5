@@ -4,8 +4,7 @@ from eli5.base import (
     FeatureWeight,
     FeatureWeights,
 )
-
-from .utils import (
+from eli5.utils import (
     argsort_k_largest_positive,
     argsort_k_smallest,
     mask,
