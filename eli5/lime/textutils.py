@@ -2,7 +2,6 @@
 """
 Utilities for text generation.
 """
-from __future__ import absolute_import
 import re
 import math
 from typing import List, Tuple, Union, Optional

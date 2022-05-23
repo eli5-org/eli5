@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import pytest
 pytest.importorskip('catboost')
 from catboost import CatBoostClassifier, CatBoostRegressor, CatBoost, Pool

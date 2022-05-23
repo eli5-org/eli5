@@ -3,7 +3,6 @@
 An impementation of LIME (http://arxiv.org/abs/1602.04938), an algorithm to
 explain predictions of black-box models.
 """
-from __future__ import absolute_import
 from typing import Any, Callable, Dict, Optional
 
 import numpy as np

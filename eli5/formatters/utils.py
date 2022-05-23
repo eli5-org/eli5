@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from itertools import chain
 import re
 from typing import Any, Union, List, Dict, Callable, Match, Optional

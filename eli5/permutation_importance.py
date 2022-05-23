@@ -10,7 +10,6 @@ https://www.stat.berkeley.edu/%7Ebreiman/randomforest2001.pdf), with an
 application to random forests. It is known in literature as
 "Mean Decrease Accuracy (MDA)" or "permutation importance".
 """
-from __future__ import absolute_import
 from typing import Tuple, List, Callable, Any
 
 import numpy as np

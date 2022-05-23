@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from typing import Union, Optional, Callable, Tuple, List, TYPE_CHECKING
 if TYPE_CHECKING:
     import PIL

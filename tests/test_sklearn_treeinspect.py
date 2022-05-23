@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 from eli5.formatters.trees import tree2text

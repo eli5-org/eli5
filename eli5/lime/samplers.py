@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import abc
 from functools import partial
 from typing import List, Tuple, Any, Union, Dict, Optional
