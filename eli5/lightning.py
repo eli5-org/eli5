@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from lightning.impl.base import BaseEstimator
 from lightning import classification, regression
 from sklearn.multiclass import OneVsRestClassifier

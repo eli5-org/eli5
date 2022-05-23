@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 from eli5.formatters.trees import tree2text

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from itertools import chain
 from tabulate import tabulate
 from typing import List, Optional, Iterator

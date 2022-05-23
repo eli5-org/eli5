@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Any, List, Tuple, Union, Optional
 
 import numpy as np

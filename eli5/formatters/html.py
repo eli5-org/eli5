@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from itertools import groupby
 from typing import List, Optional, Tuple
 

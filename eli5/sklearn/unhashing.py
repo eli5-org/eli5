@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Utilities to reverse transformation done by FeatureHasher or HashingVectorizer.
 """

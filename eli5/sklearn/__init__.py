@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .explain_weights import (
     explain_weights_sklearn,
     explain_linear_classifier_weights,

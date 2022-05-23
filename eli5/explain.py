@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Dispatch module. Explanation functions for conctere estimator classes
 are defined in submodules.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Union, Optional, Callable, Tuple, List, TYPE_CHECKING
 if TYPE_CHECKING:
     import PIL

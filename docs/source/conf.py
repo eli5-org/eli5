@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # ELI5 documentation build configuration file, created by
 # sphinx-quickstart on Mon Nov 14 21:54:37 2016.

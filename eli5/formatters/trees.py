@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Any
 
 from eli5.base import TreeInfo, NodeInfo

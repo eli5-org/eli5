@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 WEIGHTS = (
     'transition_features',
     'targets',

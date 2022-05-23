@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from sklearn.feature_extraction.text import HashingVectorizer, CountVectorizer
 from sklearn.naive_bayes import MultinomialNB

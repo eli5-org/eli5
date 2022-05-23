@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from hypothesis import given, assume
 from hypothesis.strategies import characters, text

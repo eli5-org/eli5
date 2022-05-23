@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import abc
 from functools import partial
 from typing import List, Tuple, Any, Union, Dict, Optional

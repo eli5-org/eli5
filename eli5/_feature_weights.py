@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 
 from eli5.base import FeatureWeights, FeatureWeight

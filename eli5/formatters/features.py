@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 class FormattedFeatureName(object):
     """ Feature name that does not need any additional escaping.
     """

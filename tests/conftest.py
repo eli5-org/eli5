@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 import numpy as np
 from sklearn.datasets import fetch_20newsgroups, load_boston, load_iris

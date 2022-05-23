@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 An impementation of LIME (http://arxiv.org/abs/1602.04938), an algorithm to
 explain predictions of black-box models.

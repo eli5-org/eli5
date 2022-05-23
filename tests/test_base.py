@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.base import BaseEstimator
