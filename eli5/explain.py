@@ -2,8 +2,9 @@
 Dispatch module. Explanation functions for conctere estimator classes
 are defined in submodules.
 """
+from functools import singledispatch
+
 from eli5.base import Explanation
-from eli5.base_utils import singledispatch
 
 
 @singledispatch

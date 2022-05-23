@@ -1,11 +1,18 @@
 import pytest
-pytest.importorskip('catboost')
-from catboost import CatBoostClassifier, CatBoostRegressor, CatBoost, Pool
-import numpy as np
 
-from eli5.explain import explain_weights
-from .utils import format_as_all
+pytest.importorskip('catboost')
+from catboost import (
+    CatBoost,
+    CatBoostClassifier,
+    CatBoostRegressor,
+    Pool,
+)
+
 from eli5.catboost import _is_regression
+from eli5.explain import explain_weights
+
+from .utils import format_as_all
+
 
 def test_explain_catboost_catboost(boston_train):
     xs, ys, feature_names = boston_train

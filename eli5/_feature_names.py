@@ -1,7 +1,16 @@
 import re
 from typing import (
-    Any, Iterable, Iterator, Tuple, Sized, List, Optional, Dict,
-    Union, Callable, Pattern
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Pattern,
+    Sized,
+    Tuple,
+    Union,
 )
 
 import numpy as np

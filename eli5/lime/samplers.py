@@ -1,18 +1,36 @@
 import abc
 from functools import partial
-from typing import List, Tuple, Any, Union, Dict, Optional
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 from scipy.stats import itemfreq
-from sklearn.base import BaseEstimator, clone
-from sklearn.neighbors import KernelDensity
+from sklearn.base import (
+    BaseEstimator,
+    clone,
+)
 from sklearn.metrics import pairwise_distances
-from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.model_selection import (
+    GridSearchCV,
+    KFold,
+)
+from sklearn.neighbors import KernelDensity
 from sklearn.utils import check_random_state
 
-from eli5.utils import vstack
 from eli5.lime.utils import rbf
-from .textutils import generate_samples, DEFAULT_TOKEN_PATTERN, TokenizedText
+from eli5.utils import vstack
+
+from .textutils import (
+    DEFAULT_TOKEN_PATTERN,
+    TokenizedText,
+    generate_samples,
+)
 
 
 class BaseSampler(BaseEstimator, abc.ABC):

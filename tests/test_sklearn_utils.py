@@ -1,23 +1,37 @@
 import numpy as np
 import pytest
-from sklearn.datasets import make_classification, make_regression
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.linear_model import LogisticRegression, ElasticNet, SGDRegressor
+from sklearn.datasets import (
+    make_classification,
+    make_regression,
+)
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import SGDClassifier
-from sklearn.naive_bayes import GaussianNB, BernoulliNB
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.feature_extraction.text import (
+    CountVectorizer,
+    TfidfVectorizer,
+)
+from sklearn.linear_model import (
+    ElasticNet,
+    LogisticRegression,
+    SGDClassifier,
+    SGDRegressor,
+)
 from sklearn.multiclass import OneVsRestClassifier
+from sklearn.naive_bayes import (
+    BernoulliNB,
+    GaussianNB,
+)
+from sklearn.tree import DecisionTreeClassifier
 
 from eli5._feature_names import FeatureNames
 from eli5.sklearn.utils import (
-    get_feature_names,
     get_default_target_names,
+    get_feature_names,
+    get_num_features,
     has_intercept,
     is_multiclass_classifier,
     is_multitarget_regressor,
-    get_num_features,
 )
+
 from .utils import SGD_KWARGS
 
 

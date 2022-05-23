@@ -1,8 +1,11 @@
 import numpy as np
-from hypothesis import given, assume
-from hypothesis.strategies import characters, text
+from hypothesis import (
+    assume,
+    given,
+)
+from hypothesis.strategies import text
 
-from eli5.lime.textutils import SplitResult, TokenizedText
+from eli5.lime.textutils import SplitResult
 
 
 def test_split_result():

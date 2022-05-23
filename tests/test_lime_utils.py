@@ -3,7 +3,10 @@ import scipy.sparse as sp
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import mean_absolute_error
 
-from eli5.lime.utils import fit_proba, fix_multiclass_predict_proba
+from eli5.lime.utils import (
+    fit_proba,
+    fix_multiclass_predict_proba,
+)
 
 
 def test_fit_proba():

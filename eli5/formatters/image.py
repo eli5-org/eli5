@@ -1,8 +1,12 @@
-from typing import Union, Optional, Callable
+from typing import (
+    Callable,
+    Optional,
+    Union,
+)
 
+import matplotlib.cm
 import numpy as np
 from PIL import Image
-import matplotlib.cm
 
 from eli5.base import Explanation
 

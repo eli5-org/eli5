@@ -1,28 +1,37 @@
-from functools import partial
 import re
-from typing import Any, Dict, List, Tuple, Optional, Pattern
+from functools import partial
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Pattern,
+    Tuple,
+)
 
 import numpy as np
 import scipy.sparse as sp
 from xgboost import (
+    Booster,
+    DMatrix,
     XGBClassifier,
     XGBRegressor,
-    Booster,
-    DMatrix
 )
 
-from eli5.explain import explain_weights, explain_prediction
+from eli5._decision_path import get_decision_path_explanation
+from eli5._feature_importances import get_feature_importance_explanation
+from eli5.explain import (
+    explain_prediction,
+    explain_weights,
+)
 from eli5.sklearn.utils import (
     add_intercept,
     get_X,
     get_X0,
     handle_vec,
-    predict_proba
+    predict_proba,
 )
 from eli5.utils import is_sparse_vector
-from eli5._decision_path import get_decision_path_explanation
-from eli5._feature_importances import get_feature_importance_explanation
-
 
 DESCRIPTION_XGBOOST = """
 XGBoost feature importances; values are numbers 0 <= x <= 1;

@@ -1,13 +1,12 @@
+import re
 from functools import partial
 from pprint import pprint
-import re
 from typing import List
 
-import pytest
 import numpy as np
+import pytest
 from sklearn.base import BaseEstimator
 from sklearn.datasets import make_regression
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.ensemble import (
     ExtraTreesClassifier,
     ExtraTreesRegressor,
@@ -15,6 +14,10 @@ from sklearn.ensemble import (
     GradientBoostingRegressor,
     RandomForestClassifier,
     RandomForestRegressor,
+)
+from sklearn.feature_extraction.text import (
+    CountVectorizer,
+    TfidfVectorizer,
 )
 from sklearn.linear_model import (
     ElasticNet,
@@ -43,26 +46,39 @@ from sklearn.linear_model import (
     SGDRegressor,
     TheilSenRegressor,
 )
+from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import (
-    LinearSVC,
-    LinearSVR,
     SVC,
     SVR,
+    LinearSVC,
+    LinearSVR,
     NuSVC,
     NuSVR,
     OneClassSVM,
 )
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.tree import (
+    DecisionTreeClassifier,
+    DecisionTreeRegressor,
+)
 
-from eli5 import explain_prediction, explain_prediction_sklearn
+from eli5 import (
+    explain_prediction,
+    explain_prediction_sklearn,
+)
 from eli5.base import Explanation
-from eli5.formatters import format_as_text, fields
+from eli5.formatters import (
+    fields,
+    format_as_text,
+)
 from eli5.sklearn.utils import has_intercept
-from .utils import (
-    format_as_all, strip_blanks, get_all_features, check_targets_scores,
-    SGD_KWARGS)
 
+from .utils import (
+    SGD_KWARGS,
+    check_targets_scores,
+    format_as_all,
+    get_all_features,
+    strip_blanks,
+)
 
 format_as_all = partial(format_as_all, show_feature_values=True)
 

@@ -1,16 +1,29 @@
 from itertools import chain
-from tabulate import tabulate
-from typing import List, Optional, Iterator
+from typing import (
+    Iterator,
+    List,
+    Optional,
+)
 
-from eli5.base import Explanation, FeatureImportances
+from tabulate import tabulate
+
+from eli5.base import (
+    Explanation,
+    FeatureImportances,
+)
+
 from . import fields
 from .features import FormattedFeatureName
-from .utils import (
-    format_signed, format_value, format_weight, has_any_values_for_weights,
-    replace_spaces, should_highlight_spaces)
-from .utils import tabulate as eli5_tabulate
 from .trees import tree2text
-
+from .utils import (
+    format_signed,
+    format_value,
+    format_weight,
+    has_any_values_for_weights,
+    replace_spaces,
+    should_highlight_spaces,
+)
+from .utils import tabulate as eli5_tabulate
 
 _PLUS_MINUS = "±"
 _ELLIPSIS = '…'

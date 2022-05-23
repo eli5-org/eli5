@@ -5,16 +5,20 @@ matplotlib = pytest.importorskip('matplotlib')
 
 import numpy as np
 
-from eli5.base import Explanation, TargetExplanation
+from eli5.base import (
+    Explanation,
+    TargetExplanation,
+)
 from eli5.formatters.image import (
-    format_as_image,
-    heatmap_to_image,
-    expand_heatmap,
-    _validate_heatmap,
-    _update_alpha,
     _cap_alpha,
     _overlay_heatmap,
+    _update_alpha,
+    _validate_heatmap,
+    expand_heatmap,
+    format_as_image,
+    heatmap_to_image,
 )
+
 from .utils_image import assert_pixel_by_pixel_equal
 
 

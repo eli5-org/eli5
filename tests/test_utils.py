@@ -1,10 +1,20 @@
 import numpy as np
 import scipy.sparse as sp
-from hypothesis import given, assume, settings, HealthCheck
+from hypothesis import (
+    HealthCheck,
+    assume,
+    given,
+    settings,
+)
 from hypothesis.strategies import integers
 
 from eli5.utils import (
-    argsort_k_largest, argsort_k_largest_positive, argsort_k_smallest, vstack)
+    argsort_k_largest,
+    argsort_k_largest_positive,
+    argsort_k_smallest,
+    vstack,
+)
+
 from .utils import rnd_len_arrays
 
 

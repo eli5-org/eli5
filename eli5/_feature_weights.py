@@ -1,7 +1,15 @@
 import numpy as np
 
-from eli5.base import FeatureWeights, FeatureWeight
-from .utils import argsort_k_largest_positive, argsort_k_smallest, mask
+from eli5.base import (
+    FeatureWeight,
+    FeatureWeights,
+)
+
+from .utils import (
+    argsort_k_largest_positive,
+    argsort_k_smallest,
+    mask,
+)
 
 
 def _get_top_features(feature_names, coef, top, x):

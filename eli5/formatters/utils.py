@@ -1,10 +1,19 @@
-from itertools import chain
 import re
-from typing import Any, Union, List, Dict, Callable, Match, Optional
+from itertools import chain
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Match,
+    Optional,
+    Union,
+)
 
 import numpy as np
 
 from eli5.base import Explanation
+
 from .features import FormattedFeatureName
 
 

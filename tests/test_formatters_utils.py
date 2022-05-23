@@ -1,6 +1,9 @@
 import pytest
 
-from eli5.formatters.utils import tabulate, format_value
+from eli5.formatters.utils import (
+    format_value,
+    tabulate,
+)
 
 
 def test_tabulate():

@@ -1,18 +1,37 @@
 import re
 
-import pytest
 import numpy as np
+import pytest
 from sklearn.datasets import make_regression
 from sklearn.linear_model import LinearRegression
 
-from eli5.base import DocWeightedSpans, FeatureWeight
-from eli5 import explain_weights_sklearn, explain_prediction_sklearn
+from eli5 import (
+    explain_prediction_sklearn,
+    explain_weights_sklearn,
+)
+from eli5.base import (
+    DocWeightedSpans,
+    FeatureWeight,
+)
 from eli5.formatters import (
-    format_as_text, format_as_html, format_html_styles, FormattedFeatureName)
+    FormattedFeatureName,
+    format_as_html,
+    format_as_text,
+    format_html_styles,
+)
 from eli5.formatters.html import (
-    _format_unhashed_feature, render_weighted_spans, _format_single_feature,
-    _format_feature, remaining_weight_color_hsl, weight_color_hsl)
-from eli5.formatters.text_helpers import get_char_weights, PreparedWeightedSpans
+    _format_feature,
+    _format_single_feature,
+    _format_unhashed_feature,
+    remaining_weight_color_hsl,
+    render_weighted_spans,
+    weight_color_hsl,
+)
+from eli5.formatters.text_helpers import (
+    PreparedWeightedSpans,
+    get_char_weights,
+)
+
 from .utils import write_html
 
 

@@ -1,9 +1,15 @@
 from collections import Counter
-from typing import List, Optional
+from typing import (
+    List,
+    Optional,
+)
 
 import numpy as np
 
-from eli5.base import TargetExplanation, WeightedSpans, DocWeightedSpans
+from eli5.base import (
+    DocWeightedSpans,
+    TargetExplanation,
+)
 from eli5.base_utils import attrs
 from eli5.utils import max_or_0
 

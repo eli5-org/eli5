@@ -1,14 +1,27 @@
 from collections import defaultdict
-from typing import DefaultDict, Any, Tuple, Optional
+from typing import (
+    Any,
+    DefaultDict,
+    Optional,
+    Tuple,
+)
 
-import numpy as np
 import lightgbm
+import numpy as np
 
-from eli5.explain import explain_weights, explain_prediction
-from eli5._feature_importances import get_feature_importance_explanation
-from eli5.sklearn.utils import handle_vec, get_X, get_X0, add_intercept, predict_proba
 from eli5._decision_path import get_decision_path_explanation
-
+from eli5._feature_importances import get_feature_importance_explanation
+from eli5.explain import (
+    explain_prediction,
+    explain_weights,
+)
+from eli5.sklearn.utils import (
+    add_intercept,
+    get_X,
+    get_X0,
+    handle_vec,
+    predict_proba,
+)
 
 DESCRIPTION_LIGHTGBM = """
 LightGBM feature importances; values are numbers 0 <= x <= 1;

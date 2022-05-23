@@ -1,14 +1,24 @@
 import re
 
-import pytest
 import numpy as np
+import pytest
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.linear_model import (
+    LinearRegression,
+    LogisticRegression,
+)
 
-from eli5.sklearn import explain_weights_sklearn, explain_prediction_sklearn
 from eli5.formatters import fields
 from eli5.formatters.text import _SPACE
-from .utils import format_as_all, get_all_features
+from eli5.sklearn import (
+    explain_prediction_sklearn,
+    explain_weights_sklearn,
+)
+
+from .utils import (
+    format_as_all,
+    get_all_features,
+)
 
 
 def test_show_fields(newsgroups_train):

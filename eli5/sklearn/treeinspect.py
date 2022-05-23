@@ -5,9 +5,15 @@ This is an alternative to sklearn.tree.export which doesn't require graphviz
 and provides a way to output result in text-based format.
 """
 from sklearn.base import ClassifierMixin
-from sklearn.tree import _tree, export_graphviz
+from sklearn.tree import (
+    _tree,
+    export_graphviz,
+)
 
-from eli5.base import TreeInfo, NodeInfo
+from eli5.base import (
+    NodeInfo,
+    TreeInfo,
+)
 
 
 def get_tree_info(decision_tree,

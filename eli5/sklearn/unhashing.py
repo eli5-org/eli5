@@ -1,15 +1,28 @@
 """
 Utilities to reverse transformation done by FeatureHasher or HashingVectorizer.
 """
-from collections import defaultdict, Counter
+from collections import (
+    Counter,
+    defaultdict,
+)
 from itertools import chain
-from typing import List, Iterable, Any, Dict, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Tuple,
+    Union,
+)
 
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import (
+    BaseEstimator,
+    TransformerMixin,
+)
 from sklearn.feature_extraction.text import (
-    HashingVectorizer,
     FeatureHasher,
+    HashingVectorizer,
 )
 from sklearn.pipeline import FeatureUnion
 

@@ -1,11 +1,14 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import FeatureUnion
 
+from eli5.base import DocWeightedSpans
+from eli5.base import FeatureWeight as FW
 from eli5.base import (
-    DocWeightedSpans, WeightedSpans, FeatureWeights, FeatureWeight as FW)
+    FeatureWeights,
+    WeightedSpans,
+)
 from eli5.formatters import FormattedFeatureName
 from eli5.sklearn.text import get_weighted_spans
-
 
 hl_in_text = FormattedFeatureName('Highlighted in text (sum)')
 

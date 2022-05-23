@@ -1,12 +1,20 @@
 from distutils.version import LooseVersion
-from typing import Any, Optional, List, Tuple
+from typing import (
+    Any,
+    List,
+    Optional,
+    Tuple,
+)
 
 import numpy as np
 import scipy.sparse as sp
 from sklearn.multiclass import OneVsRestClassifier
 
-from eli5.sklearn.unhashing import invert_hashing_and_fit, handle_hashing_vec
 from eli5._feature_names import FeatureNames
+from eli5.sklearn.unhashing import (
+    handle_hashing_vec,
+    invert_hashing_and_fit,
+)
 
 
 def is_multiclass_classifier(clf):

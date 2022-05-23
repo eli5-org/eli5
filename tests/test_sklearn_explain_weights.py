@@ -1,14 +1,33 @@
-from functools import partial
 import re
+from functools import partial
 
 import numpy as np
+import pytest
 import scipy.sparse as sp
-from sklearn.datasets import make_regression, make_multilabel_classification
+from sklearn.base import (
+    BaseEstimator,
+    clone,
+)
+from sklearn.datasets import (
+    make_multilabel_classification,
+    make_regression,
+)
+from sklearn.ensemble import (
+    AdaBoostClassifier,
+    AdaBoostRegressor,
+    ExtraTreesClassifier,
+    ExtraTreesRegressor,
+    GradientBoostingClassifier,
+    GradientBoostingRegressor,
+    RandomForestClassifier,
+    RandomForestRegressor,
+)
 from sklearn.feature_extraction.text import (
     CountVectorizer,
+    HashingVectorizer,
     TfidfVectorizer,
-    HashingVectorizer
 )
+from sklearn.feature_selection import SelectKBest
 from sklearn.linear_model import (
     ElasticNet,
     ElasticNetCV,
@@ -36,37 +55,36 @@ from sklearn.linear_model import (
     SGDRegressor,
     TheilSenRegressor,
 )
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.pipeline import make_pipeline
 from sklearn.svm import (
-    LinearSVC,
-    LinearSVR,
     SVC,
     SVR,
+    LinearSVC,
+    LinearSVR,
     NuSVC,
     NuSVR,
     OneClassSVM,
 )
-from sklearn.ensemble import (
-    RandomForestClassifier,
-    RandomForestRegressor,
-    ExtraTreesClassifier,
-    ExtraTreesRegressor,
-    GradientBoostingClassifier,
-    GradientBoostingRegressor,
-    AdaBoostClassifier,
-    AdaBoostRegressor,
+from sklearn.tree import (
+    DecisionTreeClassifier,
+    DecisionTreeRegressor,
 )
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.base import BaseEstimator, clone
-from sklearn.pipeline import make_pipeline
-from sklearn.feature_selection import SelectKBest
-from sklearn.multiclass import OneVsRestClassifier
-import pytest
 
-from eli5 import _graphviz
-from eli5 import explain_weights, explain_weights_sklearn
-from eli5.sklearn.utils import has_intercept
+from eli5 import (
+    _graphviz,
+    explain_weights,
+    explain_weights_sklearn,
+)
 from eli5.sklearn import InvertableHashingVectorizer
-from .utils import format_as_all, get_all_features, get_names_coefs, SGD_KWARGS
+from eli5.sklearn.utils import has_intercept
+
+from .utils import (
+    SGD_KWARGS,
+    format_as_all,
+    get_all_features,
+    get_names_coefs,
+)
 
 
 def check_newsgroups_explanation_linear(

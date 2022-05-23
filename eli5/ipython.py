@@ -1,10 +1,21 @@
-from typing import Any, Dict, Tuple
 import warnings
+from typing import (
+    Any,
+    Dict,
+    Tuple,
+)
 
-from IPython.display import HTML, Image
+from IPython.display import HTML
 
-from .explain import explain_weights, explain_prediction
-from .formatters import format_as_html, fields
+from .explain import (
+    explain_prediction,
+    explain_weights,
+)
+from .formatters import (
+    fields,
+    format_as_html,
+)
+
 try:
     from .formatters.image import format_as_image
 except ImportError as e:

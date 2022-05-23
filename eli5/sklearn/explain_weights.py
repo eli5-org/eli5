@@ -1,9 +1,22 @@
-import numpy as np
+from functools import singledispatch
 
-from sklearn.base import BaseEstimator, RegressorMixin
-from sklearn.pipeline import Pipeline
+import numpy as np
+from sklearn.base import (
+    BaseEstimator,
+    RegressorMixin,
+)
+from sklearn.ensemble import (
+    AdaBoostClassifier,
+    AdaBoostRegressor,
+    ExtraTreesClassifier,
+    ExtraTreesRegressor,
+    GradientBoostingClassifier,
+    GradientBoostingRegressor,
+    RandomForestClassifier,
+    RandomForestRegressor,
+)
+from sklearn.linear_model import ElasticNet  # includes Lasso, MultiTaskElasticNet, etc.
 from sklearn.linear_model import (
-    ElasticNet,  # includes Lasso, MultiTaskElasticNet, etc.
     ElasticNetCV,
     HuberRegressor,
     Lars,
@@ -25,55 +38,48 @@ from sklearn.linear_model import (
     TheilSenRegressor,
 )
 from sklearn.multiclass import OneVsRestClassifier
+from sklearn.pipeline import Pipeline
 from sklearn.svm import (
-    LinearSVC,
-    LinearSVR,
     SVC,
     SVR,
+    LinearSVC,
+    LinearSVR,
     NuSVC,
     NuSVR,
     OneClassSVM,
-)
-# TODO: see https://github.com/scikit-learn/scikit-learn/pull/2250
-from sklearn.naive_bayes import BernoulliNB, MultinomialNB
-from sklearn.ensemble import (
-    GradientBoostingClassifier,
-    GradientBoostingRegressor,
-    AdaBoostClassifier,
-    AdaBoostRegressor,
-    RandomForestClassifier,
-    RandomForestRegressor,
-    ExtraTreesClassifier,
-    ExtraTreesRegressor,
 )
 from sklearn.tree import (
     DecisionTreeClassifier,
     DecisionTreeRegressor,
 )
 
-from eli5.base import (
-    Explanation, TargetExplanation, FeatureImportances)
-from eli5.base_utils import singledispatch
+from eli5._feature_importances import (
+    get_feature_importance_explanation,
+    get_feature_importances_filtered,
+)
 from eli5._feature_weights import get_top_features
-from eli5.utils import argsort_k_largest_positive, get_target_display_names
-from eli5.sklearn.unhashing import handle_hashing_vec, is_invhashing
-from eli5.sklearn.treeinspect import get_tree_info
-from eli5.sklearn.utils import (
-    get_coef,
-    is_multiclass_classifier,
-    is_multitarget_regressor,
-    get_feature_names,
-    get_feature_names_filtered,
-    get_default_target_names,
+from eli5.base import (
+    Explanation,
+    TargetExplanation,
 )
 from eli5.explain import explain_weights
-from eli5.transform import transform_feature_names
-from eli5._feature_importances import (
-    get_feature_importances_filtered,
-    get_feature_importance_explanation,
+from eli5.sklearn.treeinspect import get_tree_info
+from eli5.sklearn.unhashing import (
+    handle_hashing_vec,
+    is_invhashing,
 )
-from .permutation_importance import PermutationImportance
+from eli5.sklearn.utils import (
+    get_coef,
+    get_default_target_names,
+    get_feature_names,
+    get_feature_names_filtered,
+    is_multiclass_classifier,
+    is_multitarget_regressor,
+)
+from eli5.transform import transform_feature_names
+from eli5.utils import get_target_display_names
 
+from .permutation_importance import PermutationImportance
 
 LINEAR_CAVEATS = """
 Caveats:

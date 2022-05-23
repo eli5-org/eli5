@@ -1,14 +1,15 @@
-from typing import List, Any
-
 import numpy as np
 from scipy.stats import entropy
 from sklearn.pipeline import Pipeline
-from sklearn.utils import check_random_state, issparse
-from sklearn.utils.metaestimators import if_delegate_has_method
+from sklearn.utils import (
+    check_random_state,
+    issparse,
+)
 from sklearn.utils import shuffle as _shuffle
+from sklearn.utils.metaestimators import if_delegate_has_method
 
-from eli5.utils import vstack
 from eli5.sklearn.utils import sklearn_version
+from eli5.utils import vstack
 
 
 def fit_proba(clf, X, y_proba, expand_factor=10, sample_weight=None,

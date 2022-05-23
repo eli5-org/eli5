@@ -1,10 +1,22 @@
-from typing import Tuple, Callable, Dict, Optional, List
+from typing import (
+    Callable,
+    Dict,
+    List,
+    Tuple,
+)
 
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import (
+    BaseEstimator,
+    TransformerMixin,
+)
 
-from eli5.base import DocWeightedSpans, FeatureWeights
+from eli5.base import (
+    DocWeightedSpans,
+    FeatureWeights,
+)
 from eli5.sklearn.text import _get_feature_weights_dict
+
 from .textutils import TokenizedText
 
 

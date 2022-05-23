@@ -2,26 +2,38 @@ import pytest
 
 pytest.importorskip('lightgbm')
 
-import numpy as np
-from sklearn.feature_extraction.text import CountVectorizer
 import lightgbm
-from lightgbm import LGBMClassifier, LGBMRegressor
-
-from eli5 import explain_weights, explain_prediction
-from eli5.lightgbm import _check_booster_args, _lgb_n_targets
-from .test_sklearn_explain_weights import (
-    test_explain_tree_classifier as _check_rf_classifier,
-    test_explain_random_forest_and_tree_feature_filter as _check_rf_feature_filter,
-    test_feature_importances_no_remaining as _check_rf_no_remaining,
-    test_explain_tree_regressor as _check_rf_regressor,
+import numpy as np
+from lightgbm import (
+    LGBMClassifier,
+    LGBMRegressor,
 )
+from sklearn.feature_extraction.text import CountVectorizer
+
+from eli5 import (
+    explain_prediction,
+    explain_weights,
+)
+from eli5.lightgbm import (
+    _check_booster_args,
+    _lgb_n_targets,
+)
+
 from .test_sklearn_explain_prediction import (
     assert_linear_regression_explained,
     assert_trained_linear_regression_explained,
-    test_explain_prediction_pandas as _check_explain_prediction_pandas,
-    test_explain_clf_binary_iris as _check_binary_classifier,
 )
-from .utils import format_as_all, check_targets_scores, get_all_features
+from .test_sklearn_explain_prediction import test_explain_clf_binary_iris as _check_binary_classifier
+from .test_sklearn_explain_prediction import test_explain_prediction_pandas as _check_explain_prediction_pandas
+from .test_sklearn_explain_weights import test_explain_random_forest_and_tree_feature_filter as _check_rf_feature_filter
+from .test_sklearn_explain_weights import test_explain_tree_classifier as _check_rf_classifier
+from .test_sklearn_explain_weights import test_explain_tree_regressor as _check_rf_regressor
+from .test_sklearn_explain_weights import test_feature_importances_no_remaining as _check_rf_no_remaining
+from .utils import (
+    check_targets_scores,
+    format_as_all,
+    get_all_features,
+)
 
 
 @pytest.fixture()

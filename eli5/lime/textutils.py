@@ -1,15 +1,22 @@
 """
 Utilities for text generation.
 """
-import re
 import math
-from typing import List, Tuple, Union, Optional
+import re
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 from sklearn.utils import check_random_state
 
-from eli5.utils import indices_to_bool_mask, vstack
-
+from eli5.utils import (
+    indices_to_bool_mask,
+    vstack,
+)
 
 # the same as scikit-learn token pattern, but allows single-char tokens
 DEFAULT_TOKEN_PATTERN = r'(?u)\b\w+\b'

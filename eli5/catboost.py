@@ -1,8 +1,8 @@
-import numpy as np
 import catboost
+import numpy as np
 
-from eli5.explain import explain_weights
 from eli5._feature_importances import get_feature_importance_explanation
+from eli5.explain import explain_weights
 
 DESCRIPTION_CATBOOST = """CatBoost feature importances; 
 values are numbers 0 <= x <= 1; all values sum to 1."""

@@ -1,18 +1,21 @@
-import os
 import inspect
 import json
+import os
 from pprint import pprint
 
-from hypothesis.strategies import integers
-from hypothesis.extra.numpy import arrays
 import numpy as np
+from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import integers
 
 from eli5.base import Explanation
-from eli5.formatters import format_as_text, format_as_html, format_as_dict
+from eli5.formatters import (
+    format_as_dict,
+    format_as_html,
+    format_as_text,
+)
 from eli5.formatters.html import html_escape
 from eli5.formatters.text import format_signed
 from eli5.sklearn.utils import sklearn_version
-
 
 SGD_KWARGS = {'random_state': 42}
 if sklearn_version() >= '0.19':

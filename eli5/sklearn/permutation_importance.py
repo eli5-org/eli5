@@ -2,16 +2,19 @@ from functools import partial
 from typing import List
 
 import numpy as np
-from sklearn.model_selection import check_cv
-from sklearn.utils.metaestimators import if_delegate_has_method
-from sklearn.utils import check_array, check_random_state
 from sklearn.base import (
     BaseEstimator,
     MetaEstimatorMixin,
     clone,
-    is_classifier
+    is_classifier,
 )
 from sklearn.metrics import check_scoring
+from sklearn.model_selection import check_cv
+from sklearn.utils import (
+    check_array,
+    check_random_state,
+)
+from sklearn.utils.metaestimators import if_delegate_has_method
 
 from eli5.permutation_importance import get_score_importances
 from eli5.sklearn.utils import pandas_available

@@ -1,11 +1,13 @@
 import re
 
 import pytest
+
 pytest.importorskip('sklearn_crfsuite')
 import numpy as np
 from sklearn_crfsuite import CRF
 
 from eli5 import explain_weights
+
 from .utils import format_as_all
 
 

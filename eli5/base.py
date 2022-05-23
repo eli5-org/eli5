@@ -1,10 +1,15 @@
-from typing import Any, List, Tuple, Union, Optional
+from typing import (
+    Any,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 
 from .base_utils import attrs
 from .formatters.features import FormattedFeatureName
-
 
 # @attrs decorator used in this file calls @attr.s(slots=True),
 # creating attr.ib entries based on the signature of __init__.

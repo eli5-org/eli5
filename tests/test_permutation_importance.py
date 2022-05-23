@@ -1,7 +1,10 @@
 import numpy as np
 from sklearn.svm import SVR
 
-from eli5.permutation_importance import iter_shuffled, get_score_importances
+from eli5.permutation_importance import (
+    get_score_importances,
+    iter_shuffled,
+)
 
 
 def assert_column_mean_unchanged(X, **kwargs):
