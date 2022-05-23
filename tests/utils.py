@@ -63,7 +63,7 @@ def write_html(clf, html, text, postfix='', caller_depth=1):
         os.mkdir(dirname)
     path = os.path.join(dirname, filename)
     with open(path, 'wb') as f:
-        f.write(u'Text:<pre>{text}</pre>End of text<hr/>\n{html}'
+        f.write('Text:<pre>{text}</pre>End of text<hr/>\n{html}'
                 .format(text=html_escape(text), html=html)
                 .encode('utf8'))
     print('html written to {}'.format(path))
