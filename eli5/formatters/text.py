@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from itertools import chain
-import six
 from tabulate import tabulate
 from typing import List, Optional, Iterator
 
@@ -15,9 +14,9 @@ from .utils import tabulate as eli5_tabulate
 from .trees import tree2text
 
 
-_PLUS_MINUS = "+-" if six.PY2 else "±"
-_ELLIPSIS = '...' if six.PY2 else '…'
-_SPACE = '_' if six.PY2 else '░'
+_PLUS_MINUS = "±"
+_ELLIPSIS = '…'
+_SPACE = '░'
 
 
 def format_as_text(expl,  # type: Explanation

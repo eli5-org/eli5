@@ -3,7 +3,6 @@ from __future__ import absolute_import
 import abc
 from functools import partial
 from typing import List, Tuple, Any, Union, Dict, Optional
-import six
 
 import numpy as np
 from scipy.stats import itemfreq
@@ -18,8 +17,7 @@ from eli5.lime.utils import rbf
 from .textutils import generate_samples, DEFAULT_TOKEN_PATTERN, TokenizedText
 
 
-@six.add_metaclass(abc.ABCMeta)
-class BaseSampler(BaseEstimator):
+class BaseSampler(BaseEstimator, abc.ABC):
     """
     Base sampler class.
     Sampler is an object which generates examples similar to a given example.

@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import six
-
-
 class FormattedFeatureName(object):
     """ Feature name that does not need any additional escaping.
     """
     def __init__(self, value):
-        if not isinstance(value, six.string_types):
+        if not isinstance(value, str):
             raise TypeError('"value" must be a string, got {} instead'
                             .format(type(value)))
         self.value = value

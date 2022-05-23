@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import re
-from six.moves import xrange
 
 
 def build_span_analyzer(document, vec):
@@ -49,9 +48,9 @@ def _word_ngrams(vec, tokens, stop_words=None):
         original_tokens = tokens
         tokens = []
         n_original_tokens = len(original_tokens)
-        for n in xrange(min_n,
+        for n in range(min_n,
                         min(max_n + 1, n_original_tokens + 1)):
-            for i in xrange(n_original_tokens - n + 1):
+            for i in range(n_original_tokens - n + 1):
                 ngram_tokens = original_tokens[i: i + n]
                 tokens.append((
                     [s for s, _ in ngram_tokens],
@@ -65,8 +64,8 @@ def _char_ngrams(vec, text_document):
     text_len = len(text_document)
     ngrams = []
     min_n, max_n = vec.ngram_range
-    for n in xrange(min_n, min(max_n + 1, text_len + 1)):
-        for i in xrange(text_len - n + 1):
+    for n in range(min_n, min(max_n + 1, text_len + 1)):
+        for i in range(text_len - n + 1):
             ngrams.append(([(i, i + n)], text_document[i: i + n]))
     return ngrams
 
@@ -81,7 +80,7 @@ def _char_wb_ngrams(vec, text_document):
         w = m.group(0)
         w = ' ' + w + ' '
         w_len = len(w)
-        for n in xrange(min_n, max_n + 1):
+        for n in range(min_n, max_n + 1):
             offset = 0
             ngrams.append((
                 [(w_start + offset - 1, w_start + offset + n - 1)],

@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from itertools import chain
 import re
-import six
 from typing import Any, Union, List, Dict, Callable, Match, Optional
 
 import numpy as np
@@ -118,7 +117,7 @@ def tabulate(data,  # type: List[List[Any]]
 
     if col_align is None:
         col_align = ['l'] * n_cols
-    elif isinstance(col_align, six.string_types) and len(col_align) == 1:
+    elif isinstance(col_align, str) and len(col_align) == 1:
         col_align = [col_align] * n_cols
     else:
         col_align = list(col_align)
@@ -130,7 +129,7 @@ def tabulate(data,  # type: List[List[Any]]
 
     if header:
         data = [header] + data
-    data = [[six.text_type(x) for x in row] for row in data]
+    data = [[str(x) for x in row] for row in data]
     col_width = [max(len(row[col_i]) for row in data) for col_i in range(n_cols)]
     if header:
         data.insert(1, ['-' * width for width in col_width])
