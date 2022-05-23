@@ -81,7 +81,5 @@ def _node_value(tree, node_id):
 def _treeiter(node):
     yield node
     if not node.is_leaf:
-        for n in _treeiter(node.left):
-            yield n
-        for n in _treeiter(node.right):
-            yield n
+        yield from _treeiter(node.left)
+        yield from _treeiter(node.right)
