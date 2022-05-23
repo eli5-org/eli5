@@ -1,4 +1,4 @@
-class FormattedFeatureName(object):
+class FormattedFeatureName:
     """ Feature name that does not need any additional escaping.
     """
     def __init__(self, value):

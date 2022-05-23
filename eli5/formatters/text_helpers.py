@@ -33,7 +33,7 @@ def get_char_weights(doc_weighted_spans, preserve_density=None):
 
 
 @attrs
-class PreparedWeightedSpans(object):
+class PreparedWeightedSpans:
     def __init__(self,
                  doc_weighted_spans,  # type: DocWeightedSpans
                  char_weights,  # type: np.ndarray

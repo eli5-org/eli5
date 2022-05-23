@@ -63,7 +63,7 @@ def cosine_similarity_vec(num_tokens, num_removed_vec):
     return remaining / (np.sqrt(num_tokens + 1e-6) * np.sqrt(remaining + 1e-6))
 
 
-class TokenizedText(object):
+class TokenizedText:
     def __init__(self, text, token_pattern=DEFAULT_TOKEN_PATTERN):
         # type: (str, str) -> None
         self.text = text
@@ -171,7 +171,7 @@ class TokenizedText(object):
         return list(zip(self.split.token_spans, self.split.tokens))
 
 
-class SplitResult(object):
+class SplitResult:
     def __init__(self, parts):
         self.parts = np.array(parts, ndmin=1)
         self.lenghts = np.array([len(p) for p in parts])
