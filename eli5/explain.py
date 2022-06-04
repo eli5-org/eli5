@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 """
 Dispatch module. Explanation functions for conctere estimator classes
 are defined in submodules.
 """
-from eli5.base import Explanation
-from eli5.base_utils import singledispatch
+from functools import singledispatch
 
 
 @singledispatch
@@ -73,6 +71,8 @@ def explain_weights(estimator, **kwargs):
         if you work with IPython: :func:`eli5.show_weights` allows to customize
         formatting without a need to import :mod:`eli5.formatters` functions.
     """
+    from eli5.base import Explanation  # circular dependency
+
     return Explanation(
         estimator=repr(estimator),
         error="estimator %r is not supported" % estimator,
@@ -171,6 +171,8 @@ def explain_prediction(estimator, doc, **kwargs):
         customize formatting without a need to import :mod:`eli5.formatters`
         functions.
     """
+    from eli5.base import Explanation  # circular dependency
+
     return Explanation(
         estimator=repr(estimator),
         error="estimator %r is not supported" % estimator,

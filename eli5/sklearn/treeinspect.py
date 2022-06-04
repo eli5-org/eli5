@@ -1,16 +1,19 @@
-# -*- coding: utf-8 -*-
 """
 Inspect scikit-learn decision trees.
 
 This is an alternative to sklearn.tree.export which doesn't require graphviz
 and provides a way to output result in text-based format.
 """
-from __future__ import absolute_import, division
-
 from sklearn.base import ClassifierMixin
-from sklearn.tree import _tree, export_graphviz
+from sklearn.tree import (
+    _tree,
+    export_graphviz,
+)
 
-from eli5.base import TreeInfo, NodeInfo
+from eli5.base import (
+    NodeInfo,
+    TreeInfo,
+)
 
 
 def get_tree_info(decision_tree,
@@ -84,7 +87,5 @@ def _node_value(tree, node_id):
 def _treeiter(node):
     yield node
     if not node.is_leaf:
-        for n in _treeiter(node.left):
-            yield n
-        for n in _treeiter(node.right):
-            yield n
+        yield from _treeiter(node.left)
+        yield from _treeiter(node.right)

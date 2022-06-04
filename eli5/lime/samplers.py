@@ -1,25 +1,38 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import abc
 from functools import partial
-from typing import List, Tuple, Any, Union, Dict, Optional
-import six
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 from scipy.stats import itemfreq
-from sklearn.base import BaseEstimator, clone
-from sklearn.neighbors import KernelDensity
+from sklearn.base import (
+    BaseEstimator,
+    clone,
+)
 from sklearn.metrics import pairwise_distances
-from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.model_selection import (
+    GridSearchCV,
+    KFold,
+)
+from sklearn.neighbors import KernelDensity
 from sklearn.utils import check_random_state
 
-from eli5.utils import vstack
+from eli5.lime.textutils import (
+    DEFAULT_TOKEN_PATTERN,
+    TokenizedText,
+    generate_samples,
+)
 from eli5.lime.utils import rbf
-from .textutils import generate_samples, DEFAULT_TOKEN_PATTERN, TokenizedText
+from eli5.utils import vstack
 
 
-@six.add_metaclass(abc.ABCMeta)
-class BaseSampler(BaseEstimator):
+class BaseSampler(BaseEstimator, abc.ABC):
     """
     Base sampler class.
     Sampler is an object which generates examples similar to a given example.

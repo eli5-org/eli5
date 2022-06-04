@@ -1,16 +1,20 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import numpy as np
-from sklearn.feature_extraction.text import HashingVectorizer, CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.pipeline import make_pipeline
 import pytest
+from sklearn.feature_extraction.text import (
+    CountVectorizer,
+    HashingVectorizer,
+)
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+from sklearn.tree import DecisionTreeClassifier
 
-from eli5.lime import TextExplainer
 from eli5.formatters import format_as_text
-from .utils import format_as_all, check_targets_scores
+from eli5.lime import TextExplainer
+
+from .utils import (
+    check_targets_scores,
+    format_as_all,
+)
 
 
 def test_lime_explain_probabilistic(newsgroups_train):

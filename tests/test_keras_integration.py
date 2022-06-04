@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-
 """Test integration of Grad-CAM explanation and image formatter for Keras"""
-from __future__ import print_function
-
 import pytest
 
 keras = pytest.importorskip('keras')
@@ -11,20 +7,16 @@ matplotlib = pytest.importorskip('matplotlib')
 IPython = pytest.importorskip('IPython')
 
 import numpy as np
-from PIL import Image
-from keras.applications import (
-    mobilenet_v2
-)
+from keras.applications import mobilenet_v2
 from keras.models import Sequential
+from PIL import Image
 
 import eli5
-from eli5.base import Explanation
 from eli5 import format_as_image
-from eli5.formatters.image import (
-    expand_heatmap
-)
-from .utils_image import assert_pixel_by_pixel_equal
+from eli5.base import Explanation
+from eli5.formatters.image import expand_heatmap
 
+from .utils_image import assert_pixel_by_pixel_equal
 
 imagenet_cat_idx = 282
 

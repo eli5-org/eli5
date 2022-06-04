@@ -1,8 +1,16 @@
 import re
-import six
 from typing import (
-    Any, Iterable, Iterator, Tuple, Sized, List, Optional, Dict,
-    Union, Callable, Pattern
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Pattern,
+    Sized,
+    Tuple,
+    Union,
 )
 
 import numpy as np
@@ -106,7 +114,7 @@ class FeatureNames(Sized, Iterable):
         if isinstance(self.feature_names, (np.ndarray, list)):
             indexed_names = enumerate(self.feature_names)
         elif isinstance(self.feature_names, dict):
-            indexed_names = six.iteritems(self.feature_names)
+            indexed_names = self.feature_names.items()
         elif self.feature_names is None:
             indexed_names = []
         assert indexed_names is not None

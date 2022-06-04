@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Keras unit tests"""
 
 import pytest
@@ -7,29 +5,31 @@ import pytest
 keras = pytest.importorskip('keras')
 
 import keras.backend as K
-from keras.models import Sequential, Model
+import numpy as np
+from keras.backend import epsilon
 from keras.layers import (
-    Dense, 
-    Activation, 
-    Conv2D, 
-    GlobalAveragePooling2D, 
-    Input, 
+    Activation,
+    Conv2D,
+    Dense,
+    GlobalAveragePooling2D,
+    Input,
     Lambda,
 )
-from keras.backend import epsilon
-import numpy as np
+from keras.models import (
+    Model,
+    Sequential,
+)
 
 from eli5.keras.explain_prediction import (
-    explain_prediction,
-    _validate_doc,
     _get_activation_layer,
+    _validate_doc,
+    explain_prediction,
 )
 from eli5.keras.gradcam import (
-    _get_target_prediction,
     _calc_gradient,
+    _get_target_prediction,
     gradcam,
 )
-
 
 # We need to put this layer in a fixture object AND access it in a parametrization
 conv_layer = Conv2D(10, (3, 3))

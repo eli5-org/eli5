@@ -1,16 +1,28 @@
-# -*- coding: utf-8 -*-
-import pytest
 import numpy as np
-from sklearn.base import is_classifier, is_regressor
-from sklearn.svm import SVR, SVC
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.pipeline import make_pipeline
+import pytest
+from sklearn.base import (
+    is_classifier,
+    is_regressor,
+)
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    RandomForestRegressor,
+)
 from sklearn.feature_selection import SelectFromModel
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import (
+    cross_val_score,
+    train_test_split,
+)
+from sklearn.pipeline import make_pipeline
+from sklearn.svm import (
+    SVC,
+    SVR,
+)
 
 import eli5
 from eli5.sklearn import PermutationImportance
+
 from .utils import format_as_all
 
 

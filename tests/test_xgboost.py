@@ -1,36 +1,47 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
-import pytest
 import numpy as np
+import pytest
 import scipy.sparse as sp
 from sklearn.feature_extraction.text import CountVectorizer
+
 pytest.importorskip('xgboost')
 import xgboost
-from xgboost import XGBClassifier, XGBRegressor
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
+from xgboost import (
+    XGBClassifier,
+    XGBRegressor,
+)
 
-from eli5.xgboost import (
-    _parse_tree_dump, _xgb_n_targets, _missing_values_set_to_nan,
-    _parent_value, _parse_dump_line, _check_booster_args,
+from eli5.explain import (
+    explain_prediction,
+    explain_weights,
 )
-from eli5.explain import explain_prediction, explain_weights
-from eli5.formatters.text import format_as_text
 from eli5.formatters import fields
-from .utils import format_as_all, get_all_features, check_targets_scores
-from .test_sklearn_explain_weights import (
-    test_explain_tree_classifier as _check_rf_classifier,
-    test_explain_random_forest_and_tree_feature_filter as _check_rf_feature_filter,
-    test_feature_importances_no_remaining as _check_rf_no_remaining,
-    assert_tree_classifier_explained,
+from eli5.formatters.text import format_as_text
+from eli5.xgboost import (
+    _check_booster_args,
+    _missing_values_set_to_nan,
+    _parent_value,
+    _parse_dump_line,
+    _parse_tree_dump,
+    _xgb_n_targets,
 )
+
 from .test_sklearn_explain_prediction import (
+    assert_explain_prediction_single_target,
     assert_linear_regression_explained,
     assert_trained_linear_regression_explained,
-    assert_explain_prediction_single_target,
-    test_explain_clf_binary_iris as _check_binary_classifier,
-    test_explain_prediction_pandas as _check_explain_prediction_pandas,
+)
+from .test_sklearn_explain_prediction import test_explain_clf_binary_iris as _check_binary_classifier
+from .test_sklearn_explain_prediction import test_explain_prediction_pandas as _check_explain_prediction_pandas
+from .test_sklearn_explain_weights import assert_tree_classifier_explained
+from .test_sklearn_explain_weights import test_explain_random_forest_and_tree_feature_filter as _check_rf_feature_filter
+from .test_sklearn_explain_weights import test_explain_tree_classifier as _check_rf_classifier
+from .test_sklearn_explain_weights import test_feature_importances_no_remaining as _check_rf_no_remaining
+from .utils import (
+    check_targets_scores,
+    format_as_all,
+    get_all_features,
 )
 
 

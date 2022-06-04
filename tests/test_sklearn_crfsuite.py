@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function
 import re
 
 import pytest
+
 pytest.importorskip('sklearn_crfsuite')
 import numpy as np
 from sklearn_crfsuite import CRF
 
 from eli5 import explain_weights
+
 from .utils import format_as_all
 
 
@@ -17,19 +17,19 @@ def xseq():
         {'walk': 1, 'shop': 0.5},
         {'walk': 1},
         {'walk': 1, 'clean': 0.5},
-        {u'shop': 0.5, u'clean': 0.5},
+        {'shop': 0.5, 'clean': 0.5},
         {'walk': 0.5, 'clean': 1},
-        {'clean': 1, u'shop': 0.1},
+        {'clean': 1, 'shop': 0.1},
         {'walk': 1, 'shop': 0.5},
         {},
         {'clean': 1},
-        {u'солнце': u'не светит'.encode('utf8'), 'clean': 1},
+        {'солнце': 'не светит'.encode('utf8'), 'clean': 1},
     ]
 
 
 @pytest.fixture()
 def yseq():
-    return ['sunny', 'sunny', u'sunny', 'rainy', 'rainy', 'rainy',
+    return ['sunny', 'sunny', 'sunny', 'rainy', 'rainy', 'rainy',
             'sunny', 'sunny', 'rainy', 'rainy']
 
 
@@ -44,10 +44,10 @@ def test_sklearn_crfsuite(xseq, yseq):
     assert "y='rainy' top features" in text
     assert "Transition features" in text
     assert "sunny   -0.130    0.696" in text
-    assert u'+0.124  солнце:не светит' in text
+    assert '+0.124  солнце:не светит' in text
 
     html_nospaces = html.replace(' ', '').replace("\n", '')
-    assert u'солнце:не светит' in html
+    assert 'солнце:не светит' in html
     assert '<th>rainy</th><th>sunny</th>' in html_nospaces
 
     try:
@@ -77,10 +77,10 @@ def test_sklearn_crfsuite_feature_re(xseq, yseq):
     crf.fit([xseq], [yseq])
 
     expl = explain_weights(
-        crf, feature_re=re.compile(u'(солн|clean)', re.U))
+        crf, feature_re=re.compile('(солн|clean)', re.U))
     for expl in format_as_all(expl, crf):
-        assert u'солн' in expl
-        assert u'clean' in expl
+        assert 'солн' in expl
+        assert 'clean' in expl
         assert 'walk' not in expl
 
 
@@ -93,12 +93,12 @@ def test_sklearn_targets(xseq, yseq, targets):
     crf.fit([xseq], [yseq])
 
     res = explain_weights(crf,
-                          target_names={'sunny': u'☀'},
+                          target_names={'sunny': '☀'},
                           targets=targets)
     for expl in format_as_all(res, crf):
-        assert u'☀' in expl
+        assert '☀' in expl
         if targets[0] == 'rainy':
-            assert expl.index('rainy') < expl.index(u'☀')
+            assert expl.index('rainy') < expl.index('☀')
         else:
-            assert expl.index('rainy') > expl.index(u'☀')
+            assert expl.index('rainy') > expl.index('☀')
 

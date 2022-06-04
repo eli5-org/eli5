@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from .lime import (
+from eli5.lime.lime import (
     TextExplainer,
-    _train_local_classifier
+    _train_local_classifier,
 )

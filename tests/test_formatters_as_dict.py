@@ -3,9 +3,15 @@ import json
 import numpy as np
 
 from eli5.base import (
-    Explanation, TargetExplanation, FeatureWeights, FeatureWeight)
-from eli5.formatters.as_dict import format_as_dict, _numpy_to_python
-
+    Explanation,
+    FeatureWeight,
+    FeatureWeights,
+    TargetExplanation,
+)
+from eli5.formatters.as_dict import (
+    _numpy_to_python,
+    format_as_dict,
+)
 
 # format_as_dict is called in eli5.tests.utils.format_as_all
 

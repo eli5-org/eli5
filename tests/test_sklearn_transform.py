@@ -1,39 +1,40 @@
 import re
 
-import pytest
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
+import pytest
+from sklearn.base import (
+    BaseEstimator,
+    TransformerMixin,
+)
 from sklearn.feature_selection import (
-    SelectPercentile,
-    SelectKBest,
-    SelectFpr,  # TODO: add tests and document
-    SelectFdr,  # TODO: add tests and document
-    SelectFwe,  # TODO: add tests and document
-    GenericUnivariateSelect,
-    VarianceThreshold,
     RFE,
     RFECV,
+    GenericUnivariateSelect,
     SelectFromModel,
+    SelectKBest,
+    SelectPercentile,
+    VarianceThreshold,
 )
 from sklearn.linear_model import LogisticRegression
+
 _additional_test_cases = []
 try:
-    from sklearn.linear_model import (  # type: ignore
-        RandomizedLogisticRegression,
-        RandomizedLasso,  # TODO: add tests and document
-    )
+    from sklearn.linear_model import RandomizedLogisticRegression  # type: ignore
     _additional_test_cases.append(
         (RandomizedLogisticRegression(random_state=42),
          ['<NAME1>', '<NAME2>', '<NAME3>']))
 except ImportError:     # Removed in scikit-learn 0.21
     pass
-from sklearn.preprocessing import (
-    MinMaxScaler,
-    StandardScaler,
-    MaxAbsScaler,
-    RobustScaler,
+from sklearn.pipeline import (
+    FeatureUnion,
+    make_pipeline,
 )
-from sklearn.pipeline import FeatureUnion, make_pipeline
+from sklearn.preprocessing import (
+    MaxAbsScaler,
+    MinMaxScaler,
+    RobustScaler,
+    StandardScaler,
+)
 
 from eli5 import transform_feature_names
 from eli5.sklearn import PermutationImportance

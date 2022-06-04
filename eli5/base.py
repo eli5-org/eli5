@@ -1,18 +1,22 @@
-# -*- coding: utf-8 -*-
-from typing import Any, List, Tuple, Union, Optional
+from typing import (
+    Any,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 
-from .base_utils import attrs
-from .formatters.features import FormattedFeatureName
-
+from eli5.base_utils import attrs
+from eli5.formatters.features import FormattedFeatureName
 
 # @attrs decorator used in this file calls @attr.s(slots=True),
 # creating attr.ib entries based on the signature of __init__.
 
 
 @attrs
-class Explanation(object):
+class Explanation:
     """ An explanation for classifier or regressor,
     it can either explain weights or a single prediction.
     """
@@ -51,7 +55,7 @@ class Explanation(object):
 
 
 @attrs
-class FeatureImportances(object):
+class FeatureImportances:
     """ Feature importances with number of remaining non-zero features.
     """
     def __init__(self, importances, remaining):
@@ -67,7 +71,7 @@ class FeatureImportances(object):
 
 
 @attrs
-class TargetExplanation(object):
+class TargetExplanation:
     """ Explanation for a single target or class.
     Feature weights are stored in the :feature_weights: attribute,
     and features highlighted in text in the :weighted_spans: attribute.
@@ -96,7 +100,7 @@ Feature = Union[str, List, FormattedFeatureName]
 
 
 @attrs
-class FeatureWeights(object):
+class FeatureWeights:
     """ Weights for top features, :pos: for positive and :neg: for negative,
     sorted by descending absolute value.
     Number of remaining positive and negative features are stored in
@@ -116,7 +120,7 @@ class FeatureWeights(object):
 
 
 @attrs
-class FeatureWeight(object):
+class FeatureWeight:
     def __init__(self,
                  feature,  # type: Feature
                  weight,  # type: float
@@ -131,7 +135,7 @@ class FeatureWeight(object):
 
 
 @attrs
-class WeightedSpans(object):
+class WeightedSpans:
     """ Holds highlighted spans for parts of document - a DocWeightedSpans
     object for each vectorizer, and other features not highlighted anywhere.
     """
@@ -152,7 +156,7 @@ WeightedSpan = Tuple[
 
 
 @attrs
-class DocWeightedSpans(object):
+class DocWeightedSpans:
     """ Features highlighted in text. :document: is a pre-processed document
     before applying the analyzer. :weighted_spans: holds a list of spans
     for features found in text (span indices correspond to
@@ -174,7 +178,7 @@ class DocWeightedSpans(object):
 
 
 @attrs
-class TransitionFeatureWeights(object):
+class TransitionFeatureWeights:
     """ Weights matrix for transition features. """
     def __init__(self,
                  class_names,  # type: List[str]
@@ -186,7 +190,7 @@ class TransitionFeatureWeights(object):
 
 
 @attrs
-class TreeInfo(object):
+class TreeInfo:
     """ Information about the decision tree. :criterion: is the name of
     the function to measure the quality of a split, :tree: holds all nodes
     of the tree, and :graphviz: is the tree rendered in graphviz .dot format.
@@ -205,7 +209,7 @@ class TreeInfo(object):
 
 
 @attrs
-class NodeInfo(object):
+class NodeInfo:
     """ A node in a binary tree.
     Pointers to left and right children are in :left: and :right: attributes.
     """

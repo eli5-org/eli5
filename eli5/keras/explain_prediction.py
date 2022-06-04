@@ -1,27 +1,34 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from typing import Union, Optional, Callable, Tuple, List, TYPE_CHECKING
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Optional,
+    Union,
+)
+
 if TYPE_CHECKING:
     import PIL
 
 import numpy as np
-import keras
-import keras.backend as K
-from keras.models import Model
-from keras.layers import Layer
 from keras.layers import (
-    Conv2D,
-    MaxPooling2D,
     AveragePooling2D,
-    GlobalMaxPooling2D,
+    Conv2D,
     GlobalAveragePooling2D,
+    GlobalMaxPooling2D,
+    Layer,
+    MaxPooling2D,
 )
+from keras.models import Model
 from keras.preprocessing.image import array_to_img
 
-from eli5.base import Explanation, TargetExplanation
+from eli5.base import (
+    Explanation,
+    TargetExplanation,
+)
 from eli5.explain import explain_prediction
-from .gradcam import gradcam, gradcam_backend
-
+from eli5.keras.gradcam import (
+    gradcam,
+    gradcam_backend,
+)
 
 DESCRIPTION_KERAS = """Grad-CAM visualization for image classification; 
 output is explanation object that contains input image 

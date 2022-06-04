@@ -1,17 +1,22 @@
-# -*- coding: utf-8 -*-
 """
 Utilities for text generation.
 """
-from __future__ import absolute_import
-import re
 import math
-from typing import List, Tuple, Union, Optional
+import re
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 from sklearn.utils import check_random_state
 
-from eli5.utils import indices_to_bool_mask, vstack
-
+from eli5.utils import (
+    indices_to_bool_mask,
+    vstack,
+)
 
 # the same as scikit-learn token pattern, but allows single-char tokens
 DEFAULT_TOKEN_PATTERN = r'(?u)\b\w+\b'
@@ -65,7 +70,7 @@ def cosine_similarity_vec(num_tokens, num_removed_vec):
     return remaining / (np.sqrt(num_tokens + 1e-6) * np.sqrt(remaining + 1e-6))
 
 
-class TokenizedText(object):
+class TokenizedText:
     def __init__(self, text, token_pattern=DEFAULT_TOKEN_PATTERN):
         # type: (str, str) -> None
         self.text = text
@@ -173,7 +178,7 @@ class TokenizedText(object):
         return list(zip(self.split.token_spans, self.split.tokens))
 
 
-class SplitResult(object):
+class SplitResult:
     def __init__(self, parts):
         self.parts = np.array(parts, ndmin=1)
         self.lenghts = np.array([len(p) for p in parts])

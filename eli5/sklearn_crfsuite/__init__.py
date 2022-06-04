@@ -1,3 +1,1 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from .explain_weights import explain_weights_sklearn_crfsuite
+from eli5.sklearn_crfsuite.explain_weights import explain_weights_sklearn_crfsuite

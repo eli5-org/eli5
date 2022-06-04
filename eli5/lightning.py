@@ -1,19 +1,23 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
+from functools import singledispatch
 
+from lightning import (
+    classification,
+    regression,
+)
 from lightning.impl.base import BaseEstimator
-from lightning import classification, regression
 from sklearn.multiclass import OneVsRestClassifier
 
 from eli5.base import Explanation
-from eli5.base_utils import singledispatch
+from eli5.explain import (
+    explain_prediction,
+    explain_weights,
+)
 from eli5.sklearn import (
     explain_linear_classifier_weights,
     explain_linear_regressor_weights,
     explain_prediction_linear_classifier,
-    explain_prediction_linear_regressor
+    explain_prediction_linear_regressor,
 )
-from eli5.explain import explain_prediction, explain_weights
 
 
 @singledispatch

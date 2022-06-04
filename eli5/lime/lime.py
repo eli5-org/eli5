@@ -1,31 +1,42 @@
-# -*- coding: utf-8 -*-
 """
 An impementation of LIME (http://arxiv.org/abs/1602.04938), an algorithm to
 explain predictions of black-box models.
 """
-from __future__ import absolute_import
-from typing import Any, Callable, Dict, Optional
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Optional,
+)
 
 import numpy as np
+from sklearn.base import (
+    BaseEstimator,
+    clone,
+)
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.utils import check_random_state
-from sklearn.base import clone, BaseEstimator
 
 import eli5
-from eli5.sklearn.utils import sklearn_version
-from eli5.lime.samplers import BaseSampler
-from eli5.lime.textutils import DEFAULT_TOKEN_PATTERN, CHAR_TOKEN_PATTERN
-from eli5.lime.samplers import MaskingTextSamplers
+from eli5.lime._vectorizer import SingleDocumentVectorizer
+from eli5.lime.samplers import (
+    BaseSampler,
+    MaskingTextSamplers,
+)
+from eli5.lime.textutils import (
+    CHAR_TOKEN_PATTERN,
+    DEFAULT_TOKEN_PATTERN,
+)
 from eli5.lime.utils import (
     fit_proba,
-    score_with_sample_weight,
-    mean_kl_divergence,
     fix_multiclass_predict_proba,
-    rbf
+    mean_kl_divergence,
+    rbf,
+    score_with_sample_weight,
 )
-from eli5.lime._vectorizer import SingleDocumentVectorizer
+from eli5.sklearn.utils import sklearn_version
 
 
 class TextExplainer(BaseEstimator):

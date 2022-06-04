@@ -1,9 +1,15 @@
 import numpy as np
 
 from eli5.base import (
-    TargetExplanation, WeightedSpans, DocWeightedSpans, FeatureWeights)
+    DocWeightedSpans,
+    FeatureWeights,
+    TargetExplanation,
+    WeightedSpans,
+)
 from eli5.formatters.text_helpers import (
-    PreparedWeightedSpans, prepare_weighted_spans)
+    PreparedWeightedSpans,
+    prepare_weighted_spans,
+)
 
 
 def test_prepare_weighted_spans():

@@ -1,23 +1,32 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from itertools import chain
-import six
+from typing import (
+    Iterator,
+    List,
+    Optional,
+)
+
 from tabulate import tabulate
-from typing import List, Optional, Iterator
 
-from eli5.base import Explanation, FeatureImportances
-from . import fields
-from .features import FormattedFeatureName
-from .utils import (
-    format_signed, format_value, format_weight, has_any_values_for_weights,
-    replace_spaces, should_highlight_spaces)
-from .utils import tabulate as eli5_tabulate
-from .trees import tree2text
+from eli5.base import (
+    Explanation,
+    FeatureImportances,
+)
+from eli5.formatters import fields
+from eli5.formatters.features import FormattedFeatureName
+from eli5.formatters.trees import tree2text
+from eli5.formatters.utils import (
+    format_signed,
+    format_value,
+    format_weight,
+    has_any_values_for_weights,
+    replace_spaces,
+    should_highlight_spaces,
+)
+from eli5.formatters.utils import tabulate as eli5_tabulate
 
-
-_PLUS_MINUS = "+-" if six.PY2 else "±"
-_ELLIPSIS = '...' if six.PY2 else '…'
-_SPACE = '_' if six.PY2 else '░'
+_PLUS_MINUS = "±"
+_ELLIPSIS = '…'
+_SPACE = '░'
 
 
 def format_as_text(expl,  # type: Explanation
@@ -133,13 +142,13 @@ def _fi_lines(feature_importances, hl_spaces):
     for fw in feature_importances.importances:
         featname = _format_feature(fw.feature, hl_spaces)
         if fw.std or fw.weight:
-            w = u'{:0.4f}'.format(fw.weight)
+            w = '{:0.4f}'.format(fw.weight)
         else:
-            w = u"0".rjust(6)
+            w = "0".rjust(6)
         if fw.std is None:
-            yield u'{w}  {feature}'.format(feature=featname, w=w)
+            yield '{w}  {feature}'.format(feature=featname, w=w)
         else:
-            yield u'{w} {plus} {std:0.4f}  {feature}'.format(
+            yield '{w} {plus} {std:0.4f}  {feature}'.format(
                 feature=featname,
                 w=w,
                 plus=_PLUS_MINUS,

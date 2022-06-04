@@ -1,21 +1,35 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from pprint import pprint
 
 import attr
 import pytest
-
 from sklearn.base import BaseEstimator
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.feature_extraction.text import CountVectorizer, HashingVectorizer
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import LogisticRegression
+from sklearn.feature_extraction.text import (
+    CountVectorizer,
+    HashingVectorizer,
+)
+from sklearn.linear_model import (
+    LinearRegression,
+    LogisticRegression,
+)
 from sklearn.pipeline import FeatureUnion
 
-from eli5 import explain_prediction, explain_weights
+from eli5 import (
+    explain_prediction,
+    explain_weights,
+)
 from eli5.formatters import format_as_html
-from eli5.sklearn import invert_hashing_and_fit, InvertableHashingVectorizer
-from .utils import format_as_all, get_all_features, get_names_coefs, write_html
+from eli5.sklearn import (
+    InvertableHashingVectorizer,
+    invert_hashing_and_fit,
+)
+
+from .utils import (
+    format_as_all,
+    get_all_features,
+    get_names_coefs,
+    write_html,
+)
 
 
 def check_explain_linear_binary(res, clf, target='alt.atheism'):

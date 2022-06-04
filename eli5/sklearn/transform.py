@@ -2,21 +2,25 @@
 """
 
 import numpy as np
-from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.pipeline import (
+    FeatureUnion,
+    Pipeline,
+)
+
 try:
     from sklearn.feature_selection import SelectorMixin
 except ImportError:
     from sklearn.feature_selection.base import SelectorMixin
+
 from sklearn.preprocessing import (
-    MinMaxScaler,
-    StandardScaler,
     MaxAbsScaler,
+    MinMaxScaler,
     RobustScaler,
+    StandardScaler,
 )
 
-from eli5.transform import transform_feature_names
 from eli5.sklearn.utils import get_feature_names as _get_feature_names
-
+from eli5.transform import transform_feature_names
 
 # Feature selection:
 
@@ -29,8 +33,8 @@ def _select_names(est, in_names=None):
 
 try:
     from sklearn.linear_model import (
-        RandomizedLogisticRegression,
         RandomizedLasso,
+        RandomizedLogisticRegression,
     )
     _select_names = transform_feature_names.register(RandomizedLasso)(_select_names)
     _select_names = transform_feature_names.register(RandomizedLogisticRegression)(_select_names)

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # ELI5 documentation build configuration file, created by
 # sphinx-quickstart on Mon Nov 14 21:54:37 2016.
@@ -18,14 +17,11 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-import sys
 import re
-sys.path.insert(0, os.path.abspath('../..'))
+import sys
+from unittest.mock import MagicMock
 
-try:
-    from unittest.mock import MagicMock
-except ImportError:  # python 2
-    from mock import MagicMock
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 class Mock(MagicMock):
@@ -113,6 +109,7 @@ author = 'Mikhail Korobov, Konstantin Lopuhin'
 # built documents.
 #
 import eli5
+
 # The short X.Y version.
 version = eli5.__version__
 # The full version, including alpha/beta/rc tags.
@@ -177,6 +174,7 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 import sphinx_rtd_theme
+
 html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 

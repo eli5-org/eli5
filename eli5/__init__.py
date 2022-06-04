@@ -1,62 +1,66 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 __version__ = '0.13.0'
 
-from .formatters import (
-    format_as_html,
-    format_html_styles,
-    format_as_text,
-    format_as_dict,
+from eli5.explain import (
+    explain_prediction,
+    explain_weights,
 )
-from .explain import explain_weights, explain_prediction
-from .sklearn import explain_weights_sklearn, explain_prediction_sklearn
-from .transform import transform_feature_names
-
+from eli5.formatters import (
+    format_as_dict,
+    format_as_html,
+    format_as_text,
+    format_html_styles,
+)
+from eli5.sklearn import (
+    explain_prediction_sklearn,
+    explain_weights_sklearn,
+)
+from eli5.transform import transform_feature_names
 
 try:
-    from .ipython import show_weights, show_prediction
+    from eli5.ipython import (
+        show_prediction,
+        show_weights,
+    )
 except ImportError:
     pass  # IPython is not installed
 
 try:
-    from .formatters.as_dataframe import (
-        explain_weights_df, explain_weights_dfs,
-        explain_prediction_df, explain_prediction_dfs,
-        format_as_dataframe, format_as_dataframes,
+    from eli5.formatters.as_dataframe import (
+        explain_prediction_df,
+        explain_prediction_dfs,
+        explain_weights_df,
+        explain_weights_dfs,
+        format_as_dataframe,
+        format_as_dataframes,
     )
 except ImportError:
     pass  # pandas not available
 
 try:
-    from .formatters import (
-        format_as_image
-    )
+    from eli5.formatters import format_as_image
 except ImportError:
     # Pillow or matplotlib not available
     pass
 
 try:
-    from .lightning import (
+    from eli5.lightning import (
         explain_prediction_lightning,
-        explain_weights_lightning
+        explain_weights_lightning,
     )
 except ImportError as e:
     # lightning is not available
     pass
 
 try:
-    from .sklearn_crfsuite import (
-        explain_weights_sklearn_crfsuite
-    )
+    from eli5.sklearn_crfsuite import explain_weights_sklearn_crfsuite
 except ImportError as e:
     # sklearn-crfsuite is not available
     pass
 
 try:
-    from .xgboost import (
+    from eli5.xgboost import (
+        explain_prediction_xgboost,
         explain_weights_xgboost,
-        explain_prediction_xgboost
     )
 except ImportError:
     # xgboost is not available
@@ -69,9 +73,9 @@ except Exception as e:
         raise
 
 try:
-    from .lightgbm import (
+    from eli5.lightgbm import (
+        explain_prediction_lightgbm,
         explain_weights_lightgbm,
-        explain_prediction_lightgbm
     )
 except ImportError:
     # lightgbm is not available
@@ -81,18 +85,14 @@ except OSError:
     pass
 
 try:
-    from .catboost import (
-        explain_weights_catboost
-    )
+    from eli5.catboost import explain_weights_catboost
 except ImportError:
     # catboost is not available
     pass
 
 
 try:
-    from .keras import (
-        explain_prediction_keras
-    )
+    from eli5.keras import explain_prediction_keras
 except ImportError:
     # keras is not available
     pass

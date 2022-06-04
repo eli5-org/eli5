@@ -1,18 +1,20 @@
-# -*- coding: utf-8 -*-
 from functools import partial
 
 import numpy as np
 import pytest
 from hypothesis import given
-from hypothesis.strategies import integers, text
+from hypothesis.strategies import (
+    integers,
+    text,
+)
+from sklearn.neighbors import KernelDensity
 
 from eli5.lime.samplers import (
     MaskingTextSampler,
     MaskingTextSamplers,
+    MultivariateKernelDensitySampler,
     UnivariateKernelDensitySampler,
-    MultivariateKernelDensitySampler
 )
-from sklearn.neighbors import KernelDensity
 
 
 @pytest.mark.parametrize(["bow"], [[True], [False]])

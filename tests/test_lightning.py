@@ -1,24 +1,31 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import pytest
+
 pytest.importorskip('lightning')
 
-from lightning import regression, classification
+from lightning import (
+    classification,
+    regression,
+)
 from lightning.impl.base import BaseEstimator
 from sklearn.multiclass import OneVsRestClassifier
 
-from eli5.lightning import _CLASSIFIERS, _REGRESSORS
 from eli5 import (
-    explain_weights, explain_weights_lightning,
-    explain_prediction, explain_prediction_lightning,
+    explain_prediction,
+    explain_prediction_lightning,
+    explain_weights,
+    explain_weights_lightning,
 )
+from eli5.lightning import (
+    _CLASSIFIERS,
+    _REGRESSORS,
+)
+
 from .test_sklearn_explain_prediction import (
-    assert_multiclass_linear_classifier_explained,
-    assert_linear_regression_explained,
     assert_binary_linear_classifier_explained,
-    test_explain_prediction_pandas as _check_explain_prediction_pandas,
+    assert_linear_regression_explained,
+    assert_multiclass_linear_classifier_explained,
 )
+from .test_sklearn_explain_prediction import test_explain_prediction_pandas as _check_explain_prediction_pandas
 from .test_sklearn_explain_weights import (
     assert_explained_weights_linear_classifier,
     assert_explained_weights_linear_regressor,

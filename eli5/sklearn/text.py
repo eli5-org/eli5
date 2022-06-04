@@ -1,18 +1,30 @@
-from __future__ import absolute_import
-from typing import Any, Union, Callable, Dict, List, Optional, Set, Tuple
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Set,
+    Tuple,
+)
 
 from sklearn.pipeline import FeatureUnion
+
 try:
     from sklearn.feature_extraction.text import _VectorizerMixin as VectorizerMixin
 except ImportError:  # Changed in scikit-learn 0.22
     from sklearn.feature_extraction.text import VectorizerMixin
 
 from eli5.base import (
-    DocWeightedSpans, WeightedSpans, FeatureWeights, FeatureWeight,
-    TargetExplanation)
+    DocWeightedSpans,
+    FeatureWeight,
+    FeatureWeights,
+    TargetExplanation,
+    WeightedSpans,
+)
 from eli5.formatters import FormattedFeatureName
-from eli5.sklearn.unhashing import InvertableHashingVectorizer
 from eli5.sklearn._span_analyzers import build_span_analyzer
+from eli5.sklearn.unhashing import InvertableHashingVectorizer
 
 
 def get_weighted_spans(doc, vec, feature_weights):

@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-
-from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeRegressor
 from sklearn.base import BaseEstimator
+from sklearn.linear_model import LinearRegression
 
 from eli5.sklearn import explain_weights_sklearn
 

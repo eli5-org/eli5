@@ -1,9 +1,15 @@
 from collections import Counter
-from typing import List, Optional
+from typing import (
+    List,
+    Optional,
+)
 
 import numpy as np
 
-from eli5.base import TargetExplanation, WeightedSpans, DocWeightedSpans
+from eli5.base import (
+    DocWeightedSpans,
+    TargetExplanation,
+)
 from eli5.base_utils import attrs
 from eli5.utils import max_or_0
 
@@ -33,7 +39,7 @@ def get_char_weights(doc_weighted_spans, preserve_density=None):
 
 
 @attrs
-class PreparedWeightedSpans(object):
+class PreparedWeightedSpans:
     def __init__(self,
                  doc_weighted_spans,  # type: DocWeightedSpans
                  char_weights,  # type: np.ndarray

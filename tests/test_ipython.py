@@ -1,12 +1,13 @@
-# -*- coding: utf-8 -*-
 import pytest
+
 pytest.importorskip('IPython')
 
 import numpy as np
-from sklearn.linear_model import LogisticRegression
 from IPython.display import HTML
+from sklearn.linear_model import LogisticRegression
 
 import eli5
+
 from .utils import write_html
 
 

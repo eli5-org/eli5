@@ -1,12 +1,13 @@
-from itertools import repeat
 from collections import Counter
+from itertools import repeat
 
-import pytest
 import numpy as np
+import pytest
 from sklearn.feature_extraction.text import HashingVectorizer
 
 from eli5.sklearn.unhashing import InvertableHashingVectorizer
 from eli5.sklearn.utils import sklearn_version
+
 
 @pytest.mark.parametrize(
     ['always_signed', 'binary', 'alternate_sign'], [

@@ -1,12 +1,13 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from typing import Union, Optional, Tuple, List
+from typing import (
+    List,
+    Optional,
+    Tuple,
+)
 
-import numpy as np
-import keras
 import keras.backend as K
-from keras.models import Model
+import numpy as np
 from keras.layers import Layer
+from keras.models import Model
 
 
 def gradcam(weights, activations):

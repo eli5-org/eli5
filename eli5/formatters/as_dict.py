@@ -1,9 +1,7 @@
-import six
-
 import attr
 import numpy as np
 
-from .features import FormattedFeatureName
+from eli5.formatters.features import FormattedFeatureName
 
 
 def format_as_dict(explanation):
@@ -12,8 +10,6 @@ def format_as_dict(explanation):
     """
     return _numpy_to_python(attr.asdict(explanation))
 
-
-_numpy_string_types = (np.string_, np.unicode_) if six.PY2 else np.str_
 
 
 def _numpy_to_python(obj):
@@ -26,8 +22,8 @@ def _numpy_to_python(obj):
         return [_numpy_to_python(x) for x in obj]
     elif isinstance(obj, FormattedFeatureName):
         return obj.value
-    elif isinstance(obj, _numpy_string_types):
-        return six.text_type(obj)
+    elif isinstance(obj, np.str_):
+        return str(obj)
     elif hasattr(obj, 'dtype') and np.isscalar(obj):
         if np.issubdtype(obj, np.floating):
             return float(obj)

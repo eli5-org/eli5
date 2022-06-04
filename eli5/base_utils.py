@@ -1,15 +1,6 @@
-try:
-    from inspect import getfullargspec
-except ImportError:
-    # python 2
-    from inspect import getargspec as getfullargspec  # type: ignore
+from inspect import getfullargspec
 
 import attr
-
-try:
-    from functools import singledispatch
-except ImportError:
-    from singledispatch import singledispatch  # type: ignore
 
 
 def attrs(class_):

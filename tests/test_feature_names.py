@@ -1,8 +1,7 @@
-import pytest
 import numpy as np
+import pytest
 
 from eli5._feature_names import FeatureNames
-
 
 # See also test_sklearn_utils.py::test_get_feature_names
 

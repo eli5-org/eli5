@@ -1,23 +1,39 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from itertools import groupby
-from typing import List, Optional, Tuple
+from typing import (
+    List,
+    Optional,
+    Tuple,
+)
 
 import numpy as np
-from jinja2 import Environment, PackageLoader
+from jinja2 import (
+    Environment,
+    PackageLoader,
+)
 
 from eli5 import _graphviz
-from eli5.base import (Explanation, TargetExplanation, FeatureWeights,
-                       FeatureWeight)
+from eli5.base import (
+    Explanation,
+    FeatureWeight,
+    FeatureWeights,
+    TargetExplanation,
+)
+from eli5.formatters import fields
+from eli5.formatters.features import FormattedFeatureName
+from eli5.formatters.text_helpers import (
+    PreparedWeightedSpans,
+    prepare_weighted_spans,
+)
+from eli5.formatters.trees import tree2text
+from eli5.formatters.utils import (
+    format_signed,
+    format_value,
+    format_weight,
+    has_any_values_for_weights,
+    replace_spaces,
+    should_highlight_spaces,
+)
 from eli5.utils import max_or_0
-from .utils import (
-    format_signed, format_value, format_weight, has_any_values_for_weights,
-    replace_spaces, should_highlight_spaces)
-from . import fields
-from .features import FormattedFeatureName
-from .trees import tree2text
-from .text_helpers import prepare_weighted_spans, PreparedWeightedSpans
-
 
 template_env = Environment(loader=PackageLoader('eli5', 'templates'))
 template_env.globals.update(dict(zip=zip, numpy=np))

@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
-from functools import partial
+from functools import (
+    partial,
+    singledispatch,
+)
 
 import numpy as np
 import scipy.sparse as sp
@@ -12,8 +14,8 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     RandomForestRegressor,
 )
+from sklearn.linear_model import ElasticNet  # includes Lasso, MultiTaskElasticNet, etc.
 from sklearn.linear_model import (
-    ElasticNet,  # includes Lasso, MultiTaskElasticNet, etc.
     ElasticNetCV,
     HuberRegressor,
     Lars,
@@ -27,50 +29,52 @@ from sklearn.linear_model import (
     PassiveAggressiveRegressor,
     Perceptron,
     Ridge,
-    RidgeCV,
     RidgeClassifier,
     RidgeClassifierCV,
+    RidgeCV,
     SGDClassifier,
     SGDRegressor,
     TheilSenRegressor,
 )
+from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import (
-    LinearSVC,
-    LinearSVR,
     SVC,
     SVR,
+    LinearSVC,
+    LinearSVR,
     NuSVC,
     NuSVR,
     OneClassSVM,
 )
-from sklearn.multiclass import OneVsRestClassifier
 from sklearn.tree import (
     DecisionTreeClassifier,
-    DecisionTreeRegressor
+    DecisionTreeRegressor,
 )
 
-from eli5.base import Explanation, TargetExplanation
-from eli5.base_utils import singledispatch
-from eli5.utils import (
-    get_target_display_names,
-    get_binary_target_scale_label_id
+from eli5._decision_path import DECISION_PATHS_CAVEATS
+from eli5._feature_weights import get_top_features_filtered
+from eli5.base import (
+    Explanation,
+    TargetExplanation,
 )
+from eli5.explain import explain_prediction
+from eli5.sklearn.text import add_weighted_spans
 from eli5.sklearn.utils import (
     add_intercept,
     get_coef,
     get_default_target_names,
     get_X,
     get_X0,
+    handle_vec,
+    has_intercept,
     is_multiclass_classifier,
     is_multitarget_regressor,
     predict_proba,
-    has_intercept,
-    handle_vec,
 )
-from eli5.sklearn.text import add_weighted_spans
-from eli5.explain import explain_prediction
-from eli5._decision_path import DECISION_PATHS_CAVEATS
-from eli5._feature_weights import get_top_features_filtered
+from eli5.utils import (
+    get_binary_target_scale_label_id,
+    get_target_display_names,
+)
 
 
 @singledispatch

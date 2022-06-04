@@ -1,14 +1,23 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from typing import Any, Dict, Tuple
 import warnings
+from typing import (
+    Any,
+    Dict,
+    Tuple,
+)
 
-from IPython.display import HTML, Image
+from IPython.display import HTML
 
-from .explain import explain_weights, explain_prediction
-from .formatters import format_as_html, fields
+from eli5.explain import (
+    explain_prediction,
+    explain_weights,
+)
+from eli5.formatters import (
+    fields,
+    format_as_html,
+)
+
 try:
-    from .formatters.image import format_as_image
+    from eli5.formatters.image import format_as_image
 except ImportError as e:
     # missing dependencies
     format_as_image = e  # type: ignore

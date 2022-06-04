@@ -1,15 +1,16 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import numpy as np
 from scipy import sparse as sp
 from sklearn_crfsuite import CRF
 
-from eli5.base import Explanation, TargetExplanation, TransitionFeatureWeights
-from eli5.explain import explain_weights
-from eli5.utils import get_target_display_names
 from eli5._feature_names import FeatureNames
 from eli5._feature_weights import get_top_features
+from eli5.base import (
+    Explanation,
+    TargetExplanation,
+    TransitionFeatureWeights,
+)
+from eli5.explain import explain_weights
+from eli5.utils import get_target_display_names
 
 
 @explain_weights.register(CRF)

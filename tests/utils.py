@@ -1,20 +1,21 @@
-# -*- coding: utf-8 -*-
-from __future__ import print_function
-import os
 import inspect
 import json
+import os
 from pprint import pprint
 
-from hypothesis.strategies import integers
-from hypothesis.extra.numpy import arrays
 import numpy as np
+from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import integers
 
 from eli5.base import Explanation
-from eli5.formatters import format_as_text, format_as_html, format_as_dict
+from eli5.formatters import (
+    format_as_dict,
+    format_as_html,
+    format_as_text,
+)
 from eli5.formatters.html import html_escape
 from eli5.formatters.text import format_signed
 from eli5.sklearn.utils import sklearn_version
-
 
 SGD_KWARGS = {'random_state': 42}
 if sklearn_version() >= '0.19':
@@ -65,7 +66,7 @@ def write_html(clf, html, text, postfix='', caller_depth=1):
         os.mkdir(dirname)
     path = os.path.join(dirname, filename)
     with open(path, 'wb') as f:
-        f.write(u'Text:<pre>{text}</pre>End of text<hr/>\n{html}'
+        f.write('Text:<pre>{text}</pre>End of text<hr/>\n{html}'
                 .format(text=html_escape(text), html=html)
                 .encode('utf8'))
     print('html written to {}'.format(path))

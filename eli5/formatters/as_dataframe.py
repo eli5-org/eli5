@@ -1,15 +1,22 @@
-from itertools import chain
-from typing import Any, Dict, List, Optional
 import warnings
+from functools import singledispatch
+from itertools import chain
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+)
 
 import pandas as pd
 
 import eli5
 from eli5.base import (
-    Explanation, FeatureImportances, TargetExplanation,
+    Explanation,
+    FeatureImportances,
+    TargetExplanation,
     TransitionFeatureWeights,
 )
-from eli5.base_utils import singledispatch
 
 
 def explain_weights_df(estimator, **kwargs):

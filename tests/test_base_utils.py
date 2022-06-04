@@ -7,7 +7,7 @@ from eli5.base_utils import attrs
 def test_attrs_with_default():
 
     @attrs
-    class WithDefault(object):
+    class WithDefault:
         def __init__(self, x, y=1):
             self.x = x
             self.y = y
@@ -25,7 +25,7 @@ def test_attrs_with_default():
 def test_attrs_without_default():
 
     @attrs
-    class WithoutDefault(object):
+    class WithoutDefault:
         def __init__(self, x):
             self.x = x
 
@@ -43,7 +43,7 @@ def test_attrs_with_repr():
     """
 
     @attrs
-    class WithRepr(object):
+    class WithRepr:
         def __init__(self, x):
             self.x = x
 
@@ -63,7 +63,7 @@ def test_bad_init():
     """
 
     @attrs
-    class BadInit(object):
+    class BadInit:
         def __init__(self, x):
             self._x = x
 

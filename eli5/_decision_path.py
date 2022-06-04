@@ -3,11 +3,14 @@
 # Implementations are in eli5.xgboost, eli5.lightgbm and
 # eli5.sklearn.explain_prediction.
 from eli5._feature_weights import get_top_features_filtered
-from eli5.base import Explanation, TargetExplanation
+from eli5.base import (
+    Explanation,
+    TargetExplanation,
+)
 from eli5.sklearn.text import add_weighted_spans
 from eli5.utils import (
+    get_binary_target_scale_label_id,
     get_target_display_names,
-    get_binary_target_scale_label_id
 )
 
 DECISION_PATHS_DESCRIPTION = """

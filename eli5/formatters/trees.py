@@ -1,7 +1,9 @@
-# -*- coding: utf-8 -*-
 from typing import Any
 
-from eli5.base import TreeInfo, NodeInfo
+from eli5.base import (
+    NodeInfo,
+    TreeInfo,
+)
 
 
 def tree2text(tree_obj, indent=4):

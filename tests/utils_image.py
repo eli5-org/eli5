@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-
 # image related utilities
 
-import PIL
 import numpy as np
+import PIL
 
 
 def assert_pixel_by_pixel_equal(im1, im2):

@@ -1,21 +1,30 @@
-from __future__ import print_function
 from itertools import chain
 
 import pytest
+
 pd = pytest.importorskip('pandas')
 import numpy as np
-from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.linear_model import LinearRegression
 
 from eli5 import (
-    format_as_dataframes, format_as_dataframe,
-    explain_weights_df, explain_weights_dfs,
-    explain_prediction_df, explain_prediction_dfs,
-    format_as_text, explain_weights, explain_prediction,
+    explain_prediction,
+    explain_prediction_df,
+    explain_prediction_dfs,
+    explain_weights,
+    explain_weights_df,
+    explain_weights_dfs,
+    format_as_dataframe,
+    format_as_dataframes,
+    format_as_text,
 )
 from eli5.base import (
-    Explanation, TargetExplanation, FeatureWeight, FeatureWeights,
-    FeatureImportances, TransitionFeatureWeights,
+    Explanation,
+    FeatureImportances,
+    FeatureWeight,
+    FeatureWeights,
+    TargetExplanation,
+    TransitionFeatureWeights,
 )
 
 

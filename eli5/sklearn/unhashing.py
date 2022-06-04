@@ -1,18 +1,28 @@
-# -*- coding: utf-8 -*-
 """
 Utilities to reverse transformation done by FeatureHasher or HashingVectorizer.
 """
-from __future__ import absolute_import
-from collections import defaultdict, Counter
+from collections import (
+    Counter,
+    defaultdict,
+)
 from itertools import chain
-from typing import List, Iterable, Any, Dict, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Tuple,
+    Union,
+)
 
 import numpy as np
-import six
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import (
+    BaseEstimator,
+    TransformerMixin,
+)
 from sklearn.feature_extraction.text import (
-    HashingVectorizer,
     FeatureHasher,
+    HashingVectorizer,
 )
 from sklearn.pipeline import FeatureUnion
 
@@ -172,10 +182,7 @@ class FeatureUnhasher(BaseEstimator):
         if not self._attributes_dirty and not force:
             return
         terms = [term for term, _ in self._term_counts.most_common()]
-        if six.PY2:
-            terms = np.array(terms, dtype=np.object)
-        else:
-            terms = np.array(terms)
+        terms = np.array(terms)
         if len(terms):
             indices, signs = _get_indices_and_signs(self.hasher, terms)
         else:
