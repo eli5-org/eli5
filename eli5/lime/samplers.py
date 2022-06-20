@@ -135,6 +135,7 @@ class MaskingTextSamplers(BaseSampler):
         self.random_state = random_state
         self.rng_ = check_random_state(random_state)
         self.token_pattern = token_pattern
+        self.sampler_params = sampler_params
         self.samplers = list(map(self._create_sampler, sampler_params))
         if weights is None:
             self.weights = np.ones(len(self.samplers))
