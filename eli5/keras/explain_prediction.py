@@ -20,7 +20,14 @@ from keras.layers import (
     GlobalMaxPooling2D,
     GlobalAveragePooling2D,
 )
-from keras.preprocessing.image import array_to_img
+try:
+    # tensorflow<2.9
+    from keras.preprocessing.image import array_to_img
+except:
+    # tensorflow>=2.9
+    # reference: https://www.tensorflow.org/api_docs/python/tf/keras/utils/array_to_img
+    from tensorflow.keras.utils import array_to_img
+
 
 from eli5.base import Explanation, TargetExplanation
 from eli5.explain import explain_prediction
