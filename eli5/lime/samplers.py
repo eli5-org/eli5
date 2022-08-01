@@ -6,7 +6,6 @@ from typing import List, Tuple, Any, Union, Dict, Optional
 import six
 
 import numpy as np
-from scipy.stats import itemfreq
 from sklearn.base import BaseEstimator, clone
 from sklearn.neighbors import KernelDensity
 from sklearn.metrics import pairwise_distances
@@ -188,7 +187,7 @@ class MaskingTextSamplers(BaseSampler):
                                            p=self.weights)
         return [
             (self.samplers[idx], freq)
-            for idx, freq in itemfreq(sampler_indices)
+            for idx, freq in zip(*np.unique(sampler_indices, return_counts=True))
         ]
 
 
