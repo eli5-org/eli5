@@ -3,10 +3,14 @@ from __future__ import absolute_import
 from typing import Union, Optional, Tuple, List
 
 import numpy as np
-import keras
-import keras.backend as K
-from keras.models import Model
-from keras.layers import Layer
+import os
+if 'TF_KERAS' in os.environ and os.environ['TF_KERAS'] == '1':
+    from tensorflow import keras
+else:
+    import keras
+K = keras.backend
+Model = keras.models.Model
+Layer = keras.layers.Layer
 
 
 def gradcam(weights, activations):
