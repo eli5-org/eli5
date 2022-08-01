@@ -8,9 +8,9 @@ if 'TF_KERAS' in os.environ and os.environ['TF_KERAS'] == '1':
     from tensorflow import keras
 else:
     import keras
-import keras.backend as K
-from keras.models import Model
-from keras.layers import Layer
+K = keras.backend
+Model = keras.models.Model
+Layer = keras.layers.Layer
 
 
 def gradcam(weights, activations):

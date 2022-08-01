@@ -10,19 +10,18 @@ if'TF_KERAS' in os.environ and os.environ['TF_KERAS'] == '1':
     from tensorflow import keras
 else:
     import keras
-import keras.backend as K
-from keras.models import Model
-from keras.layers import Layer
-from keras.layers import (
-    Conv2D,
-    MaxPooling2D,
-    AveragePooling2D,
-    GlobalMaxPooling2D,
-    GlobalAveragePooling2D,
-)
+K = keras.backend
+Model = keras.models.Model
+Layer = keras.layers.Layer
+Conv2D = keras.layers.Conv2D
+MaxPooling2D = keras.layers.MaxPooling2D
+AveragePooling2D = keras.layers.AveragePooling2D
+GlobalMaxPooling2D = keras.layers.GlobalMaxPooling2D
+GlobalAveragePooling2D = keras.layers.GlobalAveragePooling2D
+
 try:
     # tensorflow<2.9
-    from keras.preprocessing.image import array_to_img
+    array_to_img = keras.preprocessing.image.array_to_img
 except:
     # tensorflow>=2.9
     # reference: https://www.tensorflow.org/api_docs/python/tf/keras/utils/array_to_img
