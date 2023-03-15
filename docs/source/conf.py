@@ -20,48 +20,30 @@
 import os
 import sys
 import re
+
 sys.path.insert(0, os.path.abspath('../..'))
 
-try:
-    from unittest.mock import MagicMock
-except ImportError:  # python 2
-    from mock import MagicMock
-
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        if name == '_mock_methods':
-            raise AttributeError()
-        return Mock(spec=type)  # so that @X.register does not fail
-
-
 # Note that we must import all sub-modules too
-MOCK_MODULES = [
-    'lightning',
-    'lightning.impl',
-    'lightning.impl.base',
-    'sklearn_crfsuite',
-    # 'IPython',
-    # 'IPython.display',
-    # 'IPython.lib',
-    # 'typing',
-    'xgboost',
-    'lightgbm',
+autodoc_mock_imports = [
+    'PIL',
     'catboost',
     'keras',
     'keras.backend',
-    'keras.models',
     'keras.layers',
+    'keras.models',
     'keras.preprocessing.image',
-    'pandas',
-    'PIL',
+    'lightgbm',
+    'lightning',
+    'lightning.impl',
+    'lightning.impl.base',
     'matplotlib',
-    'matplotlib.pyplot',
     'matplotlib.cm',
+    'matplotlib.pyplot',
+    'pandas',
     'pytest',
+    'sklearn_crfsuite',
+    'xgboost',
 ]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
 # -- General configuration ------------------------------------------------
@@ -69,7 +51,7 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 def setup(app):
     # see https://github.com/snide/sphinx_rtd_theme/issues/117
-    app.add_stylesheet("rtfd_overrides.css")
+    app.add_css_file("rtfd_overrides.css")
 
 suppress_warnings = ['image.nonlocal_uri']
 
