@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from distutils.version import LooseVersion
+#from distutils.version import LooseVersion # deprecated
+from packaging.version import parse as LooseVersion
 from typing import Any, Optional, List, Tuple
 
 import numpy as np
@@ -80,7 +81,9 @@ def get_feature_names(clf, vec=None, bias_name='<BIAS>', feature_names=None,
         bias_name = None
 
     if feature_names is None:
-        if vec and hasattr(vec, 'get_feature_names'):
+        if vec and hasattr(vec, 'get_feature_names_out'):
+            return FeatureNames(vec.get_feature_names_out(), bias_name=bias_name)
+        elif vec and hasattr(vec, 'get_feature_names'):
             return FeatureNames(vec.get_feature_names(), bias_name=bias_name)
         else:
             if estimator_feature_names is None:
