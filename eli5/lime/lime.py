@@ -27,6 +27,8 @@ from eli5.lime.utils import (
 )
 from eli5.lime._vectorizer import SingleDocumentVectorizer
 
+from packaging.version import parse 
+
 
 class TextExplainer(BaseEstimator):
     """
@@ -325,7 +327,7 @@ class TextExplainer(BaseEstimator):
             alpha=1e-3,
             random_state=self.rng_
         )
-        if sklearn_version() >= '0.19':
+        if sklearn_version() >= parse('0.19'):
             kwargs['tol'] = 1e-3
         return SGDClassifier(**kwargs)
 

@@ -12,6 +12,8 @@ from sklearn.utils import shuffle as _shuffle
 from eli5.utils import vstack
 from eli5.sklearn.utils import sklearn_version
 
+from packaging.version import parse
+
 
 def fit_proba(clf, X, y_proba, expand_factor=10, sample_weight=None,
               shuffle=True, random_state=None,
@@ -83,7 +85,7 @@ class _PipelinePatched(Pipeline):
 
 
 def score_with_sample_weight(estimator, X, y=None, sample_weight=None):
-    if sklearn_version() < '0.19':
+    if sklearn_version() < parse('0.19'):
         if isinstance(estimator, Pipeline) and sample_weight is not None:
             estimator = _PipelinePatched(estimator.steps)
     if sample_weight is None:
