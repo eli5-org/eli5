@@ -10,12 +10,12 @@ from eli5.base import Explanation
 
 
 def format_as_image(expl, # type: Explanation
-    resampling_filter=Image.LANCZOS, # type: int
+    resampling_filter=Image.Resampling.LANCZOS, # type: int
     colormap=matplotlib.cm.viridis, # type: Callable[[np.ndarray], np.ndarray]
     alpha_limit=0.65, # type: Optional[Union[float, int]]
     ):
     # type: (...) -> Image
-    """format_as_image(expl, resampling_filter=Image.LANCZOS, colormap=matplotlib.cm.viridis, alpha_limit=0.65)
+    """format_as_image(expl, resampling_filter=Image.Resampling.LANCZOS, colormap=matplotlib.cm.viridis, alpha_limit=0.65)
 
     Format a :class:`eli5.base.Explanation` object as an image.
 
@@ -50,7 +50,7 @@ def format_as_image(expl, # type: Explanation
 
         *Note that these attributes are integer values*.
 
-        Default is ``PIL.Image.LANCZOS``.
+        Default is ``PIL.Image.Resampling.LANCZOS``.
     :type resampling_filter: int, optional
 
     :param colormap:
@@ -239,7 +239,7 @@ def _cap_alpha(alpha_arr, alpha_limit):
                         'got: {}'.format(alpha_limit))
 
 
-def expand_heatmap(heatmap, image, resampling_filter=Image.LANCZOS):
+def expand_heatmap(heatmap, image, resampling_filter=Image.Resampling.LANCZOS):
     # type: (np.ndarray, Image, Union[None, int]) -> Image
     """
     Resize the ``heatmap`` image array to fit over the original ``image``,
