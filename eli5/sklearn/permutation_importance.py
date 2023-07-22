@@ -4,7 +4,7 @@ from typing import List
 
 import numpy as np
 from sklearn.model_selection import check_cv
-from sklearn.utils.metaestimators import if_delegate_has_method
+from sklearn.utils.metaestimators import available_if
 from sklearn.utils import check_array, check_random_state
 from sklearn.base import (
     BaseEstimator,
@@ -247,23 +247,30 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
 
     # ============= Exposed methods of a wrapped estimator:
 
-    @if_delegate_has_method(delegate='wrapped_estimator_')
+    # Reference: https://github.com/scikit-learn/scikit-learn/issues/20506
+    def _estimator_has(attr):
+        def check(self):
+            return hasattr(self.estimator, attr)
+
+        return check
+
+    @available_if(_estimator_has('wrapped_estimator_'))
     def score(self, X, y=None, *args, **kwargs):
         return self.wrapped_estimator_.score(X, y, *args, **kwargs)
 
-    @if_delegate_has_method(delegate='wrapped_estimator_')
+    @available_if(_estimator_has('wrapped_estimator_'))
     def predict(self, X):
         return self.wrapped_estimator_.predict(X)
 
-    @if_delegate_has_method(delegate='wrapped_estimator_')
+    @available_if(_estimator_has('wrapped_estimator_'))
     def predict_proba(self, X):
         return self.wrapped_estimator_.predict_proba(X)
 
-    @if_delegate_has_method(delegate='wrapped_estimator_')
+    @available_if(_estimator_has('wrapped_estimator_'))
     def predict_log_proba(self, X):
         return self.wrapped_estimator_.predict_log_proba(X)
 
-    @if_delegate_has_method(delegate='wrapped_estimator_')
+    @available_if(_estimator_has('wrapped_estimator_'))
     def decision_function(self, X):
         return self.wrapped_estimator_.decision_function(X)
 

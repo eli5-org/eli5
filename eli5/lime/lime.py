@@ -322,7 +322,7 @@ class TextExplainer(BaseEstimator):
 
     def _default_clf(self):
         kwargs = dict(
-            loss='log',
+            loss='log_loss',
             penalty='elasticnet',
             alpha=1e-3,
             random_state=self.rng_
