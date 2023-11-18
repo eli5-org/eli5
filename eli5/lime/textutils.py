@@ -14,7 +14,7 @@ from eli5.utils import indices_to_bool_mask, vstack
 
 
 # the same as scikit-learn token pattern, but allows single-char tokens
-DEFAULT_TOKEN_PATTERN = r'(?u)\b\w+\b'
+DEFAULT_TOKEN_PATTERN = r'\b\w+\b'
 
 # non-whitespace chars
 CHAR_TOKEN_PATTERN = r'[^\s]'
@@ -183,7 +183,7 @@ class SplitResult(object):
     def fromtext(cls, text, token_pattern=DEFAULT_TOKEN_PATTERN):
         # type: (str, str) -> SplitResult
         token_pattern = u"(%s)" % token_pattern
-        parts = re.split(token_pattern, text)
+        parts = re.split(token_pattern, text, flags=re.UNICODE)
         return cls(parts)
 
     @property
