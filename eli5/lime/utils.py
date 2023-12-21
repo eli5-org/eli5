@@ -6,7 +6,7 @@ import numpy as np
 from scipy.stats import entropy
 from sklearn.pipeline import Pipeline
 from sklearn.utils import check_random_state, issparse
-from sklearn.utils.metaestimators import if_delegate_has_method
+from sklearn.utils.metaestimators import available_if
 from sklearn.utils import shuffle as _shuffle
 
 from eli5.utils import vstack
@@ -73,7 +73,14 @@ def fix_multiclass_predict_proba(y_proba,          # type: np.ndarray
 class _PipelinePatched(Pipeline):
     # Patch from https://github.com/scikit-learn/scikit-learn/pull/7723;
     # only needed for scikit-learn < 0.19.
-    @if_delegate_has_method(delegate='_final_estimator')
+    # Reference: https://github.com/scikit-learn/scikit-learn/issues/20506
+    def _estimator_has(attr):
+        def check(self):
+            return hasattr(self.estimator, attr)
+
+        return check
+
+    @available_if(_estimator_has('_final_estimator'))
     def score(self, X, y=None, **score_params):
         Xt = X
         for name, transform in self.steps[:-1]:
