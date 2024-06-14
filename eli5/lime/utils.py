@@ -5,7 +5,8 @@ from typing import List, Any
 import numpy as np
 from scipy.stats import entropy
 from sklearn.pipeline import Pipeline
-from sklearn.utils import check_random_state, issparse
+from sklearn.utils import check_random_state
+from scipy.sparse import issparse
 from sklearn.utils.metaestimators import available_if
 from sklearn.utils import shuffle as _shuffle
 
