@@ -246,24 +246,29 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
         return CAVEATS_CV
 
     # ============= Exposed methods of a wrapped estimator:
+    def _estimator_has(attr):
+        def check(self):
+            return hasattr(self.wrapped_estimator_, attr)
 
-    @available_if('wrapped_estimator_')
+        return check
+
+    @available_if(_estimator_has('wrapped_estimator_'))
     def score(self, X, y=None, *args, **kwargs):
         return self.wrapped_estimator_.score(X, y, *args, **kwargs)
 
-    @available_if('wrapped_estimator_')
+    @available_if(_estimator_has('wrapped_estimator_'))
     def predict(self, X):
         return self.wrapped_estimator_.predict(X)
 
-    @available_if('wrapped_estimator_')
+    @available_if(_estimator_has('wrapped_estimator_'))
     def predict_proba(self, X):
         return self.wrapped_estimator_.predict_proba(X)
 
-    @available_if('wrapped_estimator_')
+    @available_if(_estimator_has('wrapped_estimator_'))
     def predict_log_proba(self, X):
         return self.wrapped_estimator_.predict_log_proba(X)
 
-    @available_if('wrapped_estimator_')
+    @available_if(_estimator_has('wrapped_estimator_'))
     def decision_function(self, X):
         return self.wrapped_estimator_.decision_function(X)
 
