@@ -20,6 +20,12 @@ from eli5.sklearn.utils import pandas_available
 if pandas_available:
     import pandas as pd
 
+def _estimator_has(attr):
+    def check(self):
+        return hasattr(self.wrapped_estimator_, attr)
+
+    return check
+
 CAVEATS_CV_NONE = """
 Feature importances are computed on the same data as used for training, 
 i.e. feature importances don't reflect importance of features for 
@@ -246,29 +252,24 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
         return CAVEATS_CV
 
     # ============= Exposed methods of a wrapped estimator:
-    def _estimator_has(attr):
-        def check(self):
-            return hasattr(self.wrapped_estimator_, attr)
 
-        return check
-
-    @available_if(_estimator_has('wrapped_estimator_'))
+    @available_if(_estimator_has('score'))
     def score(self, X, y=None, *args, **kwargs):
         return self.wrapped_estimator_.score(X, y, *args, **kwargs)
 
-    @available_if(_estimator_has('wrapped_estimator_'))
+    @available_if(_estimator_has('predict'))
     def predict(self, X):
         return self.wrapped_estimator_.predict(X)
 
-    @available_if(_estimator_has('wrapped_estimator_'))
+    @available_if(_estimator_has('predict_proba'))
     def predict_proba(self, X):
         return self.wrapped_estimator_.predict_proba(X)
 
-    @available_if(_estimator_has('wrapped_estimator_'))
+    @available_if(_estimator_has('predict_log_proba'))
     def predict_log_proba(self, X):
         return self.wrapped_estimator_.predict_log_proba(X)
 
-    @available_if(_estimator_has('wrapped_estimator_'))
+    @available_if(_estimator_has('decision_function'))
     def decision_function(self, X):
         return self.wrapped_estimator_.decision_function(X)
 
