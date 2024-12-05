@@ -4,7 +4,7 @@ from typing import List
 
 import numpy as np
 from sklearn.model_selection import check_cv
-from sklearn.utils.metaestimators import available_if
+from sklearn.utils.metaestimators import if_delegate_has_method
 from sklearn.utils import check_array, check_random_state
 from sklearn.base import (
     BaseEstimator,
@@ -19,12 +19,6 @@ from eli5.sklearn.utils import pandas_available
 
 if pandas_available:
     import pandas as pd
-
-def _estimator_has(attr):
-    def check(self):
-        return hasattr(self.wrapped_estimator_, attr)
-
-    return check
 
 CAVEATS_CV_NONE = """
 Feature importances are computed on the same data as used for training, 
@@ -253,23 +247,23 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
 
     # ============= Exposed methods of a wrapped estimator:
 
-    @available_if(_estimator_has('score'))
+    @if_delegate_has_method(delegate='wrapped_estimator_')
     def score(self, X, y=None, *args, **kwargs):
         return self.wrapped_estimator_.score(X, y, *args, **kwargs)
 
-    @available_if(_estimator_has('predict'))
+    @if_delegate_has_method(delegate='wrapped_estimator_')
     def predict(self, X):
         return self.wrapped_estimator_.predict(X)
 
-    @available_if(_estimator_has('predict_proba'))
+    @if_delegate_has_method(delegate='wrapped_estimator_')
     def predict_proba(self, X):
         return self.wrapped_estimator_.predict_proba(X)
 
-    @available_if(_estimator_has('predict_log_proba'))
+    @if_delegate_has_method(delegate='wrapped_estimator_')
     def predict_log_proba(self, X):
         return self.wrapped_estimator_.predict_log_proba(X)
 
-    @available_if(_estimator_has('decision_function'))
+    @if_delegate_has_method(delegate='wrapped_estimator_')
     def decision_function(self, X):
         return self.wrapped_estimator_.decision_function(X)
 
