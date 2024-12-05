@@ -1,6 +1,7 @@
 -r requirements.txt
-pytest==8.3.4
-hypothesis==6.122.1
+pytest>=8.3.4
+hypothesis>=6.122.1
+xgboost>=2.1.3
 
 # repo maintenance tooling
 black>=21.5b1
