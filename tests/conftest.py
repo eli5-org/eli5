@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from os.path import dirname
+from os.path import join
+import csv
 import pytest
 import numpy as np
-from sklearn.datasets import fetch_20newsgroups, load_boston, load_iris
+from sklearn.datasets import fetch_20newsgroups, load_iris
 from sklearn.utils import shuffle
 
 NEWSGROUPS_CATEGORIES = [
@@ -48,6 +51,36 @@ def newsgroups_train_big():
 def newsgroups_train_binary_big():
     return _get_newsgroups(binary=True, remove_chrome=True, size=1000)
 
+class Bunch(dict):
+    """Container object for datasets: dictionary-like object that
+       exposes its keys as attributes."""
+
+    def __init__(self, **kwargs):
+        dict.__init__(self, kwargs)
+        self.__dict__ = self
+
+def load_boston():
+    module_path = dirname(__file__)
+
+    data_file_name = join(module_path, 'data', 'boston_house_prices.csv')
+    with open(data_file_name) as f:
+        data_file = csv.reader(f)
+        temp = next(data_file)
+        n_samples = int(temp[0])
+        n_features = int(temp[1])
+        data = np.empty((n_samples, n_features))
+        target = np.empty((n_samples,))
+        temp = next(data_file)  # names of features
+        feature_names = np.array(temp)
+
+        for i, d in enumerate(data_file):
+            data[i] = np.asarray(d[:-1], dtype=float)
+            target[i] = np.asarray(d[-1], dtype=float)
+
+    return Bunch(data=data,
+                 target=target,
+                 # last column is target value
+                 feature_names=feature_names[:-1])
 
 @pytest.fixture(scope="session")
 def boston_train(size=SIZE):
