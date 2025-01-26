@@ -53,7 +53,7 @@ def explain_prediction_keras(model, # type: Model
 
         The tensor must be of suitable shape for the ``model``.
 
-        Check ``model.input_shape`` to confirm the required dimensions of the input tensor.
+        Check ``model.input.shape`` to confirm the required dimensions of the input tensor.
 
 
         :raises TypeError: if ``doc`` is not a numpy array.
@@ -260,7 +260,7 @@ def _validate_doc(model, doc):
     """
     if not isinstance(doc, np.ndarray):
         raise TypeError('doc must be a numpy.ndarray, got: {}'.format(doc))
-    input_sh = model.input_shape
+    input_sh = model.input.shape
     doc_sh = doc.shape
     if len(input_sh) == 4:
         # rank 4 with (batch, ...) shape
@@ -337,6 +337,6 @@ def _is_suitable_activation_layer(model, layer):
     # check layer name
 
     # a check that asks "can we resize this activation layer over the image?"
-    rank = len(layer.output_shape)
-    required_rank = len(model.input_shape)
+    rank = len(layer.output.shape)
+    required_rank = len(model.input.shape)
     return rank == required_rank
