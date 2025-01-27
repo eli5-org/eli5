@@ -17,3 +17,5 @@ docs/_build
 .mypy_cache
 mypy-cov
 .vscode
+catboost_info/
+*.DS_Store
