@@ -103,7 +103,7 @@ def test_validate_doc(simple_seq):
 
 def test_validate_doc_custom():
     # model with custom (not rank 4) input shape
-    model = Sequential([Dense(1, input_shape=(2, 3))])
+    model = Sequential(Input((2, 3)), [Dense(1)])
     # not matching shape
     with pytest.raises(ValueError):
         _validate_doc(model, np.zeros((5, 3)))
