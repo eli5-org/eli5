@@ -66,15 +66,15 @@ def get_feature_names(clf, vec=None, bias_name='<BIAS>', feature_names=None,
     """
     Return a FeatureNames instance that holds all feature names
     and a bias feature.
-    If vec is None or doesn't have get_feature_names() method,
+    If vec is None or doesn't have get_feature_names_out() method,
     features are named x0, x1, x2, etc.
     """
     if not has_intercept(clf):
         bias_name = None
 
     if feature_names is None:
-        if vec and hasattr(vec, 'get_feature_names'):
-            return FeatureNames(vec.get_feature_names(), bias_name=bias_name)
+        if vec and hasattr(vec, 'get_feature_names_out'):
+            return FeatureNames(vec.get_feature_names_out(), bias_name=bias_name)
         else:
             if estimator_feature_names is None:
                 num_features = num_features or get_num_features(clf)
