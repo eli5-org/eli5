@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from distutils.version import LooseVersion
-from typing import Any, Optional, List, Tuple
+from typing import Any, Optional
 
 import numpy as np
 import scipy.sparse as sp
@@ -11,16 +8,14 @@ from eli5.sklearn.unhashing import invert_hashing_and_fit, handle_hashing_vec
 from eli5._feature_names import FeatureNames
 
 
-def is_multiclass_classifier(clf):
-    # type: (Any) -> bool
+def is_multiclass_classifier(clf) -> bool:
     """
     Return True if a classifier is multiclass or False if it is binary.
     """
     return clf.coef_.shape[0] > 1
 
 
-def is_multitarget_regressor(clf):
-    # type: (Any) -> bool
+def is_multitarget_regressor(clf) -> bool:
     """
     Return True if a regressor is multitarget
     or False if it predicts a single target.
@@ -28,8 +23,7 @@ def is_multitarget_regressor(clf):
     return len(clf.coef_.shape) > 1 and clf.coef_.shape[0] > 1
 
 
-def is_probabilistic_classifier(clf):
-    # type: (Any) -> bool
+def is_probabilistic_classifier(clf) -> bool:
     """ Return True if a classifier can return probabilities """
     if not hasattr(clf, 'predict_proba'):
         return False
@@ -40,8 +34,7 @@ def is_probabilistic_classifier(clf):
     return True
 
 
-def predict_proba(estimator, X):
-    # type: (Any, Any) -> Optional[np.ndarray]
+def predict_proba(estimator, X) -> Optional[np.ndarray]:
     """ Return result of predict_proba, if an estimator supports it, or None.
     """
     if is_probabilistic_classifier(estimator):
@@ -54,8 +47,7 @@ def predict_proba(estimator, X):
         return None
 
 
-def has_intercept(estimator):
-    # type: (Any) -> bool
+def has_intercept(estimator) -> bool:
     """ Return True if an estimator has intercept fit. """
     if hasattr(estimator, 'fit_intercept'):
         return estimator.fit_intercept
@@ -68,8 +60,7 @@ def has_intercept(estimator):
 
 
 def get_feature_names(clf, vec=None, bias_name='<BIAS>', feature_names=None,
-                      num_features=None, estimator_feature_names=None):
-    # type: (Any, Any, Optional[str], Any, int, Any) -> FeatureNames
+                      num_features=None, estimator_feature_names=None) -> FeatureNames:
     """
     Return a FeatureNames instance that holds all feature names
     and a bias feature.
@@ -112,11 +103,11 @@ def get_feature_names(clf, vec=None, bias_name='<BIAS>', feature_names=None,
         return FeatureNames(feature_names, bias_name=bias_name)
 
 
-def get_feature_names_filtered(clf, vec=None, bias_name='<BIAS>',
-                               feature_names=None, num_features=None,
-                               feature_filter=None, feature_re=None,
-                               estimator_feature_names=None):
-    # type: (...) -> Tuple[FeatureNames, List[int]]
+def get_feature_names_filtered(
+        clf, vec=None, bias_name='<BIAS>',
+        feature_names=None, num_features=None,
+        feature_filter=None, feature_re=None,
+        estimator_feature_names=None) -> tuple[FeatureNames, list[int]]:
     feature_names = get_feature_names(
         clf=clf,
         vec=vec,
@@ -247,8 +238,9 @@ def get_X0(X):
     return x
 
 
-def handle_vec(clf, doc, vec, vectorized, feature_names, num_features=None):
-    # type: (...) -> Tuple[Any, FeatureNames]
+def handle_vec(
+        clf, doc, vec, vectorized, feature_names, num_features=None,
+        ) -> tuple[Any, FeatureNames]:
     if not vectorized:
         vec = invert_hashing_and_fit(vec, [doc])
     if (vec is None and feature_names is None and
@@ -270,12 +262,3 @@ def add_intercept(X):
         return sp.hstack([X, intercept]).tocsr()
     else:
         return np.hstack([X, intercept])
-
-
-def sklearn_version():
-    """Return sklearn version object which can be used for comparison. Usage:
-    >>> sklearn_version() > '0.17'
-    True
-    """
-    from sklearn import __version__
-    return LooseVersion(__version__)

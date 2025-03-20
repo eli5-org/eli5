@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from typing import List, Any
-
 import numpy as np
 from scipy.stats import entropy
+from scipy.sparse import issparse
 from sklearn.pipeline import Pipeline
-from sklearn.utils import check_random_state, issparse
-from sklearn.utils.metaestimators import if_delegate_has_method
+from sklearn.utils import check_random_state
 from sklearn.utils import shuffle as _shuffle
 
 from eli5.utils import vstack
-from eli5.sklearn.utils import sklearn_version
 
 
 def fit_proba(clf, X, y_proba, expand_factor=10, sample_weight=None,
@@ -48,11 +43,8 @@ def with_sample_weight(clf, sample_weight, fit_params):
     return params
 
 
-def fix_multiclass_predict_proba(y_proba,          # type: np.ndarray
-                                 seen_classes,
-                                 complete_classes
-                                 ):
-    # type: (...) -> np.ndarray
+def fix_multiclass_predict_proba(
+        y_proba: np.ndarray, seen_classes, complete_classes) -> np.ndarray:
     """
     Add missing columns to predict_proba result.
 
@@ -70,22 +62,7 @@ def fix_multiclass_predict_proba(y_proba,          # type: np.ndarray
     return y_proba_fixed
 
 
-class _PipelinePatched(Pipeline):
-    # Patch from https://github.com/scikit-learn/scikit-learn/pull/7723;
-    # only needed for scikit-learn < 0.19.
-    @if_delegate_has_method(delegate='_final_estimator')
-    def score(self, X, y=None, **score_params):
-        Xt = X
-        for name, transform in self.steps[:-1]:
-            if transform is not None:
-                Xt = transform.transform(Xt)
-        return self.steps[-1][-1].score(Xt, y, **score_params)
-
-
 def score_with_sample_weight(estimator, X, y=None, sample_weight=None):
-    if sklearn_version() < '0.19':
-        if isinstance(estimator, Pipeline) and sample_weight is not None:
-            estimator = _PipelinePatched(estimator.steps)
     if sample_weight is None:
         return estimator.score(X, y)
     return estimator.score(X, y, sample_weight=sample_weight)

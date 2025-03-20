@@ -17,26 +17,23 @@ jobs:
       fail-fast: false
       matrix:
         include:
-            - python-version: '3.6'
+            - python-version: '3.12'
               tox-env: 'mypy'
-            - python-version: '3.9'
+            - python-version: '3.12'
               tox-env: 'docs'
-            - python-version: '3.6'
-              tox-env: 'py36'
-            - python-version: '3.6'
-              tox-env: 'py36-nodeps'
-            - python-version: '3.6'
-              tox-env: 'py36-extra'
-            - python-version: '3.7'
-              tox-env: 'py37'
-            - python-version: '3.8'
-              tox-env: 'py38'
-            - python-version: '3.8'
-              tox-env: 'py38-nodeps'
             - python-version: '3.9'
               tox-env: 'py39'
             - python-version: '3.9'
               tox-env: 'py39-nodeps'
+            - python-version: '3.9'
+              tox-env: 'py39-extra'
+            - python-version: '3.10'
+              tox-env: 'py310'
+            - python-version: '3.11'
+              tox-env: 'py311'
+            - python-version: '3.12'
+              tox-env: 'py313'
+            - python-version: '3.13'
 
     steps:
     - uses: actions/checkout@v2
