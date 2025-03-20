@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import numpy as np
 from sklearn.feature_extraction.text import HashingVectorizer, CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -15,11 +12,7 @@ from .utils import format_as_all, check_targets_scores
 
 def test_lime_explain_probabilistic(newsgroups_train):
     docs, y, target_names = newsgroups_train
-    try:
-        vec = HashingVectorizer(alternate_sign=False)
-    except TypeError:
-        # sklearn < 0.19
-        vec = HashingVectorizer(non_negative=True)
+    vec = HashingVectorizer(alternate_sign=False)
     clf = MultinomialNB()
 
     X = vec.fit_transform(docs)
@@ -154,7 +147,7 @@ def test_text_explainer_token_pattern():
     predict_proba = substring_presence_predict_proba('bar')
 
     # a different token_pattern
-    te = TextExplainer(token_pattern=r'(?u)\b[-\w]+\b')
+    te = TextExplainer(token_pattern=r'\b[-\w]+\b')
     te.fit(text, predict_proba)
     print(te.metrics_)
     assert te.metrics_['score'] > 0.95

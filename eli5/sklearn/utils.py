@@ -12,7 +12,9 @@ def is_multiclass_classifier(clf) -> bool:
     """
     Return True if a classifier is multiclass or False if it is binary.
     """
-    return len(clf.classes_) > 1
+    if isinstance(clf, OneVsRestClassifier):
+        return len(clf.estimators_) > 1
+    return clf.coef_.shape[0] > 1
 
 
 def is_multitarget_regressor(clf) -> bool:
