@@ -49,6 +49,8 @@ def predict_proba(estimator, X) -> Optional[np.ndarray]:
 
 def has_intercept(estimator) -> bool:
     """ Return True if an estimator has intercept fit. """
+    if isinstance(estimator, OneVsRestClassifier):
+        estimator = estimator.estimator
     if hasattr(estimator, 'fit_intercept'):
         return estimator.fit_intercept
     if hasattr(estimator, 'intercept_'):
