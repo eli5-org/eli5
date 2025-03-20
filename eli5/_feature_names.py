@@ -14,7 +14,7 @@ class FeatureNames(Sized, Iterable):
     A list-like object with feature names. It allows
     feature names for unknown features to be generated using
     a provided template, and to avoid making copies of large objects
-    in get_feature_names.
+    in get_feature_names_out.
     """
     def __init__(self,
                  feature_names=None,

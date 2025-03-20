@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from pprint import pprint
 
 import attr
@@ -79,7 +77,7 @@ def test_explain_hashing_vectorizer(newsgroups_train_binary):
     assert res_vectorized == _without_weighted_spans(res)
 
     assert res == get_res(
-        feature_names=ivec.get_feature_names(always_signed=False))
+        feature_names=ivec.get_feature_names_out(always_signed=False))
 
 
 def _without_weighted_spans(res):
@@ -105,7 +103,7 @@ def test_explain_linear_dense():
     [test_day_vec] = vec.transform(test_day)
     res2 = explain_prediction(
         clf, test_day_vec, target_names=target_names,
-        vectorized=True, feature_names=vec.get_feature_names())
+        vectorized=True, feature_names=vec.get_feature_names_out())
     assert res1 == res2
 
 

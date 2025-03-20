@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import numpy as np
 
 from sklearn.base import BaseEstimator, RegressorMixin
@@ -38,7 +35,7 @@ from sklearn.svm import (
     OneClassSVM,
 )
 # TODO: see https://github.com/scikit-learn/scikit-learn/pull/2250
-from sklearn.naive_bayes import BernoulliNB, MultinomialNB
+# from sklearn.naive_bayes import BernoulliNB, MultinomialNB
 from sklearn.ensemble import (
     GradientBoostingClassifier,
     GradientBoostingRegressor,
@@ -54,11 +51,10 @@ from sklearn.tree import (
     DecisionTreeRegressor,
 )
 
-from eli5.base import (
-    Explanation, TargetExplanation, FeatureImportances)
+from eli5.base import Explanation, TargetExplanation
 from eli5.base_utils import singledispatch
 from eli5._feature_weights import get_top_features
-from eli5.utils import argsort_k_largest_positive, get_target_display_names
+from eli5.utils import get_target_display_names
 from eli5.sklearn.unhashing import handle_hashing_vec, is_invhashing
 from eli5.sklearn.treeinspect import get_tree_info
 from eli5.sklearn.utils import (

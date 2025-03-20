@@ -44,7 +44,7 @@ def test_invertable_hashing_vectorizer(always_signed, binary, alternate_sign):
 
 
 def check_feature_names(vec, ivec, always_signed, corpus, alternate_sign):
-    feature_names = ivec.get_feature_names(always_signed=always_signed)
+    feature_names = ivec.get_feature_names_out(always_signed=always_signed)
     seen_words = set()
     counts = Counter(corpus)
     for idx, collisions in enumerate(feature_names):

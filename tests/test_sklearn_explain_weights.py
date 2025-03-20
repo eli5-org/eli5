@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from functools import partial
 import re
 
@@ -120,7 +118,7 @@ def assert_explained_weights_linear_classifier(
     X = vec.fit_transform(docs)
     if add_bias:
         X = sp.hstack([X, np.ones((X.shape[0], 1))])
-        feature_names = vec.get_feature_names() + ['BIAS']
+        feature_names = vec.get_feature_names_out() + ['BIAS']
     else:
         feature_names = None
 
@@ -281,7 +279,7 @@ def test_explain_linear_hashed_pos_neg(newsgroups_train, pass_feature_weights):
     if pass_feature_weights:
         res = explain_weights(
             clf, top=(10, 10), target_names=target_names,
-            feature_names=ivec.get_feature_names(always_signed=False),
+            feature_names=ivec.get_feature_names_out(always_signed=False),
             coef_scale=ivec.column_signs_)
     else:
         res = explain_weights(

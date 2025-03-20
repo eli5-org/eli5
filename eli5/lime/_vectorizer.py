@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from typing import Tuple, Callable, Dict, Optional, List
+from typing import Callable
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -29,11 +27,10 @@ class SingleDocumentVectorizer(BaseEstimator, TransformerMixin):
         return np.ones(len(self.text_.tokens)).reshape((1, -1))
 
     def get_doc_weighted_spans(self,
-                               doc,              # type: str
-                               feature_weights,  # type: FeatureWeights
-                               feature_fn        # type: Callable[[str], str]
-                               ):
-        # type: (...) -> Tuple[Dict[Tuple[str, int], float], DocWeightedSpans]
+                               doc: str,
+                               feature_weights: FeatureWeights,
+                               feature_fn: Callable[[str], str],
+                               ) -> tuple[dict[tuple[str, int], float], DocWeightedSpans]:
         feature_weights_dict = _get_feature_weights_dict(feature_weights,
                                                          feature_fn)
         spans = []
@@ -53,11 +50,9 @@ class SingleDocumentVectorizer(BaseEstimator, TransformerMixin):
         )
         return found_features, doc_weighted_spans
 
-    def _featname(self, idx, token):
-        # type: (int, str) -> str
+    def _featname(self, idx: int, token: str) -> str:
         return "[{}] {}".format(idx, token)
 
-    def get_feature_names(self):
-        # type: () -> List[str]
+    def get_feature_names_out(self) -> list[str]:
         return [self._featname(idx, token)
                 for idx, token in enumerate(self.text_.tokens)]
