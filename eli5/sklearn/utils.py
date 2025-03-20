@@ -12,7 +12,7 @@ def is_multiclass_classifier(clf) -> bool:
     """
     Return True if a classifier is multiclass or False if it is binary.
     """
-    return clf.coef_.shape[0] > 1
+    return len(clf.classes_) > 1
 
 
 def is_multitarget_regressor(clf) -> bool:
@@ -146,7 +146,13 @@ def get_coef(clf, label_id, scale=None):
     ``scale`` (optional) is a scaling vector; coef_[i] => coef[i] * scale[i] if
     scale[i] is not nan. Intercept is not scaled.
     """
-    if len(clf.coef_.shape) == 2:
+    if isinstance(clf, OneVsRestClassifier):
+        coef = clf.estimators_[label_id].coef_
+        if len(coef.shape) == 2 and coef.shape[0] == 1:
+            coef = coef[0]
+        if len(coef.shape) != 1:
+            raise ValueError(f'Unexpected coef shape: {coef.shape}')
+    elif len(clf.coef_.shape) == 2:
         # Most classifiers (even in binary case) and regressors
         coef = _dense_1d(clf.coef_[label_id])
     elif len(clf.coef_.shape) == 1:
@@ -159,7 +165,7 @@ def get_coef(clf, label_id, scale=None):
         # Lasso with one feature: 0D array
         coef = np.array([clf.coef_])
     else:
-        raise ValueError('Unexpected clf.coef_ shape: %s' % clf.coef_.shape)
+        raise ValueError(f'Unexpected coef shape: {clf.coef_.shape}')
 
     if scale is not None:
         if coef.shape != scale.shape:
@@ -173,7 +179,9 @@ def get_coef(clf, label_id, scale=None):
 
     if not has_intercept(clf):
         return coef
-    if label_id == 0 and not isinstance(clf.intercept_, np.ndarray):
+    if isinstance(clf, OneVsRestClassifier):
+        bias = clf.estimators_[label_id].intercept_
+    elif label_id == 0 and not isinstance(clf.intercept_, np.ndarray):
         bias = clf.intercept_
     else:
         bias = clf.intercept_[label_id]

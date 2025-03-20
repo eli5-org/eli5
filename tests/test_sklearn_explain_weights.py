@@ -162,7 +162,7 @@ def assert_explained_weights_linear_regressor(boston_train, reg, has_bias=True):
     [RidgeClassifier(random_state=42)],
     [RidgeClassifierCV()],
     [SGDClassifier(**SGD_KWARGS)],
-    [SGDClassifier(loss='log', **SGD_KWARGS)],
+    [SGDClassifier(loss='log_loss', **SGD_KWARGS)],
     [PassiveAggressiveClassifier(random_state=42)],
     [Perceptron(random_state=42)],
     [LinearSVC(random_state=42)],
