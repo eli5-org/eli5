@@ -3,7 +3,7 @@ from functools import partial
 
 import numpy as np
 import scipy.sparse as sp
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, is_classifier
 from sklearn.ensemble import (
     ExtraTreesClassifier,
     ExtraTreesRegressor,
@@ -12,6 +12,7 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     RandomForestRegressor,
 )
+from sklearn.ensemble._gb import _init_raw_predictions
 from sklearn.linear_model import (
     ElasticNet,  # includes Lasso, MultiTaskElasticNet, etc.
     ElasticNetCV,
@@ -581,9 +582,11 @@ def _trees_feature_weights(clf, X, feature_names, num_targets):
         if hasattr(clf, 'init_'):
             if clf.init_ == 'zero':
                 bias_init = 0
-            elif is_grad_boost and hasattr(clf.loss_, 'get_init_raw_predictions'):
-                bias_init = clf.loss_.get_init_raw_predictions(
-                    X, clf.init_).astype(np.float64)[0]
+            elif is_grad_boost:
+                bias_init = _init_raw_predictions(
+                    X, clf.init_, clf._loss, is_classifier(clf)
+                )
+                bias_init = bias_init.astype(np.float64)[0]
             else:
                 bias_init = clf.init_.predict(X)[0]
             feature_weights[feature_names.bias_idx] += bias_init
