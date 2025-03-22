@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from functools import partial
 from pprint import pprint
 import re
-from typing import List
 
 import pytest
 import numpy as np
@@ -275,12 +272,11 @@ def assert_predicted_class_used(clf, X):
     return assert_class_used(clf, X, y_pred)
 
 
-def assert_class_used(clf, X, y, **explain_kwargs):
-    # type: (...) -> List[Explanation]
+def assert_class_used(clf, X, y, **explain_kwargs) -> list[Explanation]:
     """ Check that classes y are used for explanations of X predictions """
     explanations = []
     for x, pred_target in zip(X, y):
-        res = explain_prediction(clf, x, **explain_kwargs)  # type: Explanation
+        res: Explanation = explain_prediction(clf, x, **explain_kwargs)
         explanations.append(res)
         assert len(res.targets) == 1
         if res.targets[0].score != 0:
@@ -339,11 +335,11 @@ def _assert_feature_filter_works(get_res, x):
 
 @pytest.mark.parametrize(['clf'], [
     [LogisticRegression(random_state=42)],
-    [LogisticRegression(random_state=42, multi_class='multinomial', solver='lbfgs')],
+    [LogisticRegression(random_state=42, solver='lbfgs')],
     [LogisticRegression(random_state=42, fit_intercept=False)],
     [LogisticRegressionCV(random_state=42)],
     [SGDClassifier(**SGD_KWARGS)],
-    [SGDClassifier(loss='log', **SGD_KWARGS)],
+    [SGDClassifier(loss='log_loss', **SGD_KWARGS)],
     [PassiveAggressiveClassifier(random_state=42)],
     [Perceptron(random_state=42)],
     [RidgeClassifier(random_state=42)],

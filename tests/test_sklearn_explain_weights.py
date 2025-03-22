@@ -156,7 +156,7 @@ def assert_explained_weights_linear_regressor(boston_train, reg, has_bias=True):
 
 @pytest.mark.parametrize(['clf'], [
     [LogisticRegression(random_state=42)],
-    [LogisticRegression(random_state=42, multi_class='multinomial', solver='lbfgs')],
+    [LogisticRegression(random_state=42, solver='lbfgs')],
     [LogisticRegression(random_state=42, fit_intercept=False)],
     [LogisticRegressionCV(random_state=42)],
     [RidgeClassifier(random_state=42)],
