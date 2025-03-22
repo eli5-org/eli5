@@ -42,7 +42,7 @@ def test_explain_booster(newsgroups_train):
     vec = CountVectorizer()
     X = vec.fit_transform(docs)
     booster = xgboost.train(
-        params={'objective': 'multi:softprob', 'silent': True, 'max_depth': 3,
+        params={'objective': 'multi:softprob', 'max_depth': 3,
                 'num_class': len(target_names)},
         dtrain=xgboost.DMatrix(X, label=y, missing=np.nan),
         num_boost_round=10)
@@ -72,7 +72,7 @@ def test_explain_xgboost_regressor(boston_train):
 def test_explain_xgboost_booster(boston_train):
     xs, ys, feature_names = boston_train
     booster = xgboost.train(
-        params={'objective': 'reg:linear', 'silent': True},
+        params={'objective': 'reg:squarederror'},
         dtrain=xgboost.DMatrix(xs, label=ys),
     )
     res = explain_weights(booster)
@@ -94,9 +94,7 @@ def test_explain_prediction_clf_binary(
     explain_kwargs = {}
     if use_booster:
         clf = xgboost.train(
-            params={'objective': 'binary:logistic',
-                    'silent': True,
-                    'max_depth': 2},
+            params={'objective': 'binary:logistic', 'max_depth': 2},
             dtrain=xgboost.DMatrix(xs, label=ys, missing=missing),
             num_boost_round=100,
         )
@@ -156,7 +154,6 @@ def test_explain_prediction_clf_multitarget(
         clf = xgboost.train(
             params={'objective': 'multi:softprob',
                     'num_class': len(target_names),
-                    'silent': True,
                     'max_depth': 2},
             dtrain=xgboost.DMatrix(xs, label=ys, missing=np.nan),
             num_boost_round=100,
@@ -245,7 +242,7 @@ def test_explain_prediction_reg(boston_train):
 def test_explain_prediction_reg_booster(boston_train):
     X, y, feature_names = boston_train
     booster = xgboost.train(
-        params={'objective': 'reg:linear', 'silent': True, 'max_depth': 2},
+        params={'objective': 'reg:squarederror', 'max_depth': 2},
         dtrain=xgboost.DMatrix(X, label=y),
     )
     assert_trained_linear_regression_explained(
