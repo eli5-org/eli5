@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import DefaultDict, Optional
+from typing import DefaultDict, Optional, Union
 
 import numpy as np
 import lightgbm
@@ -164,6 +164,7 @@ def explain_prediction_lightgbm(
     if is_regression is None:
         raise ValueError('Please specify is_regression argument')
 
+    names: Union[list[str], np.ndarray]
     if is_regression:
         names = ['y']
     elif isinstance(lgb, lightgbm.Booster):

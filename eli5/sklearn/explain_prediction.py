@@ -583,10 +583,10 @@ def _trees_feature_weights(clf, X, feature_names, num_targets):
             if clf.init_ == 'zero':
                 bias_init = 0
             elif is_grad_boost:
-                bias_init = _init_raw_predictions(
+                bias_init_arr = _init_raw_predictions(
                     X, clf.init_, clf._loss, is_classifier(clf)
                 )
-                bias_init = bias_init.astype(np.float64)[0]
+                bias_init = bias_init_arr.astype(np.float64)[0]
             else:
                 bias_init = clf.init_.predict(X)[0]
             feature_weights[feature_names.bias_idx] += bias_init

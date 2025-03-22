@@ -1,6 +1,6 @@
 from functools import partial
 import re
-from typing import Any, Optional, Pattern
+from typing import Any, Optional, Pattern, Union
 
 import numpy as np
 import scipy.sparse as sp
@@ -100,7 +100,7 @@ def explain_prediction_xgboost(
         feature_filter=None,
         vectorized: bool = False,
         is_regression: Optional[bool] = None,
-        missing: Optional[bool] = None,
+        missing: Optional[Any] = None,
         ):
     """ Return an explanation of XGBoost prediction (via scikit-learn wrapper
     XGBClassifier or XGBRegressor, or via xgboost.Booster) as feature weights.
@@ -187,6 +187,7 @@ def explain_prediction_xgboost(
         proba = predict_proba(xgb, X)
         n_targets = _xgb_n_targets(xgb)
 
+    names: Union[list[str], np.ndarray]
     if is_regression:
         names = ['y']
     elif isinstance(xgb, Booster):
