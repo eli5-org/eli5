@@ -1,27 +1,11 @@
-import json
-
 import numpy as np
 
 from eli5.base import (
     Explanation, TargetExplanation, FeatureWeights, FeatureWeight)
-from eli5.formatters.as_dict import format_as_dict, _numpy_to_python
+from eli5.formatters.as_dict import format_as_dict
 
 
 # format_as_dict is called in eli5.tests.utils.format_as_all
-
-
-def test_numpy_to_python():
-    x = _numpy_to_python({
-        'x': np.int32(12),
-        'y': [np.ones(2)],
-        'z': {'inner': np.bool_(False)},
-    })
-    assert x == {
-        'x': 12,
-        'y': [[1.0, 1.0]],
-        'z': {'inner': False},
-    }
-    json.dumps(x)
 
 
 def test_format_as_dict():

@@ -2,15 +2,13 @@ from itertools import chain
 from tabulate import tabulate
 from typing import Optional, Iterator
 
-import numpy as np
-
 from eli5.base import Explanation, FeatureImportances
 from . import fields
 from .features import FormattedFeatureName
 from .utils import (
     format_signed, format_value, format_weight, has_any_values_for_weights,
     replace_spaces, should_highlight_spaces)
-from .utils import tabulate as eli5_tabulate
+from .utils import tabulate as eli5_tabulate, numpy_to_python
 from .trees import tree2text
 
 
@@ -174,7 +172,7 @@ def _targets_lines(explanation: Explanation,
 
         header = "%s%r%s top features" % (
             'y=' if not explanation.is_regression else '',
-            _np_to_native(target.target),
+            numpy_to_python(target.target),
             scores)
         lines.append(header)
 
@@ -265,11 +263,3 @@ def _format_unhashed_feature(name: list, hl_spaces: bool, sep=' | ') -> str:
     return sep.join(
         format_signed(n, _format_single_feature, hl_spaces=hl_spaces)
         for n in name)
-
-
-def _np_to_native(value) -> str:
-    if isinstance(value, np.integer):
-        value = int(value)
-    elif isinstance(value, np.str_):
-        value = str(value)
-    return value
