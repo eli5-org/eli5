@@ -128,6 +128,7 @@ class MaskingTextSamplers(BaseSampler):
         self.rng_ = check_random_state(random_state)
         self.token_pattern = token_pattern
         self.samplers = list(map(self._create_sampler, sampler_params))
+        self.weights: np.ndarray
         if weights is None:
             self.weights = np.ones(len(self.samplers))
         else:
@@ -241,7 +242,7 @@ class MultivariateKernelDensitySampler(_BaseKernelDensitySampler):
     It is a problem e.g. when features have different variances
     (e.g. some of them are one-hot encoded and other are continuous).
     """
-    def fit(self, X, y=None):
+    def fit(self, X=None, y=None):
         self.grid_, self.kde_ = self._fit_kde(self.kde, X)
         self._set_sigma(self.kde_.bandwidth)
         return self
@@ -268,7 +269,7 @@ class UnivariateKernelDensitySampler(_BaseKernelDensitySampler):
     Also, at sampling time it replaces only random subsets
     of the features instead of generating totally new examples.
     """
-    def fit(self, X, y=None):
+    def fit(self, X=None, y=None):
         self.kdes_: list[KernelDensity] = []
         self.grids_: list[GridSearchCV] = []
         num_features = X.shape[-1]
@@ -295,8 +296,8 @@ class UnivariateKernelDensitySampler(_BaseKernelDensitySampler):
                 kde = self.kdes_[i]
                 new_doc[i] = kde.sample(random_state=self.rng_).ravel()
             samples.append(new_doc)
-        samples = np.asarray(samples)
-        return samples, self._similarity(doc, samples)
+        samples_array = np.asarray(samples)
+        return samples_array, self._similarity(doc, samples_array)
 
 
 def _distances(doc, samples, metric):
