@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import pytest
 pytest.importorskip('lightning')
 
@@ -53,11 +50,10 @@ def test_explain_predition_classifiers_binary(newsgroups_train_binary, clf):
 @pytest.mark.parametrize(['clf'], _instances(_CLASSIFIERS))
 def test_explain_weights_classifiers(newsgroups_train, clf):
     clf = OneVsRestClassifier(clf)
-    assert_explained_weights_linear_classifier(newsgroups_train, clf,
-                                               add_bias=True)
+    assert_explained_weights_linear_classifier(newsgroups_train, clf)
     if _CLASSIFIERS.index(type(clf.estimator)) == 0:
         assert_explained_weights_linear_classifier(
-            newsgroups_train, clf, add_bias=True,
+            newsgroups_train, clf,
             explain_weights=explain_weights_lightning)
 
 

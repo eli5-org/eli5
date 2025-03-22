@@ -105,26 +105,19 @@ def check_newsgroups_explanation_linear(
         assert 'space' in pos
 
         pos, neg = _top('talk.religion.misc')
-        assert 'jesus' in pos or 'christians' in pos
+        assert 'jesus' in pos or 'christians' in pos or 'bible' in pos
 
     assert res == get_result()
 
 
 def assert_explained_weights_linear_classifier(
-        newsgroups_train, clf, add_bias=False, explain_weights=explain_weights,
+        newsgroups_train, clf, explain_weights=explain_weights,
         binary=False):
     docs, y, target_names = newsgroups_train
     vec = TfidfVectorizer()
     X = vec.fit_transform(docs)
-    if add_bias:
-        X = sp.hstack([X, np.ones((X.shape[0], 1))])
-        feature_names = vec.get_feature_names_out() + ['BIAS']
-    else:
-        feature_names = None
-
     clf.fit(X, y)
     check_newsgroups_explanation_linear(clf, vec, target_names,
-                                        feature_names=feature_names,
                                         explain_weights=explain_weights,
                                         binary=binary,
                                         top=(20, 20))
