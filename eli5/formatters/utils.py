@@ -158,10 +158,7 @@ def numpy_to_python(obj):
     elif isinstance(obj, np.str_):
         return str(obj)
     elif hasattr(obj, 'dtype') and np.isscalar(obj):
-        if np.issubdtype(obj, np.floating):
-            return float(obj)
-        elif np.issubdtype(obj, np.integer):
-            return int(obj)
-        elif np.issubdtype(obj, np.bool_):
-            return bool(obj)
+        if np.issubdtype(obj, np.floating): return float(obj)  # type: ignore
+        elif np.issubdtype(obj, np.integer): return int(obj)  # type: ignore
+        elif np.issubdtype(obj, np.bool_): return bool(obj)  # type: ignore
     return obj
