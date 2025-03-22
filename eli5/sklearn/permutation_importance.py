@@ -20,9 +20,15 @@ from eli5.sklearn.utils import pandas_available
 if pandas_available:
     import pandas as pd
 
-def _estimator_has(attr):
+def _wrapped_estimator_has(attr):
     def check(self):
         return hasattr(self.wrapped_estimator_, attr)
+
+    return check
+
+def _estimator_has(attr):
+    def check(self):
+        return hasattr(self.estimator, attr)
 
     return check
 
@@ -202,7 +208,7 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
             self.estimator_ = clone(self.estimator)
             self.estimator_.fit(X, y, **fit_params)
 
-        X = check_array(X, force_all_finite='allow-nan')
+        X = check_array(X, ensure_all_finite='allow-nan')
 
         if self.cv not in (None, "prefit"):
             si = self._cv_scores_importances(X, y, groups=groups, **fit_params)
@@ -253,25 +259,29 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
 
     # ============= Exposed methods of a wrapped estimator:
 
-    @available_if(_estimator_has('score'))
+    @available_if(_wrapped_estimator_has('score'))
     def score(self, X, y=None, *args, **kwargs):
         return self.wrapped_estimator_.score(X, y, *args, **kwargs)
 
-    @available_if(_estimator_has('predict'))
+    @available_if(_wrapped_estimator_has('predict'))
     def predict(self, X):
         return self.wrapped_estimator_.predict(X)
 
-    @available_if(_estimator_has('predict_proba'))
+    @available_if(_wrapped_estimator_has('predict_proba'))
     def predict_proba(self, X):
         return self.wrapped_estimator_.predict_proba(X)
 
-    @available_if(_estimator_has('predict_log_proba'))
+    @available_if(_wrapped_estimator_has('predict_log_proba'))
     def predict_log_proba(self, X):
         return self.wrapped_estimator_.predict_log_proba(X)
 
-    @available_if(_estimator_has('decision_function'))
+    @available_if(_wrapped_estimator_has('decision_function'))
     def decision_function(self, X):
         return self.wrapped_estimator_.decision_function(X)
+
+    @available_if(_estimator_has('__sklearn_tags__'))
+    def __sklearn_tags__(self):
+        return self.estimator.__sklearn_tags__()
 
     @property
     def wrapped_estimator_(self):
