@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from typing import Any, List, Tuple, Union, Optional
+from typing import Union, Optional
 
 import numpy as np
 
@@ -17,19 +16,18 @@ class Explanation(object):
     it can either explain weights or a single prediction.
     """
     def __init__(self,
-                 estimator,  # type: str
-                 description=None,  # type: Optional[str]
-                 error=None,  # type: Optional[str]
-                 method=None,  # type: Optional[str]
-                 is_regression=False,  # type: bool
-                 targets=None,  # type: Optional[List[TargetExplanation]]
-                 feature_importances=None,  # type: Optional[FeatureImportances]
-                 decision_tree=None,  # type: Optional[TreeInfo]
-                 highlight_spaces=None,  # type: Optional[bool]
-                 transition_features=None,  # type: Optional[TransitionFeatureWeights]
-                 image=None, # type: Any
+                 estimator: str,
+                 description: Optional[str] = None,
+                 error: Optional[str] = None,
+                 method: Optional[str] = None,
+                 is_regression: bool = False,
+                 targets: Optional[list['TargetExplanation']] = None,
+                 feature_importances: Optional['FeatureImportances'] = None,
+                 decision_tree: Optional['TreeInfo'] = None,
+                 highlight_spaces: Optional[bool] = None,
+                 transition_features: Optional['TransitionFeatureWeights'] = None,
+                 image=None,
                  ):
-        # type: (...) -> None
         self.estimator = estimator
         self.description = description
         self.error = error
@@ -55,9 +53,8 @@ class FeatureImportances(object):
     """ Feature importances with number of remaining non-zero features.
     """
     def __init__(self, importances, remaining):
-        # type: (...) -> None
-        self.importances = importances  # type: List[FeatureWeight]
-        self.remaining = remaining  # type: int
+        self.importances: list[FeatureWeight] = importances
+        self.remaining: int = remaining
 
     @classmethod
     def from_names_values(cls, names, values, std=None, **kwargs):
@@ -75,14 +72,13 @@ class TargetExplanation(object):
     Spatial values are stored in the :heatmap: attribute.
     """
     def __init__(self,
-                 target,  # type: Union[str, int]
-                 feature_weights=None,  # type: Optional[FeatureWeights]
-                 proba=None,  # type: Optional[float]
-                 score=None,  # type: Optional[float]
-                 weighted_spans=None,  # type: Optional[WeightedSpans]
-                 heatmap=None, # type: Optional[np.ndarray]
+                 target: Union[str, int],
+                 feature_weights: Optional['FeatureWeights'] = None,
+                 proba: Optional[float] = None,
+                 score: Optional[float] = None,
+                 weighted_spans: Optional['WeightedSpans'] = None,
+                 heatmap: Optional[np.ndarray] = None,
                  ):
-        # type: (...) -> None
         self.target = target
         self.feature_weights = feature_weights
         self.proba = proba
@@ -92,7 +88,7 @@ class TargetExplanation(object):
 
 
 # List is currently used for unhashed features
-Feature = Union[str, List, FormattedFeatureName]
+Feature = Union[str, list, FormattedFeatureName]
 
 
 @attrs
@@ -103,12 +99,11 @@ class FeatureWeights(object):
     :pos_remaining: and :neg_remaining: attributes.
     """
     def __init__(self,
-                 pos,  # type: List[FeatureWeight]
-                 neg,  # type: List[FeatureWeight]
-                 pos_remaining=0,  # type: int
-                 neg_remaining=0,  # type: int
+                 pos: list['FeatureWeight'],
+                 neg: list['FeatureWeight'],
+                 pos_remaining: int = 0,
+                 neg_remaining: int = 0,
                  ):
-        # type: (...) -> None
         self.pos = pos
         self.neg = neg
         self.pos_remaining = pos_remaining
@@ -117,13 +112,7 @@ class FeatureWeights(object):
 
 @attrs
 class FeatureWeight(object):
-    def __init__(self,
-                 feature,  # type: Feature
-                 weight,  # type: float
-                 std=None,  # type: float
-                 value=None,  # type: Any
-                 ):
-        # type: (...) -> None
+    def __init__(self, feature: Feature, weight: float, std: Optional[float] = None, value=None):
         self.feature = feature
         self.weight = weight
         self.std = std
@@ -136,17 +125,16 @@ class WeightedSpans(object):
     object for each vectorizer, and other features not highlighted anywhere.
     """
     def __init__(self,
-                 docs_weighted_spans,  # type: List[DocWeightedSpans]
-                 other=None,  # type: FeatureWeights
+                 docs_weighted_spans: list['DocWeightedSpans'],
+                 other: Optional[FeatureWeights] = None,
                  ):
-        # type: (...) -> None
         self.docs_weighted_spans = docs_weighted_spans
         self.other = other
 
 
-WeightedSpan = Tuple[
+WeightedSpan = tuple[
     Feature,
-    List[Tuple[int, int]],  # list of spans (start, end) for this feature
+    list[tuple[int, int]],  # list of spans (start, end) for this feature
     float,  # feature weight
 ]
 
@@ -161,12 +149,11 @@ class DocWeightedSpans(object):
     and to False for word features.
     """
     def __init__(self,
-                 document,  # type: str
-                 spans,  # type: List[WeightedSpan]
-                 preserve_density=None,  # type: bool
-                 vec_name=None,  # type: str
+                 document: str,
+                 spans: list[WeightedSpan],
+                 preserve_density: Optional[bool] = None,
+                 vec_name: Optional[str] = None,
                  ):
-        # type: (...) -> None
         self.document = document
         self.spans = spans
         self.preserve_density = preserve_density
@@ -176,11 +163,7 @@ class DocWeightedSpans(object):
 @attrs
 class TransitionFeatureWeights(object):
     """ Weights matrix for transition features. """
-    def __init__(self,
-                 class_names,  # type: List[str]
-                 coef,
-                 ):
-        # type: (...) -> None
+    def __init__(self, class_names: list[str], coef):
         self.class_names = class_names
         self.coef = coef
 
@@ -191,13 +174,7 @@ class TreeInfo(object):
     the function to measure the quality of a split, :tree: holds all nodes
     of the tree, and :graphviz: is the tree rendered in graphviz .dot format.
     """
-    def __init__(self,
-                 criterion,  # type: str
-                 tree,  # type: NodeInfo
-                 graphviz,  # type: str
-                 is_classification, # type: bool
-                 ):
-        # type: (...) -> None
+    def __init__(self, criterion: str, tree: 'NodeInfo', graphviz: str, is_classification: bool):
         self.criterion = criterion
         self.tree = tree
         self.graphviz = graphviz
@@ -210,20 +187,19 @@ class NodeInfo(object):
     Pointers to left and right children are in :left: and :right: attributes.
     """
     def __init__(self,
-                 id,                 # type: int
-                 is_leaf,            # type: bool
+                 id: int,
+                 is_leaf: bool,
                  value,
                  value_ratio,
-                 impurity,           # type: float
-                 samples,            # type: int
-                 sample_ratio,       # type: float
-                 feature_name=None,  # type: str
-                 feature_id=None,    # type: int
-                 threshold=None,     # type: float
-                 left=None,          # type: NodeInfo
-                 right=None,         # type: NodeInfo
+                 impurity: float,
+                 samples: int,
+                 sample_ratio: float,
+                 feature_name: Optional[str] = None,
+                 feature_id: Optional[int] = None,
+                 threshold: Optional[float] = None,
+                 left: Optional['NodeInfo'] = None,
+                 right: Optional['NodeInfo'] = None,
                  ):
-        # type: (...) -> None
         self.id = id
         self.is_leaf = is_leaf
         self.value = value
