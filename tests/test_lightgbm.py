@@ -92,7 +92,7 @@ def test_explain_prediction_clf_multitarget(newsgroups_train):
     docs, ys, target_names = newsgroups_train
     from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
     stop_words = set(ENGLISH_STOP_WORDS) | {'does', 'just'}
-    vec = CountVectorizer(stop_words=stop_words, dtype=np.float64)
+    vec = CountVectorizer(stop_words=list(stop_words), dtype=np.float64)
     xs = vec.fit_transform(docs)
     clf = LGBMClassifier(n_estimators=100, max_depth=2,
                          min_child_samples=1, min_child_weight=1,
