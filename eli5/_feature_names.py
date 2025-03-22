@@ -65,6 +65,7 @@ class FeatureNames(Sized, Iterable):
     def _slice(self, aslice: slice):
         if isinstance(self.feature_names, (list, np.ndarray)):
             # Fast path without going through __getitem__
+            lst: Union[list, np.ndarray]
             if self.has_bias:
                 lst = list(self.feature_names)
                 lst.append(self.bias_name)

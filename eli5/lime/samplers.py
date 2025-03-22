@@ -122,7 +122,7 @@ class MaskingTextSamplers(BaseSampler):
                  sampler_params: list[dict[str, Any]],
                  token_pattern: Optional[str] = None,
                  random_state=None,
-                 weights: Union[np.ndarray, list[float]] = None,
+                 weights: Optional[Union[np.ndarray, list[float]]] = None,
                  ):
         self.random_state = random_state
         self.rng_ = check_random_state(random_state)

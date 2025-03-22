@@ -34,7 +34,7 @@ def replace_spaces(s: str, replacer: Callable[[int, str], str]) -> str:
 
 
 def format_signed(feature: dict[str, Any],
-                  formatter: Callable[..., str]=None,
+                  formatter: Optional[Callable[..., str]]=None,
                   **kwargs
                   ) -> str:
     """
@@ -91,7 +91,7 @@ def has_any_values_for_weights(explanation: Explanation) -> bool:
 
 def tabulate(data: list[list[Any]],
              header: Optional[list[Any]] = None,
-             col_align: Union[str, list[str]] = None,
+             col_align: Optional[Union[str, list[str]]] = None,
              ) -> list[str]:
     """ Format data as a table without any fancy features.
     col_align: l/r/c or a list/string of l/r/c. l = left, r = right, c = center

@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import numpy as np
 import scipy.sparse as sp
@@ -59,7 +59,7 @@ def has_intercept(estimator) -> bool:
         if estimator.intercept_ is None:
             return False
         # scikit-learn sets intercept to zero vector if it is not fit
-        return np.any(estimator.intercept_)
+        return bool(np.any(estimator.intercept_))
     return False
 
 
@@ -224,6 +224,7 @@ except ImportError:
 
 
 def get_X(doc, vec=None, vectorized=False, to_dense=False):
+    X: Union[np.ndarray, sp._base._spbase]
     if vec is None or vectorized:
         if isinstance(doc, np.ndarray):
             X = np.array([doc])
@@ -235,6 +236,7 @@ def get_X(doc, vec=None, vectorized=False, to_dense=False):
     else:
         X = vec.transform([doc])
     if to_dense and sp.issparse(X):
+        assert isinstance(X, sp._base._spbase)
         X = X.toarray()
     return X
 

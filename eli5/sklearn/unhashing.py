@@ -119,7 +119,7 @@ class FeatureUnhasher(BaseEstimator):
         self.n_features: int = self.hasher.n_features
         self.unkn_template = unkn_template
         self._attributes_dirty = True
-        self._term_counts = Counter()
+        self._term_counts: Counter[str] = Counter()
 
     def fit(self, X: Iterable[str], y=None) -> 'FeatureUnhasher':
         self._term_counts.clear()
@@ -144,7 +144,7 @@ class FeatureUnhasher(BaseEstimator):
                                          for name in names]
             else:
                 if not always_signed and _invert_signs(signs):
-                    signs = [-sign for sign in signs]
+                    signs = -signs
                 feature_names[col_id] = [{'name': name, 'sign': sign}
                                          for name, sign in zip(names, signs)]
         return FeatureNames(

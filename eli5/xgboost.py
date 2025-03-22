@@ -39,7 +39,7 @@ def explain_weights_xgboost(xgb,
                             target_names=None,  # ignored
                             targets=None,  # ignored
                             feature_names=None,
-                            feature_re: Pattern[str] = None,
+                            feature_re: Optional[Pattern[str]] = None,
                             feature_filter=None,
                             importance_type='gain',
                             ):
@@ -96,11 +96,11 @@ def explain_prediction_xgboost(
         target_names=None,
         targets=None,
         feature_names=None,
-        feature_re: Pattern[str] = None,
+        feature_re: Optional[Pattern[str]] = None,
         feature_filter=None,
         vectorized: bool = False,
-        is_regression: bool = None,
-        missing: bool = None,
+        is_regression: Optional[bool] = None,
+        missing: Optional[bool] = None,
         ):
     """ Return an explanation of XGBoost prediction (via scikit-learn wrapper
     XGBClassifier or XGBRegressor, or via xgboost.Booster) as feature weights.
