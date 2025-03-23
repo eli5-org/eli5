@@ -179,12 +179,14 @@ def test_explain_prediction_clf_multitarget(
         t.proba for t in res.targets)[-2:]
 
 
-def test_explain_prediction_clf_xor():
-    true_xs = [[np.random.randint(2), np.random.randint(2)] for _ in range(100)]
-    xs = np.array([[np.random.normal(x, 0.2), np.random.normal(y, 0.2)]
+@pytest.mark.parametrize('seed', [1, 2, 3])
+def test_explain_prediction_clf_xor(seed):
+    rng = np.random.RandomState(seed)
+    true_xs = [[rng.randint(2), rng.randint(2)] for _ in range(100)]
+    xs = np.array([[rng.normal(x, 0.2), rng.normal(y, 0.2)]
                    for x, y in true_xs])
     ys = np.array([x == y for x, y in true_xs])
-    clf = XGBClassifier(n_estimators=100, max_depth=2)
+    clf = XGBClassifier(n_estimators=100, max_depth=2, tree_method='exact')
     clf.fit(xs, ys)
     res = explain_prediction(clf, np.array([1, 1]))
     format_as_all(res, clf)

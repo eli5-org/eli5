@@ -153,7 +153,7 @@ def explain_prediction_xgboost(
         xgb, doc, vec, vectorized, feature_names,
         num_features=len(xgb_feature_names))
     if feature_names.bias_name is None:
-        # XGBoost estimators do not have an intercept, but here we interpret
+        # Some XGBoost estimators do not have an intercept, but here we interpret
         # them as having an intercept
         feature_names.bias_name = '<BIAS>'
 
