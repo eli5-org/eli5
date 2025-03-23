@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 from functools import partial
 
 import numpy as np
 import scipy.sparse as sp
-from sklearn.base import BaseEstimator, is_classifier
+from sklearn.base import BaseEstimator
 from sklearn.ensemble import (
     ExtraTreesClassifier,
     ExtraTreesRegressor,
@@ -54,7 +53,7 @@ from eli5.base import Explanation, TargetExplanation
 from eli5.base_utils import singledispatch
 from eli5.utils import (
     get_target_display_names,
-    get_binary_target_scale_label_id
+    get_binary_target_scale_label_id,
 )
 from eli5.sklearn.utils import (
     add_intercept,
@@ -62,6 +61,7 @@ from eli5.sklearn.utils import (
     get_default_target_names,
     get_X,
     get_X0,
+    is_classifier,
     is_multiclass_classifier,
     is_multitarget_regressor,
     predict_proba,

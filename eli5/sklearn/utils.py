@@ -2,10 +2,28 @@ from typing import Any, Optional, Union
 
 import numpy as np
 import scipy.sparse as sp
+import sklearn.base
 from sklearn.multiclass import OneVsRestClassifier
 
 from eli5.sklearn.unhashing import invert_hashing_and_fit, handle_hashing_vec
 from eli5._feature_names import FeatureNames
+
+
+def is_classifier(estimator):
+    try:
+        return sklearn.base.is_classifier(estimator)
+    except AttributeError:
+        # old xgboost < 2.0.0 is not compatible with new sklean here
+        try:
+            import xgboost
+        except ImportError:
+            pass
+        else:
+            if isinstance(estimator, xgboost.XGBClassifier):
+                return True
+            elif isinstance(estimator, (xgboost.XGBRanker, xgboost.XGBRegressor)):
+                return False
+        raise
 
 
 def is_multiclass_classifier(clf) -> bool:
