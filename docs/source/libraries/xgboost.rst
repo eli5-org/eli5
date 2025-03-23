@@ -6,7 +6,9 @@ XGBoost
 XGBoost_ is a popular Gradient Boosting library with Python interface.
 eli5 supports :func:`eli5.explain_weights` and :func:`eli5.explain_prediction`
 for XGBClassifer_, XGBRegressor_ and Booster_ estimators. It is tested for
-xgboost >= 0.6a2.
+xgboost >= 0.6a2 and < 2.0.0.
+Versions starting from 2.0.0 likely produce incorrect results in
+:func:`eli5.explain_prediction`, and will issue a warning.
 
 .. _XGBoost: https://github.com/dmlc/xgboost
 .. _XGBClassifer: https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBClassifier

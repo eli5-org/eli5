@@ -1,9 +1,11 @@
-from functools import partial
 import re
+import warnings
+from functools import partial
 from typing import Any, Optional, Pattern, Union
 
 import numpy as np
 import scipy.sparse as sp
+import xgboost
 from xgboost import (
     XGBClassifier,
     XGBRegressor,
@@ -147,6 +149,11 @@ def explain_prediction_xgboost(
     changes from parent to child.
     Weights of all features sum to the output score of the estimator.
     """
+    if not xgboost.__version__.startswith(('0.', '1.')):
+        warnings.warn(
+            'This explanation might be incoorrect, '
+            'only xgboost < 2.0.0 is known to work correctly')
+
     booster, is_regression = _check_booster_args(xgb, is_regression)
     xgb_feature_names = _get_booster_feature_names(booster)
     vec, feature_names = handle_vec(
