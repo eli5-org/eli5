@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression

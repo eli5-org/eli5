@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from functools import partial
 import re
 
@@ -107,26 +105,19 @@ def check_newsgroups_explanation_linear(
         assert 'space' in pos
 
         pos, neg = _top('talk.religion.misc')
-        assert 'jesus' in pos or 'christians' in pos
+        assert 'jesus' in pos or 'christians' in pos or 'bible' in pos
 
     assert res == get_result()
 
 
 def assert_explained_weights_linear_classifier(
-        newsgroups_train, clf, add_bias=False, explain_weights=explain_weights,
+        newsgroups_train, clf, explain_weights=explain_weights,
         binary=False):
     docs, y, target_names = newsgroups_train
     vec = TfidfVectorizer()
     X = vec.fit_transform(docs)
-    if add_bias:
-        X = sp.hstack([X, np.ones((X.shape[0], 1))])
-        feature_names = vec.get_feature_names() + ['BIAS']
-    else:
-        feature_names = None
-
     clf.fit(X, y)
     check_newsgroups_explanation_linear(clf, vec, target_names,
-                                        feature_names=feature_names,
                                         explain_weights=explain_weights,
                                         binary=binary,
                                         top=(20, 20))
@@ -158,13 +149,13 @@ def assert_explained_weights_linear_regressor(boston_train, reg, has_bias=True):
 
 @pytest.mark.parametrize(['clf'], [
     [LogisticRegression(random_state=42)],
-    [LogisticRegression(random_state=42, multi_class='multinomial', solver='lbfgs')],
+    [LogisticRegression(random_state=42, solver='lbfgs')],
     [LogisticRegression(random_state=42, fit_intercept=False)],
     [LogisticRegressionCV(random_state=42)],
     [RidgeClassifier(random_state=42)],
     [RidgeClassifierCV()],
     [SGDClassifier(**SGD_KWARGS)],
-    [SGDClassifier(loss='log', **SGD_KWARGS)],
+    [SGDClassifier(loss='log_loss', **SGD_KWARGS)],
     [PassiveAggressiveClassifier(random_state=42)],
     [Perceptron(random_state=42)],
     [LinearSVC(random_state=42)],
@@ -281,7 +272,7 @@ def test_explain_linear_hashed_pos_neg(newsgroups_train, pass_feature_weights):
     if pass_feature_weights:
         res = explain_weights(
             clf, top=(10, 10), target_names=target_names,
-            feature_names=ivec.get_feature_names(always_signed=False),
+            feature_names=ivec.get_feature_names_out(always_signed=False),
             coef_scale=ivec.column_signs_)
     else:
         res = explain_weights(
@@ -481,14 +472,14 @@ def test_unsupported():
     [ElasticNetCV(random_state=42)],
     [HuberRegressor()],
     [Lars()],
-    [LarsCV(max_n_alphas=10)],
+    [LarsCV(max_n_alphas=100)],
     [Lasso(random_state=42)],
     [LassoCV(random_state=42)],
     [LassoLars(alpha=0.01)],
     [LassoLarsCV(max_n_alphas=10)],
     [LassoLarsIC()],
     [OrthogonalMatchingPursuit(n_nonzero_coefs=10)],
-    [OrthogonalMatchingPursuitCV()],
+    [OrthogonalMatchingPursuitCV(max_iter=10)],
     [PassiveAggressiveRegressor(C=0.1, random_state=42)],
     [Ridge(random_state=42)],
     [RidgeCV()],

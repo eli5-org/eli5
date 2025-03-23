@@ -6,7 +6,6 @@ import numpy as np
 from sklearn.feature_extraction.text import HashingVectorizer
 
 from eli5.sklearn.unhashing import InvertableHashingVectorizer
-from eli5.sklearn.utils import sklearn_version
 
 @pytest.mark.parametrize(
     ['always_signed', 'binary', 'alternate_sign'], [
@@ -22,12 +21,8 @@ from eli5.sklearn.utils import sklearn_version
 def test_invertable_hashing_vectorizer(always_signed, binary, alternate_sign):
     n_features = 8
     n_words = 4 * n_features
-    kwargs = dict(n_features=n_features, binary=binary)
-    if sklearn_version() < '0.19':
-        kwargs['non_negative'] = not alternate_sign
-    else:
-        kwargs['alternate_sign'] = alternate_sign
-    vec = HashingVectorizer(**kwargs)
+    vec = HashingVectorizer(
+        n_features=n_features, binary=binary, alternate_sign=alternate_sign)
     words = ['word_{}'.format(i) for i in range(n_words)]
     corpus = [w for i, word in enumerate(words, 1) for w in repeat(word, i)]
     split = len(corpus) // 2
@@ -49,7 +44,7 @@ def test_invertable_hashing_vectorizer(always_signed, binary, alternate_sign):
 
 
 def check_feature_names(vec, ivec, always_signed, corpus, alternate_sign):
-    feature_names = ivec.get_feature_names(always_signed=always_signed)
+    feature_names = ivec.get_feature_names_out(always_signed=always_signed)
     seen_words = set()
     counts = Counter(corpus)
     for idx, collisions in enumerate(feature_names):

@@ -1,6 +1,9 @@
+import json
+
+import numpy as np
 import pytest
 
-from eli5.formatters.utils import tabulate, format_value
+from eli5.formatters.utils import tabulate, format_value, numpy_to_python
 
 
 def test_tabulate():
@@ -53,3 +56,17 @@ def test_format_value():
     assert format_value(float('nan')) == 'Missing'
     assert format_value(12.23333334) == '12.233'
     assert format_value(-12.23333334) == '-12.233'
+
+
+def test_numpy_to_python():
+    x = numpy_to_python({
+        'x': np.int32(12),
+        'y': [np.ones(2)],
+        'z': {'inner': np.bool_(False)},
+    })
+    assert x == {
+        'x': 12,
+        'y': [[1.0, 1.0]],
+        'z': {'inner': False},
+    }
+    json.dumps(x)

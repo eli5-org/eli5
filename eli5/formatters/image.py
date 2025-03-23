@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from typing import Union, Optional, Callable
 
 import numpy as np
@@ -9,12 +7,12 @@ import matplotlib.cm
 from eli5.base import Explanation
 
 
-def format_as_image(expl, # type: Explanation
-    resampling_filter=Image.LANCZOS, # type: int
-    colormap=matplotlib.cm.viridis, # type: Callable[[np.ndarray], np.ndarray]
-    alpha_limit=0.65, # type: Optional[Union[float, int]]
-    ):
-    # type: (...) -> Image
+def format_as_image(
+        expl: Explanation,
+        resampling_filter: int = Image.LANCZOS,  # type: ignore
+        colormap: Callable[[np.ndarray], np.ndarray] = matplotlib.cm.viridis,
+        alpha_limit: Optional[Union[float, int]] = 0.65,
+    ) -> Image.Image:
     """format_as_image(expl, resampling_filter=Image.LANCZOS, colormap=matplotlib.cm.viridis, alpha_limit=0.65)
 
     Format a :class:`eli5.base.Explanation` object as an image.
@@ -106,6 +104,7 @@ def format_as_image(expl, # type: Explanation
     else:
         assert len(expl.targets) == 1
         heatmap = expl.targets[0].heatmap
+        assert heatmap is not None
         _validate_heatmap(heatmap)
 
     # The order of our operations is: 1. colorize 2. resize
@@ -120,13 +119,12 @@ def format_as_image(expl, # type: Explanation
     # cap the intensity so that it's not too opaque when near maximum value
     _update_alpha(heatmap, starting_array=heatvals, alpha_limit=alpha_limit)
 
-    heatmap = expand_heatmap(heatmap, image, resampling_filter=resampling_filter)
-    overlay = _overlay_heatmap(heatmap, image)
+    heatmap_image = expand_heatmap(heatmap, image, resampling_filter=resampling_filter)
+    overlay = _overlay_heatmap(heatmap_image, image)
     return overlay
 
 
-def heatmap_to_image(heatmap):
-    # type: (np.ndarray) -> Image
+def heatmap_to_image(heatmap: np.ndarray) -> Image.Image:
     """
     Convert the numpy array ``heatmap`` to a Pillow image.
 
@@ -185,8 +183,7 @@ def _validate_heatmap(heatmap):
                          'and maximum: {}'.format(mi, ma))
 
 
-def _colorize(heatmap, colormap):
-    # type: (np.ndarray, Callable[[np.ndarray], np.ndarray]) -> np.ndarray
+def _colorize(heatmap: np.ndarray, colormap: Callable[[np.ndarray], np.ndarray]) -> np.ndarray:
     """
     Apply the ``colormap`` function to a grayscale 
     rank 2 ``heatmap`` array (with float values in interval [0, 1]).
@@ -196,8 +193,10 @@ def _colorize(heatmap, colormap):
     return heatmap
 
 
-def _update_alpha(image_array, starting_array=None, alpha_limit=None):
-    # type: (np.ndarray, Optional[np.ndarray], Optional[Union[float, int]]) -> None
+def _update_alpha(
+        image_array: np.ndarray,
+        starting_array: Optional[np.ndarray] = None,
+        alpha_limit: Optional[Union[float, int]] = None) -> None:
     """
     Update the alpha channel values of an RGBA rank 3 ndarray ``image_array``,
     optionally creating the alpha channel from rank 2 ``starting_array``, 
@@ -218,8 +217,7 @@ def _update_alpha(image_array, starting_array=None, alpha_limit=None):
     image_array[:,:,3] = alpha
 
 
-def _cap_alpha(alpha_arr, alpha_limit):
-    # type: (np.ndarray, Union[None, float, int]) -> np.ndarray
+def _cap_alpha(alpha_arr: np.ndarray, alpha_limit: Union[None, float, int]) -> np.ndarray:
     """
     Limit the alpha values in ``alpha_arr``
     by setting the maximum alpha value to ``alpha_limit``.
@@ -239,8 +237,10 @@ def _cap_alpha(alpha_arr, alpha_limit):
                         'got: {}'.format(alpha_limit))
 
 
-def expand_heatmap(heatmap, image, resampling_filter=Image.LANCZOS):
-    # type: (np.ndarray, Image, Union[None, int]) -> Image
+def expand_heatmap(
+        heatmap: np.ndarray, image: Image.Image,
+        resampling_filter: Optional[int] = Image.LANCZOS,  # type: ignore
+        ) -> Image.Image:
     """
     Resize the ``heatmap`` image array to fit over the original ``image``,
     using the specified ``resampling_filter`` method.
@@ -271,14 +271,11 @@ def expand_heatmap(heatmap, image, resampling_filter=Image.LANCZOS):
     if not isinstance(image, Image.Image):
         raise TypeError('image must be a PIL.Image.Image instance. '
                         'Got: {}'.format(image))
-    heatmap = heatmap_to_image(heatmap)
     spatial_dimensions = (image.width, image.height)
-    heatmap = heatmap.resize(spatial_dimensions, resample=resampling_filter)
-    return heatmap
+    return heatmap_to_image(heatmap).resize(spatial_dimensions, resample=resampling_filter)
 
 
-def _overlay_heatmap(heatmap, image):
-    # type: (Image, Image) -> Image
+def _overlay_heatmap(heatmap: Image.Image, image: Image.Image) -> Image.Image:
     """
     Blend (combine) ``heatmap`` over ``image``, 
     using alpha channel values appropriately (must have mode `RGBA`).

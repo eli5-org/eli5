@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import numpy as np
 from scipy import sparse as sp
 from sklearn_crfsuite import CRF
@@ -30,9 +27,9 @@ def explain_weights_sklearn_crfsuite(crf,
     transition_coef = crf_transition_coef(crf)
 
     if feature_filter is not None or feature_re is not None:
-        state_feature_names, flt_indices = (
+        state_feature_names_obj, flt_indices = (
             FeatureNames(feature_names).handle_filter(feature_filter, feature_re))
-        state_feature_names = np.array(state_feature_names.feature_names)
+        state_feature_names = np.array(state_feature_names_obj.feature_names)
         state_coef = state_coef[:, flt_indices]
     else:
         state_feature_names = feature_names
@@ -57,7 +54,7 @@ def explain_weights_sklearn_crfsuite(crf,
             for label_id, label in zip(indices, names)
         ],
         transition_features=TransitionFeatureWeights(
-            class_names=names,
+            class_names=list(names),
             coef=transition_coef,
         ),
         estimator=repr(crf),

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 import numpy as np
 from sklearn.base import is_classifier, is_regressor

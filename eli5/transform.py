@@ -12,7 +12,7 @@ def transform_feature_names(transformer, in_names=None):
     transformations for each class of transformer.
     
     If there is no ``singledispatch`` handler registered for a transformer 
-    class, ``transformer.get_feature_names()`` method is called; if there is
+    class, ``transformer.get_feature_names_out()`` method is called; if there is
     no such method then feature names are not supported and 
     this function raises an exception.
 
@@ -28,7 +28,7 @@ def transform_feature_names(transformer, in_names=None):
     -------
     feature_names : list of str
     """
-    if hasattr(transformer, 'get_feature_names'):
-        return transformer.get_feature_names()
+    if hasattr(transformer, 'get_feature_names_out'):
+        return transformer.get_feature_names_out()
     raise NotImplementedError('transform_feature_names not available for '
                               '{}'.format(transformer))

@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 """
 An impementation of LIME (http://arxiv.org/abs/1602.04938), an algorithm to
 explain predictions of black-box models.
 """
-from __future__ import absolute_import
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Optional
 
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
@@ -14,7 +12,6 @@ from sklearn.utils import check_random_state
 from sklearn.base import clone, BaseEstimator
 
 import eli5
-from eli5.sklearn.utils import sklearn_version
 from eli5.lime.samplers import BaseSampler
 from eli5.lime.textutils import DEFAULT_TOKEN_PATTERN, CHAR_TOKEN_PATTERN
 from eli5.lime.samplers import MaskingTextSamplers
@@ -139,18 +136,17 @@ class TextExplainer(BaseEstimator):
         Only available after :func:`fit`.
     """
     def __init__(self,
-                 n_samples=5000,  # type: int
-                 char_based=None,  # type: bool
+                 n_samples: int = 5000,
+                 char_based: Optional[bool] = None,
                  clf=None,
                  vec=None,
-                 sampler=None,  # type: BaseSampler
-                 position_dependent=False,  # type: bool
-                 rbf_sigma=None,  # type: float
+                 sampler: Optional[BaseSampler] = None,
+                 position_dependent: bool = False,
+                 rbf_sigma: Optional[float] = None,
                  random_state=None,
-                 expand_factor=10,  # type: Optional[int]
-                 token_pattern=None,  # type: Optional[str]
-                 ):
-        # type: (...) -> None
+                 expand_factor: Optional[int] = 10,
+                 token_pattern: Optional[str] = None,
+                 ) -> None:
         self.n_samples = n_samples
         self.random_state = random_state
         self.expand_factor = expand_factor
@@ -161,8 +157,8 @@ class TextExplainer(BaseEstimator):
 
         if char_based is None:
             if token_pattern is None:
-                self.char_based = False  # type: Optional[bool]
-                self.token_pattern = DEFAULT_TOKEN_PATTERN  # type: str
+                self.char_based: Optional[bool] = False
+                self.token_pattern: str = DEFAULT_TOKEN_PATTERN
             else:
                 self.char_based = None
                 self.token_pattern = token_pattern
@@ -203,11 +199,7 @@ class TextExplainer(BaseEstimator):
                     )
             self.vec = vec
 
-    def fit(self,
-            doc,             # type: str
-            predict_proba,   # type: Callable[[Any], Any]
-            ):
-        # type: (...) -> TextExplainer
+    def fit(self, doc: str, predict_proba: Callable[[Any], Any]) -> 'TextExplainer':
         """
         Explain ``predict_proba`` probabilistic classification function
         for the ``doc`` example. This method fits a local classification
@@ -320,26 +312,23 @@ class TextExplainer(BaseEstimator):
 
     def _default_clf(self):
         kwargs = dict(
-            loss='log',
+            loss='log_loss',
             penalty='elasticnet',
             alpha=1e-3,
-            random_state=self.rng_
+            random_state=self.rng_,
+            tol=1e-3,
         )
-        if sklearn_version() >= '0.19':
-            kwargs['tol'] = 1e-3
         return SGDClassifier(**kwargs)
-
 
 
 def _train_local_classifier(estimator,
                             samples,
-                            similarity,        # type: np.ndarray
-                            y_proba,           # type: np.ndarray
-                            expand_factor=10,  # type: Optional[int]
-                            test_size=0.3,     # type: float
+                            similarity: np.ndarray,
+                            y_proba: np.ndarray,
+                            expand_factor: Optional[int] = 10,
+                            test_size: float = 0.3,
                             random_state=None,
-                            ):
-    # type: (...) -> Dict[str, float]
+                            ) -> dict[str, float]:
     rng = check_random_state(random_state)
 
     (X_train, X_test,

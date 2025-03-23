@@ -1,26 +1,41 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from distutils.version import LooseVersion
-from typing import Any, Optional, List, Tuple
+from typing import Any, Optional, Union
 
 import numpy as np
 import scipy.sparse as sp
+import sklearn.base
 from sklearn.multiclass import OneVsRestClassifier
 
 from eli5.sklearn.unhashing import invert_hashing_and_fit, handle_hashing_vec
 from eli5._feature_names import FeatureNames
 
 
-def is_multiclass_classifier(clf):
-    # type: (Any) -> bool
+def is_classifier(estimator):
+    try:
+        return sklearn.base.is_classifier(estimator)
+    except AttributeError:
+        # old xgboost < 2.0.0 is not compatible with new sklean here
+        try:
+            import xgboost
+        except ImportError:
+            pass
+        else:
+            if isinstance(estimator, xgboost.XGBClassifier):
+                return True
+            elif isinstance(estimator, (xgboost.XGBRanker, xgboost.XGBRegressor)):
+                return False
+        raise
+
+
+def is_multiclass_classifier(clf) -> bool:
     """
     Return True if a classifier is multiclass or False if it is binary.
     """
+    if isinstance(clf, OneVsRestClassifier):
+        return len(clf.estimators_) > 1
     return clf.coef_.shape[0] > 1
 
 
-def is_multitarget_regressor(clf):
-    # type: (Any) -> bool
+def is_multitarget_regressor(clf) -> bool:
     """
     Return True if a regressor is multitarget
     or False if it predicts a single target.
@@ -28,8 +43,7 @@ def is_multitarget_regressor(clf):
     return len(clf.coef_.shape) > 1 and clf.coef_.shape[0] > 1
 
 
-def is_probabilistic_classifier(clf):
-    # type: (Any) -> bool
+def is_probabilistic_classifier(clf) -> bool:
     """ Return True if a classifier can return probabilities """
     if not hasattr(clf, 'predict_proba'):
         return False
@@ -40,8 +54,7 @@ def is_probabilistic_classifier(clf):
     return True
 
 
-def predict_proba(estimator, X):
-    # type: (Any, Any) -> Optional[np.ndarray]
+def predict_proba(estimator, X) -> Optional[np.ndarray]:
     """ Return result of predict_proba, if an estimator supports it, or None.
     """
     if is_probabilistic_classifier(estimator):
@@ -54,34 +67,34 @@ def predict_proba(estimator, X):
         return None
 
 
-def has_intercept(estimator):
-    # type: (Any) -> bool
+def has_intercept(estimator) -> bool:
     """ Return True if an estimator has intercept fit. """
+    if isinstance(estimator, OneVsRestClassifier):
+        estimator = estimator.estimator
     if hasattr(estimator, 'fit_intercept'):
         return estimator.fit_intercept
     if hasattr(estimator, 'intercept_'):
         if estimator.intercept_ is None:
             return False
         # scikit-learn sets intercept to zero vector if it is not fit
-        return np.any(estimator.intercept_)
+        return bool(np.any(estimator.intercept_))
     return False
 
 
 def get_feature_names(clf, vec=None, bias_name='<BIAS>', feature_names=None,
-                      num_features=None, estimator_feature_names=None):
-    # type: (Any, Any, Optional[str], Any, int, Any) -> FeatureNames
+                      num_features=None, estimator_feature_names=None) -> FeatureNames:
     """
     Return a FeatureNames instance that holds all feature names
     and a bias feature.
-    If vec is None or doesn't have get_feature_names() method,
+    If vec is None or doesn't have get_feature_names_out() method,
     features are named x0, x1, x2, etc.
     """
     if not has_intercept(clf):
         bias_name = None
 
     if feature_names is None:
-        if vec and hasattr(vec, 'get_feature_names'):
-            return FeatureNames(vec.get_feature_names(), bias_name=bias_name)
+        if vec and hasattr(vec, 'get_feature_names_out'):
+            return FeatureNames(vec.get_feature_names_out(), bias_name=bias_name)
         else:
             if estimator_feature_names is None:
                 num_features = num_features or get_num_features(clf)
@@ -112,11 +125,11 @@ def get_feature_names(clf, vec=None, bias_name='<BIAS>', feature_names=None,
         return FeatureNames(feature_names, bias_name=bias_name)
 
 
-def get_feature_names_filtered(clf, vec=None, bias_name='<BIAS>',
-                               feature_names=None, num_features=None,
-                               feature_filter=None, feature_re=None,
-                               estimator_feature_names=None):
-    # type: (...) -> Tuple[FeatureNames, List[int]]
+def get_feature_names_filtered(
+        clf, vec=None, bias_name='<BIAS>',
+        feature_names=None, num_features=None,
+        feature_filter=None, feature_re=None,
+        estimator_feature_names=None) -> tuple[FeatureNames, list[int]]:
     feature_names = get_feature_names(
         clf=clf,
         vec=vec,
@@ -153,7 +166,13 @@ def get_coef(clf, label_id, scale=None):
     ``scale`` (optional) is a scaling vector; coef_[i] => coef[i] * scale[i] if
     scale[i] is not nan. Intercept is not scaled.
     """
-    if len(clf.coef_.shape) == 2:
+    if isinstance(clf, OneVsRestClassifier):
+        coef = clf.estimators_[label_id].coef_
+        if len(coef.shape) == 2 and coef.shape[0] == 1:
+            coef = coef[0]
+        if len(coef.shape) != 1:
+            raise ValueError(f'Unexpected coef shape: {coef.shape}')
+    elif len(clf.coef_.shape) == 2:
         # Most classifiers (even in binary case) and regressors
         coef = _dense_1d(clf.coef_[label_id])
     elif len(clf.coef_.shape) == 1:
@@ -166,7 +185,7 @@ def get_coef(clf, label_id, scale=None):
         # Lasso with one feature: 0D array
         coef = np.array([clf.coef_])
     else:
-        raise ValueError('Unexpected clf.coef_ shape: %s' % clf.coef_.shape)
+        raise ValueError(f'Unexpected coef shape: {clf.coef_.shape}')
 
     if scale is not None:
         if coef.shape != scale.shape:
@@ -180,7 +199,9 @@ def get_coef(clf, label_id, scale=None):
 
     if not has_intercept(clf):
         return coef
-    if label_id == 0 and not isinstance(clf.intercept_, np.ndarray):
+    if isinstance(clf, OneVsRestClassifier):
+        bias = clf.estimators_[label_id].intercept_
+    elif label_id == 0 and not isinstance(clf.intercept_, np.ndarray):
         bias = clf.intercept_
     else:
         bias = clf.intercept_[label_id]
@@ -221,6 +242,7 @@ except ImportError:
 
 
 def get_X(doc, vec=None, vectorized=False, to_dense=False):
+    X: Union[np.ndarray, sp._base._spbase]
     if vec is None or vectorized:
         if isinstance(doc, np.ndarray):
             X = np.array([doc])
@@ -232,6 +254,7 @@ def get_X(doc, vec=None, vectorized=False, to_dense=False):
     else:
         X = vec.transform([doc])
     if to_dense and sp.issparse(X):
+        assert isinstance(X, sp._base._spbase)
         X = X.toarray()
     return X
 
@@ -247,8 +270,9 @@ def get_X0(X):
     return x
 
 
-def handle_vec(clf, doc, vec, vectorized, feature_names, num_features=None):
-    # type: (...) -> Tuple[Any, FeatureNames]
+def handle_vec(
+        clf, doc, vec, vectorized, feature_names, num_features=None,
+        ) -> tuple[Any, FeatureNames]:
     if not vectorized:
         vec = invert_hashing_and_fit(vec, [doc])
     if (vec is None and feature_names is None and
@@ -270,12 +294,3 @@ def add_intercept(X):
         return sp.hstack([X, intercept]).tocsr()
     else:
         return np.hstack([X, intercept])
-
-
-def sklearn_version():
-    """Return sklearn version object which can be used for comparison. Usage:
-    >>> sklearn_version() > '0.17'
-    True
-    """
-    from sklearn import __version__
-    return LooseVersion(__version__)

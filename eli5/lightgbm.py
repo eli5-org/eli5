@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division
 from collections import defaultdict
-from typing import DefaultDict, Any, Tuple, Optional
+from typing import DefaultDict, Optional, Union
 
 import numpy as np
 import lightgbm
@@ -166,6 +164,7 @@ def explain_prediction_lightgbm(
     if is_regression is None:
         raise ValueError('Please specify is_regression argument')
 
+    names: Union[list[str], np.ndarray]
     if is_regression:
         names = ['y']
     elif isinstance(lgb, lightgbm.Booster):
@@ -204,8 +203,7 @@ def explain_prediction_lightgbm(
      )
 
 
-def _check_booster_args(lgb, is_regression=None):
-    # type: (Any, Optional[bool]) -> Tuple[lightgbm.Booster, Optional[bool]]
+def _check_booster_args(lgb, is_regression: Optional[bool] = None) -> tuple[lightgbm.Booster, Optional[bool]]:
     if isinstance(lgb, lightgbm.Booster):
         booster = lgb
         if is_regression is None:
@@ -332,7 +330,7 @@ def _get_prediction_feature_weights(booster, X, n_targets):
 
     res = []
     for target in range(n_targets):
-        feature_weights = defaultdict(float)  # type: DefaultDict[Optional[str], float]
+        feature_weights: DefaultDict[Optional[str], float] = defaultdict(float)
         for info, leaf_id in zip(tree_info[:, target], pred_leafs[:, target]):
             leaf_index, split_index = _get_leaf_split_indices(
                 info['tree_structure']

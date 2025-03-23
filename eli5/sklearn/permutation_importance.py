@@ -1,28 +1,27 @@
-# -*- coding: utf-8 -*-
 from functools import partial
-from typing import List
 
 import numpy as np
 from sklearn.model_selection import check_cv
 from sklearn.utils.metaestimators import available_if
 from sklearn.utils import check_array, check_random_state
-from sklearn.base import (
-    BaseEstimator,
-    MetaEstimatorMixin,
-    clone,
-    is_classifier
-)
+from sklearn.base import BaseEstimator, MetaEstimatorMixin, clone
 from sklearn.metrics import check_scoring
 
 from eli5.permutation_importance import get_score_importances
-from eli5.sklearn.utils import pandas_available
+from eli5.sklearn.utils import pandas_available, is_classifier
 
 if pandas_available:
     import pandas as pd
 
-def _estimator_has(attr):
+def _wrapped_estimator_has(attr):
     def check(self):
         return hasattr(self.wrapped_estimator_, attr)
+
+    return check
+
+def _estimator_has(attr):
+    def check(self):
+        return hasattr(self.estimator, attr)
 
     return check
 
@@ -151,7 +150,6 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
     """
     def __init__(self, estimator, scoring=None, n_iter=5, random_state=None,
                  cv='prefit', refit=True):
-        # type: (...) -> None
         if isinstance(cv, str) and cv != "prefit":
             raise ValueError("Invalid cv value: {!r}".format(cv))
         self.refit = refit
@@ -168,8 +166,7 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
             return base_scorer(model, X, y)
         return pd_scorer
 
-    def fit(self, X, y, groups=None, **fit_params):
-        # type: (...) -> PermutationImportance
+    def fit(self, X, y, groups=None, **fit_params) -> 'PermutationImportance':
         """Compute ``feature_importances_`` attribute and optionally
         fit the base estimator.
 
@@ -202,7 +199,7 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
             self.estimator_ = clone(self.estimator)
             self.estimator_.fit(X, y, **fit_params)
 
-        X = check_array(X, force_all_finite='allow-nan')
+        X = check_array(X, ensure_all_finite='allow-nan')
 
         if self.cv not in (None, "prefit"):
             si = self._cv_scores_importances(X, y, groups=groups, **fit_params)
@@ -218,8 +215,8 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
     def _cv_scores_importances(self, X, y, groups=None, **fit_params):
         assert self.cv is not None
         cv = check_cv(self.cv, y, classifier=is_classifier(self.estimator))
-        feature_importances = []  # type: List
-        base_scores = []  # type: List[float]
+        feature_importances: list = []
+        base_scores: list[float] = []
         weights = fit_params.pop('sample_weight', None)
         fold_fit_params = fit_params.copy()
         for train, test in cv.split(X, y, groups):
@@ -243,8 +240,7 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
                                      random_state=self.rng_)
 
     @property
-    def caveats_(self):
-        # type: () -> str
+    def caveats_(self) -> str:
         if self.cv == 'prefit':
             return CAVEATS_PREFIT
         elif self.cv is None:
@@ -253,25 +249,29 @@ class PermutationImportance(BaseEstimator, MetaEstimatorMixin):
 
     # ============= Exposed methods of a wrapped estimator:
 
-    @available_if(_estimator_has('score'))
+    @available_if(_wrapped_estimator_has('score'))
     def score(self, X, y=None, *args, **kwargs):
         return self.wrapped_estimator_.score(X, y, *args, **kwargs)
 
-    @available_if(_estimator_has('predict'))
+    @available_if(_wrapped_estimator_has('predict'))
     def predict(self, X):
         return self.wrapped_estimator_.predict(X)
 
-    @available_if(_estimator_has('predict_proba'))
+    @available_if(_wrapped_estimator_has('predict_proba'))
     def predict_proba(self, X):
         return self.wrapped_estimator_.predict_proba(X)
 
-    @available_if(_estimator_has('predict_log_proba'))
+    @available_if(_wrapped_estimator_has('predict_log_proba'))
     def predict_log_proba(self, X):
         return self.wrapped_estimator_.predict_log_proba(X)
 
-    @available_if(_estimator_has('decision_function'))
+    @available_if(_wrapped_estimator_has('decision_function'))
     def decision_function(self, X):
         return self.wrapped_estimator_.decision_function(X)
+
+    @available_if(_estimator_has('__sklearn_tags__'))
+    def __sklearn_tags__(self):
+        return self.estimator.__sklearn_tags__()
 
     @property
     def wrapped_estimator_(self):

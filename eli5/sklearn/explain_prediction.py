@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from functools import partial
 
 import numpy as np
@@ -12,6 +11,7 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     RandomForestRegressor,
 )
+from sklearn.ensemble._gb import _init_raw_predictions
 from sklearn.linear_model import (
     ElasticNet,  # includes Lasso, MultiTaskElasticNet, etc.
     ElasticNetCV,
@@ -53,7 +53,7 @@ from eli5.base import Explanation, TargetExplanation
 from eli5.base_utils import singledispatch
 from eli5.utils import (
     get_target_display_names,
-    get_binary_target_scale_label_id
+    get_binary_target_scale_label_id,
 )
 from eli5.sklearn.utils import (
     add_intercept,
@@ -61,6 +61,7 @@ from eli5.sklearn.utils import (
     get_default_target_names,
     get_X,
     get_X0,
+    is_classifier,
     is_multiclass_classifier,
     is_multitarget_regressor,
     predict_proba,
@@ -581,9 +582,11 @@ def _trees_feature_weights(clf, X, feature_names, num_targets):
         if hasattr(clf, 'init_'):
             if clf.init_ == 'zero':
                 bias_init = 0
-            elif is_grad_boost and hasattr(clf.loss_, 'get_init_raw_predictions'):
-                bias_init = clf.loss_.get_init_raw_predictions(
-                    X, clf.init_).astype(np.float64)[0]
+            elif is_grad_boost:
+                bias_init_arr = _init_raw_predictions(
+                    X, clf.init_, clf._loss, is_classifier(clf)
+                )
+                bias_init = bias_init_arr.astype(np.float64)[0]
             else:
                 bias_init = clf.init_.predict(X)[0]
             feature_weights[feature_names.bias_idx] += bias_init

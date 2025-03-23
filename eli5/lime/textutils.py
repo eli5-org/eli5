@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 """
 Utilities for text generation.
 """
-from __future__ import absolute_import
 import re
 import math
 from typing import List, Tuple, Union, Optional
@@ -14,22 +12,21 @@ from eli5.utils import indices_to_bool_mask, vstack
 
 
 # the same as scikit-learn token pattern, but allows single-char tokens
-DEFAULT_TOKEN_PATTERN = r'(?u)\b\w+\b'
+DEFAULT_TOKEN_PATTERN = r'\b\w+\b'
 
 # non-whitespace chars
 CHAR_TOKEN_PATTERN = r'[^\s]'
 
 
-def generate_samples(text,                # type: TokenizedText
-                     n_samples=500,       # type: int
-                     bow=True,            # type: bool
+def generate_samples(text: 'TokenizedText',
+                     n_samples=500,
+                     bow=True,
                      random_state=None,
-                     replacement='',      # type: str
-                     min_replace=1,       # type: Union[int, float]
-                     max_replace=1.0,     # type: Union[int, float]
-                     group_size=1,        # type: int
-                     ):
-    # type: (...) -> Tuple[List[str], np.ndarray, np.ndarray]
+                     replacement='',
+                     min_replace=1.0,
+                     max_replace=1.0,
+                     group_size=1,
+                     ) -> Tuple[List[str], np.ndarray, np.ndarray]:
     """
     Return ``n_samples`` changed versions of text (with some words removed),
     along with distances between the original text and a generated
@@ -66,21 +63,19 @@ def cosine_similarity_vec(num_tokens, num_removed_vec):
 
 
 class TokenizedText(object):
-    def __init__(self, text, token_pattern=DEFAULT_TOKEN_PATTERN):
-        # type: (str, str) -> None
+    def __init__(self, text: str, token_pattern=DEFAULT_TOKEN_PATTERN):
         self.text = text
         self.split = SplitResult.fromtext(text, token_pattern)
-        self._vocab = None  # type: Optional[List[str]]
+        self._vocab: Optional[list[str]] = None
 
     def replace_random_tokens(self,
-                              n_samples,  # type: int
-                              replacement='',  # type: str
+                              n_samples: int,
+                              replacement='',
                               random_state=None,
-                              min_replace=1,  # type: Union[int, float]
-                              max_replace=1.0,  # type: Union[int, float]
-                              group_size=1  # type: int
-                              ):
-        # type: (...) -> List[Tuple[str, int, np.ndarray]]
+                              min_replace=1.0,
+                              max_replace=1.0,
+                              group_size=1,
+                              ) -> list[tuple[str, int, np.ndarray]]:
         """ 
         Return a list of ``(text, replaced_count, mask)``
         tuples with n_samples versions of text with some words replaced.
@@ -110,13 +105,12 @@ class TokenizedText(object):
         return res
     
     def replace_random_tokens_bow(self,
-                                  n_samples,  # type: int
-                                  replacement='',  # type: str
+                                  n_samples: int,
+                                  replacement='',
                                   random_state=None,
-                                  min_replace=1,  # type: Union[int, float]
-                                  max_replace=1.0, # type: Union[int, float]
-                                  ):
-        # type: (...) -> List[Tuple[str, int, np.ndarray]]
+                                  min_replace=1.0,
+                                  max_replace=1.0,
+                                  ) -> list[tuple[str, int, np.ndarray]]:
         """
         Return a list of ``(text, replaced_words_count, mask)`` tuples with
         n_samples versions of text with some words replaced.
@@ -144,11 +138,10 @@ class TokenizedText(object):
         return res
 
     def _get_min_max(self,
-                     min_replace,  # type: Union[int, float]
-                     max_replace,  # type: Union[int, float]
-                     hard_maximum  # type: int
-                     ):
-        # type: (...) -> Tuple[int, int]
+                     min_replace: Union[int, float],
+                     max_replace: Union[int, float],
+                     hard_maximum: int,
+                     ) -> tuple[int, int]:
         if isinstance(min_replace, float):
             min_replace = int(math.floor(hard_maximum * min_replace)) or 1
         if isinstance(max_replace, float):
@@ -158,8 +151,7 @@ class TokenizedText(object):
         return min_replace, max_replace
 
     @property
-    def vocab(self):
-        # type: () -> List[str]
+    def vocab(self) -> list[str]:
         if self._vocab is None:
             self._vocab = sorted(set(self.tokens))
         return self._vocab
@@ -180,8 +172,7 @@ class SplitResult(object):
         self.starts = self.lenghts.cumsum()
 
     @classmethod
-    def fromtext(cls, text, token_pattern=DEFAULT_TOKEN_PATTERN):
-        # type: (str, str) -> SplitResult
+    def fromtext(cls, text: str, token_pattern=DEFAULT_TOKEN_PATTERN) -> 'SplitResult':
         token_pattern = u"(%s)" % token_pattern
         parts = re.split(token_pattern, text)
         return cls(parts)
@@ -195,21 +186,17 @@ class SplitResult(object):
         return self.parts[1::2]
 
     @property
-    def token_spans(self):
-        # type: () -> List[Tuple[int, int]]
+    def token_spans(self) -> list[tuple[int, int]]:
         return list(zip(self.starts[::2], self.starts[1::2]))
 
-    def copy(self):
-        # type: () -> SplitResult
+    def copy(self) -> 'SplitResult':
         return self.__class__(self.parts.copy())
 
-    def masked(self, invmask, replacement=''):
-        # type: (Union[np.ndarray, List[int]], str) -> SplitResult
+    def masked(self, invmask: Union[np.ndarray, list[int]], replacement='') -> 'SplitResult':
         s = self.copy()
         s.tokens[invmask] = replacement
         return s
 
     @property
-    def text(self):
-        # type: () -> str
+    def text(self) -> str:
         return "".join(self.parts)

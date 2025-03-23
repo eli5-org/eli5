@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from itertools import chain
-import six
 from tabulate import tabulate
-from typing import List, Optional, Iterator
+from typing import Optional, Iterator
 
 from eli5.base import Explanation, FeatureImportances
 from . import fields
@@ -11,21 +8,20 @@ from .features import FormattedFeatureName
 from .utils import (
     format_signed, format_value, format_weight, has_any_values_for_weights,
     replace_spaces, should_highlight_spaces)
-from .utils import tabulate as eli5_tabulate
+from .utils import tabulate as eli5_tabulate, numpy_to_python
 from .trees import tree2text
 
 
-_PLUS_MINUS = "+-" if six.PY2 else "±"
-_ELLIPSIS = '...' if six.PY2 else '…'
-_SPACE = '_' if six.PY2 else '░'
+_PLUS_MINUS = "±"
+_ELLIPSIS = '…'
+_SPACE = '░'
 
 
-def format_as_text(expl,  # type: Explanation
+def format_as_text(expl: Explanation,
                    show=fields.ALL,
-                   highlight_spaces=None,  # type: Optional[bool]
-                   show_feature_values=False,  # type: bool
-                   ):
-    # type: (...) -> str
+                   highlight_spaces: Optional[bool] = None,
+                   show_feature_values: bool = False,
+                   ) -> str:
     """ Format explanation as text.
 
     Parameters
@@ -44,7 +40,7 @@ def format_as_text(expl,  # type: Explanation
         When True, feature values are shown along with feature contributions.
         Default is False.
 
-    show : List[str], optional
+    show : list[str], optional
         List of sections to show. Allowed values:
 
         * 'targets' - per-target feature weights;
@@ -59,7 +55,7 @@ def format_as_text(expl,  # type: Explanation
         ``INFO`` (method and description), ``WEIGHTS`` (all the rest),
         and ``ALL`` (all).
     """
-    lines = []  # type: List[str]
+    lines: list[str] = []
 
     if highlight_spaces is None:
         highlight_spaces = should_highlight_spaces(expl)
@@ -101,23 +97,20 @@ def format_as_text(expl,  # type: Explanation
     return '\n'.join(lines)
 
 
-def _method_lines(explanation):
-    # type: (Explanation) -> List[str]
+def _method_lines(explanation: Explanation) -> list[str]:
     return ['Explained as: {}'.format(explanation.method)]
 
 
-def _description_lines(explanation):
-    # type: (Explanation) -> List[str]
+def _description_lines(explanation: Explanation) -> list[str]:
     return [explanation.description or '']
 
 
-def _error_lines(explanation):
-    # type: (Explanation) -> List[str]
+def _error_lines(explanation: Explanation) -> list[str]:
     return ['Error: {}'.format(explanation.error)]
 
 
-def _feature_importances_lines(explanation, hl_spaces):
-    # type: (Explanation, Optional[bool]) -> Iterator[str]
+def _feature_importances_lines(
+        explanation: Explanation, hl_spaces: Optional[bool]) -> Iterator[str]:
     max_width = 0
     assert explanation.feature_importances is not None
     for line in _fi_lines(explanation.feature_importances, hl_spaces):
@@ -128,8 +121,9 @@ def _feature_importances_lines(explanation, hl_spaces):
             explanation.feature_importances.remaining, kind='', width=max_width)
 
 
-def _fi_lines(feature_importances, hl_spaces):
-    # type: (FeatureImportances, Optional[bool]) -> Iterator[str]
+def _fi_lines(
+        feature_importances: FeatureImportances, hl_spaces: Optional[bool],
+    ) -> Iterator[str]:
     for fw in feature_importances.importances:
         featname = _format_feature(fw.feature, hl_spaces)
         if fw.std or fw.weight:
@@ -147,14 +141,12 @@ def _fi_lines(feature_importances, hl_spaces):
             )
 
 
-def _decision_tree_lines(explanation):
-    # type: (Explanation) -> List[str]
+def _decision_tree_lines(explanation: Explanation) -> list[str]:
     assert explanation.decision_tree is not None
     return ["", tree2text(explanation.decision_tree)]
 
 
-def _transition_features_lines(explanation):
-    # type: (Explanation) -> List[str]
+def _transition_features_lines(explanation: Explanation) -> list[str]:
     tf = explanation.transition_features
     assert tf is not None
     return [
@@ -166,12 +158,11 @@ def _transition_features_lines(explanation):
     ]
 
 
-def _targets_lines(explanation,  # type: Explanation
-                   hl_spaces,  # type: Optional[bool]
-                   show_feature_values,  # type: bool
-                   explaining_prediction,  # type: bool
-                   ):
-    # type: (...) -> List[str]
+def _targets_lines(explanation: Explanation,
+                   hl_spaces: Optional[bool],
+                   show_feature_values: bool,
+                   explaining_prediction: bool,
+                   ) -> list[str]:
     lines = []
     assert explanation.targets is not None
     for target in explanation.targets:
@@ -181,7 +172,7 @@ def _targets_lines(explanation,  # type: Explanation
 
         header = "%s%r%s top features" % (
             'y=' if not explanation.is_regression else '',
-            target.target,
+            numpy_to_python(target.target),
             scores)
         lines.append(header)
 
@@ -228,8 +219,7 @@ def _targets_lines(explanation,  # type: Explanation
     return lines
 
 
-def _format_scores(proba, score):
-    # type: (Optional[float], Optional[float]) -> str
+def _format_scores(proba: Optional[float], score: Optional[float]) -> str:
     scores = []
     if proba is not None:
         scores.append("probability=%0.3f" % proba)
@@ -238,8 +228,7 @@ def _format_scores(proba, score):
     return ", ".join(scores)
 
 
-def _format_remaining(remaining, kind, width):
-    # type: (int, str, int) -> str
+def _format_remaining(remaining: int, kind: str, width: int) -> str:
     s = '{ellipsis} {remaining} more {kind}{ellipsis}'.format(
         ellipsis=_ELLIPSIS,
         remaining=remaining,
@@ -248,8 +237,7 @@ def _format_remaining(remaining, kind, width):
     return ('{:^%d}' % width).format(s)
 
 
-def _format_feature(name, hl_spaces):
-    # type: (...) -> str
+def _format_feature(name, hl_spaces) -> str:
     if isinstance(name, bytes):
         name = name.decode('utf8')
     if isinstance(name, FormattedFeatureName):
@@ -261,16 +249,14 @@ def _format_feature(name, hl_spaces):
         return _format_single_feature(name, hl_spaces=hl_spaces)
 
 
-def _format_single_feature(feature, hl_spaces):
-    # type: (str, bool) -> str
+def _format_single_feature(feature: str, hl_spaces: bool) -> str:
     if hl_spaces:
         return replace_spaces(feature, lambda n, _: _SPACE * n)
     else:
         return feature
 
 
-def _format_unhashed_feature(name, hl_spaces, sep=' | '):
-    # type: (List, bool, str) -> str
+def _format_unhashed_feature(name: list, hl_spaces: bool, sep=' | ') -> str:
     """
     Format feature name for hashed features.
     """

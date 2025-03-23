@@ -54,7 +54,7 @@ MOCK_MODULES = [
     'keras.models',
     'keras.layers',
     'keras.preprocessing.image',
-    'pandas',
+    # 'pandas',
     'PIL',
     'matplotlib',
     'matplotlib.pyplot',
@@ -69,7 +69,7 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 def setup(app):
     # see https://github.com/snide/sphinx_rtd_theme/issues/117
-    app.add_stylesheet("rtfd_overrides.css")
+    app.add_css_file("rtfd_overrides.css")
 
 suppress_warnings = ['image.nonlocal_uri']
 
@@ -123,7 +123,7 @@ release = re.match(r'[\d\.]+', eli5.__version__).group()
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:

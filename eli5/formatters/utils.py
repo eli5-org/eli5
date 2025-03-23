@@ -1,8 +1,6 @@
-from __future__ import absolute_import
 from itertools import chain
 import re
-import six
-from typing import Any, Union, List, Dict, Callable, Match, Optional
+from typing import Any, Union, Callable, Match, Optional
 
 import numpy as np
 
@@ -10,8 +8,7 @@ from eli5.base import Explanation
 from .features import FormattedFeatureName
 
 
-def replace_spaces(s, replacer):
-    # type: (str, Callable[[int, str], str]) -> str
+def replace_spaces(s: str, replacer: Callable[[int, str], str]) -> str:
     """
     >>> replace_spaces('ab', lambda n, l: '_' * n)
     'ab'
@@ -24,8 +21,7 @@ def replace_spaces(s, replacer):
     >>> replace_spaces(' a b  ', lambda n, _: '0 0' * n)
     '0 0a0 0b0 00 0'
     """
-    def replace(m):
-        # type: (Match[str]) -> str
+    def replace(m: Match[str]) -> str:
         if m.start() == 0:
             side = 'left'
         elif m.end() == len(s):
@@ -37,11 +33,10 @@ def replace_spaces(s, replacer):
     return re.sub(r'[ ]+', replace, s)
 
 
-def format_signed(feature,  # type: Dict[str, Any]
-                  formatter=None,  # type: Callable[..., str]
+def format_signed(feature: dict[str, Any],
+                  formatter: Optional[Callable[..., str]]=None,
                   **kwargs
-                  ):
-    # type: (...) -> str
+                  ) -> str:
     """
     Format unhashed feature with sign.
 
@@ -53,14 +48,13 @@ def format_signed(feature,  # type: Dict[str, Any]
     '(-)" foo"'
     """
     txt = '' if feature['sign'] > 0 else '(-)'
-    name = feature['name']  # type: str
+    name: str = feature['name']
     if formatter is not None:
         name = formatter(name, **kwargs)
     return '{}{}'.format(txt, name)
 
 
-def should_highlight_spaces(explanation):
-    # type: (Explanation) -> bool
+def should_highlight_spaces(explanation: Explanation) -> bool:
     hl_spaces = bool(explanation.highlight_spaces)
     if explanation.feature_importances:
         hl_spaces = hl_spaces or any(
@@ -75,8 +69,7 @@ def should_highlight_spaces(explanation):
     return hl_spaces
 
 
-def _has_invisible_spaces(name):
-    # type: (Union[str, List[Dict], FormattedFeatureName]) -> bool
+def _has_invisible_spaces(name: Union[str, list[dict], FormattedFeatureName]) -> bool:
     if isinstance(name, FormattedFeatureName):
         return False
     elif isinstance(name, list):
@@ -85,8 +78,7 @@ def _has_invisible_spaces(name):
         return name.startswith(' ') or name.endswith(' ')
 
 
-def has_any_values_for_weights(explanation):
-    # type: (Explanation) -> bool
+def has_any_values_for_weights(explanation: Explanation) -> bool:
     if explanation.targets:
         return any(fw.value is not None
                    for t in explanation.targets
@@ -97,11 +89,10 @@ def has_any_values_for_weights(explanation):
         return False
 
 
-def tabulate(data,  # type: List[List[Any]]
-             header=None,  # type: Optional[List[Any]]
-             col_align=None,  # type: Union[str, List[str]]
-             ):
-    # type: (...) -> List[str]
+def tabulate(data: list[list[Any]],
+             header: Optional[list[Any]] = None,
+             col_align: Optional[Union[str, list[str]]] = None,
+             ) -> list[str]:
     """ Format data as a table without any fancy features.
     col_align: l/r/c or a list/string of l/r/c. l = left, r = right, c = center
     Return a list of strings (lines of the table).
@@ -118,7 +109,7 @@ def tabulate(data,  # type: List[List[Any]]
 
     if col_align is None:
         col_align = ['l'] * n_cols
-    elif isinstance(col_align, six.string_types) and len(col_align) == 1:
+    elif isinstance(col_align, str) and len(col_align) == 1:
         col_align = [col_align] * n_cols
     else:
         col_align = list(col_align)
@@ -130,7 +121,7 @@ def tabulate(data,  # type: List[List[Any]]
 
     if header:
         data = [header] + data
-    data = [[six.text_type(x) for x in row] for row in data]
+    data = [[str(x) for x in row] for row in data]
     col_width = [max(len(row[col_i]) for row in data) for col_i in range(n_cols)]
     if header:
         data.insert(1, ['-' * width for width in col_width])
@@ -141,16 +132,33 @@ def tabulate(data,  # type: List[List[Any]]
     return [line_tpl.format(*row) for row in data]
 
 
-def format_weight(value):
-    # type: (float) -> str
+def format_weight(value: float) -> str:
     return '{:+.3f}'.format(value)
 
 
-def format_value(value):
-    # type: (Optional[float]) -> str
+def format_value(value: Optional[float]) -> str:
     if value is None:
         return ''
     elif np.isnan(value):
         return 'Missing'
     else:
         return '{:.3f}'.format(value)
+
+
+def numpy_to_python(obj):
+    """ Convert an nested dict/list/tuple that might contain numpy objects
+    to their python equivalents. Return converted object.
+    """
+    if isinstance(obj, dict):
+        return {k: numpy_to_python(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple, np.ndarray)):
+        return [numpy_to_python(x) for x in obj]
+    elif isinstance(obj, FormattedFeatureName):
+        return obj.value
+    elif isinstance(obj, np.str_):
+        return str(obj)
+    elif hasattr(obj, 'dtype') and np.isscalar(obj):
+        if np.issubdtype(obj, np.floating): return float(obj)  # type: ignore
+        elif np.issubdtype(obj, np.integer): return int(obj)  # type: ignore
+        elif np.issubdtype(obj, np.bool_): return bool(obj)  # type: ignore
+    return obj

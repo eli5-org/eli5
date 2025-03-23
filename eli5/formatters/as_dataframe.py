@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 import warnings
 
 import pandas as pd
@@ -12,8 +12,7 @@ from eli5.base import (
 from eli5.base_utils import singledispatch
 
 
-def explain_weights_df(estimator, **kwargs):
-    # type: (...) -> pd.DataFrame
+def explain_weights_df(estimator, **kwargs) -> pd.DataFrame:
     """ Explain weights and export them to ``pandas.DataFrame``.
     All keyword arguments are passed to :func:`eli5.explain_weights`.
     Weights of all features are exported by default.
@@ -23,8 +22,7 @@ def explain_weights_df(estimator, **kwargs):
         eli5.explain_weights(estimator, **kwargs))
 
 
-def explain_weights_dfs(estimator, **kwargs):
-    # type: (...) -> Dict[str, pd.DataFrame]
+def explain_weights_dfs(estimator, **kwargs) -> dict[str, pd.DataFrame]:
     """ Explain weights and export them to a dict with ``pandas.DataFrame``
     values (as :func:`eli5.formatters.as_dataframe.format_as_dataframes` does).
     All keyword arguments are passed to :func:`eli5.explain_weights`.
@@ -35,8 +33,7 @@ def explain_weights_dfs(estimator, **kwargs):
         eli5.explain_weights(estimator, **kwargs))
 
 
-def explain_prediction_df(estimator, doc, **kwargs):
-    # type: (...) -> pd.DataFrame
+def explain_prediction_df(estimator, doc, **kwargs) -> pd.DataFrame:
     """ Explain prediction and export explanation to ``pandas.DataFrame``
     All keyword arguments are passed to :func:`eli5.explain_prediction`.
     Weights of all features are exported by default.
@@ -46,8 +43,7 @@ def explain_prediction_df(estimator, doc, **kwargs):
         eli5.explain_prediction(estimator, doc, **kwargs))
 
 
-def explain_prediction_dfs(estimator, doc, **kwargs):
-    # type: (...) -> Dict[str, pd.DataFrame]
+def explain_prediction_dfs(estimator, doc, **kwargs) -> dict[str, pd.DataFrame]:
     """ Explain prediction and export explanation
     to a dict with ``pandas.DataFrame`` values
     (as :func:`eli5.formatters.as_dataframe.format_as_dataframes` does).
@@ -69,8 +65,7 @@ def _set_defaults(kwargs):
 _EXPORTED_ATTRIBUTES = ['transition_features', 'targets', 'feature_importances']
 
 
-def format_as_dataframes(explanation):
-    # type: (Explanation) -> Dict[str, pd.DataFrame]
+def format_as_dataframes(explanation: Explanation) -> dict[str, pd.DataFrame]:
     """ Export an explanation to a dictionary with ``pandas.DataFrame`` values
     and string keys that correspond to explanation attributes.
     Use this method if several dataframes can be exported from a single
@@ -90,8 +85,7 @@ def format_as_dataframes(explanation):
 
 
 @singledispatch
-def format_as_dataframe(explanation):
-    # type: (Explanation) -> Optional[pd.DataFrame]
+def format_as_dataframe(explanation) -> Optional[pd.DataFrame]:
     """ Export an explanation to a single ``pandas.DataFrame``.
     In case several dataframes could be exported by
     :func:`eli5.formatters.as_dataframe.format_as_dataframes`,
@@ -117,8 +111,7 @@ def format_as_dataframe(explanation):
 
 
 @format_as_dataframe.register(FeatureImportances)
-def _feature_importances_to_df(feature_importances):
-    # type: (FeatureImportances) -> pd.DataFrame
+def _feature_importances_to_df(feature_importances: FeatureImportances) -> pd.DataFrame:
     weights = feature_importances.importances
     df = pd.DataFrame(
         {'feature': [fw.feature for fw in weights],
@@ -133,12 +126,11 @@ def _feature_importances_to_df(feature_importances):
 
 
 @format_as_dataframe.register(list)
-def _targets_to_df(targets):
-    # type: (List[TargetExplanation]) -> pd.DataFrame
+def _targets_to_df(targets: list[TargetExplanation]) -> pd.DataFrame:
     if targets and not isinstance(targets[0], TargetExplanation):
         raise ValueError('Only lists of TargetExplanation are supported')
     columns = ['target', 'feature', 'weight', 'std', 'value']
-    df_data = {f: [] for f in columns}  # type: Dict[str, List[Any]]
+    df_data: dict[str, list[Any]] = {f: [] for f in columns}
     for target in targets:
         assert target.feature_weights is not None
         for fw in chain(target.feature_weights.pos,
@@ -156,8 +148,7 @@ def _targets_to_df(targets):
 
 
 @format_as_dataframe.register(TransitionFeatureWeights)
-def _transition_features_to_df(transition_features):
-    # type: (TransitionFeatureWeights) -> pd.DataFrame
+def _transition_features_to_df(transition_features: TransitionFeatureWeights) -> pd.DataFrame:
     class_names = list(transition_features.class_names)
     return pd.DataFrame(
         {'from': [f for f in class_names for _ in class_names],

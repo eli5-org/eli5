@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import abc
 from functools import partial
-from typing import List, Tuple, Any, Union, Dict, Optional
-import six
+from typing import Any, Union, Optional
 
 import numpy as np
 from sklearn.base import BaseEstimator, clone
@@ -17,8 +14,7 @@ from eli5.lime.utils import rbf
 from .textutils import generate_samples, DEFAULT_TOKEN_PATTERN, TokenizedText
 
 
-@six.add_metaclass(abc.ABCMeta)
-class BaseSampler(BaseEstimator):
+class BaseSampler(BaseEstimator, metaclass=abc.ABCMeta):
     """
     Base sampler class.
     Sampler is an object which generates examples similar to a given example.
@@ -67,15 +63,14 @@ class MaskingTextSampler(BaseSampler):
         Default is 1, meaning individual tokens are replaced.
     """
     def __init__(self,
-                 token_pattern=None,  # type: Optional[str]
-                 bow=True,            # type: bool
+                 token_pattern: Optional[str] = None,
+                 bow: bool = True,
                  random_state=None,
-                 replacement='',      # type: str
-                 min_replace=1,       # type: Union[int, float]
-                 max_replace=1.0,     # type: Union[int, float]
-                 group_size=1,        # type: int
+                 replacement: str = '',
+                 min_replace: Union[int, float] = 1,
+                 max_replace: Union[int, float] = 1.0,
+                 group_size: int = 1,
                  ):
-        # type: (...) -> None
         self.token_pattern = token_pattern or DEFAULT_TOKEN_PATTERN
         self.bow = bow
         self.random_state = random_state
@@ -85,18 +80,17 @@ class MaskingTextSampler(BaseSampler):
         self.group_size = group_size
         self.rng_ = check_random_state(self.random_state)
 
-    def sample_near(self, doc, n_samples=1):
-        # type: (str, int) -> Tuple[List[str], np.ndarray]
+    def sample_near(self, doc: str, n_samples: int = 1) -> tuple[list[str], np.ndarray]:
         docs, similarities, mask, text = self.sample_near_with_mask(
             doc=doc, n_samples=n_samples
         )
         return docs, similarities
 
-    def sample_near_with_mask(self,
-                              doc,         # type: Union[TokenizedText, str]
-                              n_samples=1  # type: int
-                              ):
-        # type: (...) -> Tuple[List[str], np.ndarray, np.ndarray, TokenizedText]
+    def sample_near_with_mask(
+            self,
+            doc: Union[TokenizedText, str],
+            n_samples: int = 1,
+            ) -> tuple[list[str], np.ndarray, np.ndarray, TokenizedText]:
         if not isinstance(doc, TokenizedText):
             doc = TokenizedText(doc, token_pattern=self.token_pattern)
 
@@ -125,35 +119,33 @@ class MaskingTextSamplers(BaseSampler):
     with :class:`MaskingTextSampler` paremeters.
     """
     def __init__(self,
-                 sampler_params,      # type: List[Dict[str, Any]]
-                 token_pattern=None,  # type: Optional[str]
+                 sampler_params: list[dict[str, Any]],
+                 token_pattern: Optional[str] = None,
                  random_state=None,
-                 weights=None,        # type: Union[np.ndarray, List[float]]
+                 weights: Optional[Union[np.ndarray, list[float]]] = None,
                  ):
-        # type: (...) -> None
         self.random_state = random_state
         self.rng_ = check_random_state(random_state)
         self.token_pattern = token_pattern
         self.samplers = list(map(self._create_sampler, sampler_params))
+        self.weights: np.ndarray
         if weights is None:
             self.weights = np.ones(len(self.samplers))
         else:
             self.weights = np.array(weights)
         self.weights /= self.weights.sum()
 
-    def _create_sampler(self, extra):
-        # type: (Dict) -> MaskingTextSampler
-        params = dict(
+    def _create_sampler(self, extra: dict) -> MaskingTextSampler:
+        params: dict[str, Any] = dict(
             token_pattern=self.token_pattern,
             random_state=self.rng_,
-        )  # type: Dict[str, Any]
+        )
         params.update(extra)
         return MaskingTextSampler(**params)
 
-    def sample_near(self, doc, n_samples=1):
-        # type: (str, int) -> Tuple[List[str], np.ndarray]
+    def sample_near(self, doc: str, n_samples: int = 1) -> tuple[list[str], np.ndarray]:
         assert n_samples >= 1
-        all_docs = []  # type: List[str]
+        all_docs: list[str] = []  # type
         similarities = []
         for sampler, freq in self._sampler_n_samples(n_samples):
             docs, sims = sampler.sample_near(doc, n_samples=freq)
@@ -161,15 +153,13 @@ class MaskingTextSamplers(BaseSampler):
             similarities.append(sims)
         return all_docs, np.hstack(similarities)
 
-    def sample_near_with_mask(self,
-                              doc,         # type: str
-                              n_samples=1  # type: int
-                              ):
-        # type: (...) -> Tuple[List[str], np.ndarray, np.ndarray, TokenizedText]
+    def sample_near_with_mask(
+            self, doc: str, n_samples: int = 1,
+            ) -> tuple[list[str], np.ndarray, np.ndarray, TokenizedText]:
         assert n_samples >= 1
         assert self.token_pattern is not None
         text = TokenizedText(doc, token_pattern=self.token_pattern)
-        all_docs = []  # type: List[str]
+        all_docs: list[str] = []
         similarities = []
         masks = []
         for sampler, freq in self._sampler_n_samples(n_samples):
@@ -222,8 +212,7 @@ class _BaseKernelDensitySampler(BaseSampler):
         return GridSearchCV(self.kde, param_grid=param_grid, n_jobs=self.n_jobs,
                             cv=cv)
 
-    def _fit_kde(self, kde, X):
-        # type: (KernelDensity, np.ndarray) -> Tuple[GridSearchCV, KernelDensity]
+    def _fit_kde(self, kde: KernelDensity, X: np.ndarray) -> tuple[GridSearchCV, KernelDensity]:
         if self.fit_bandwidth:
             grid = self._get_grid()
             grid.fit(X)
@@ -253,7 +242,7 @@ class MultivariateKernelDensitySampler(_BaseKernelDensitySampler):
     It is a problem e.g. when features have different variances
     (e.g. some of them are one-hot encoded and other are continuous).
     """
-    def fit(self, X, y=None):
+    def fit(self, X=None, y=None):
         self.grid_, self.kde_ = self._fit_kde(self.kde, X)
         self._set_sigma(self.kde_.bandwidth)
         return self
@@ -280,9 +269,9 @@ class UnivariateKernelDensitySampler(_BaseKernelDensitySampler):
     Also, at sampling time it replaces only random subsets
     of the features instead of generating totally new examples.
     """
-    def fit(self, X, y=None):
-        self.kdes_ = []  # type: List[KernelDensity]
-        self.grids_ = []  # type: List[GridSearchCV]
+    def fit(self, X=None, y=None):
+        self.kdes_: list[KernelDensity] = []
+        self.grids_: list[GridSearchCV] = []
         num_features = X.shape[-1]
         for i in range(num_features):
             grid, kde = self._fit_kde(self.kde, X[:, i].reshape(-1, 1))
@@ -307,8 +296,8 @@ class UnivariateKernelDensitySampler(_BaseKernelDensitySampler):
                 kde = self.kdes_[i]
                 new_doc[i] = kde.sample(random_state=self.rng_).ravel()
             samples.append(new_doc)
-        samples = np.asarray(samples)
-        return samples, self._similarity(doc, samples)
+        samples_array = np.asarray(samples)
+        return samples_array, self._similarity(doc, samples_array)
 
 
 def _distances(doc, samples, metric):

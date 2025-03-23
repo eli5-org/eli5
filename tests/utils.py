@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import print_function
 import os
 import inspect
 import json
@@ -13,12 +11,9 @@ from eli5.base import Explanation
 from eli5.formatters import format_as_text, format_as_html, format_as_dict
 from eli5.formatters.html import html_escape
 from eli5.formatters.text import format_signed
-from eli5.sklearn.utils import sklearn_version
 
 
-SGD_KWARGS = {'random_state': 42}
-if sklearn_version() >= '0.19':
-    SGD_KWARGS['tol'] = 1e-3
+SGD_KWARGS = {'random_state': 42, 'tol': 1e-3}
 
 
 def rnd_len_arrays(dtype, min_len=0, max_len=3, elements=None):
@@ -90,8 +85,7 @@ def get_names_coefs(feature_weights):
             for fw in feature_weights]
 
 
-def check_targets_scores(explanation, atol=1e-8):
-    # type: (Explanation, float) -> None
+def check_targets_scores(explanation: Explanation, atol: float = 1e-8) -> None:
     """ Check that feature weights sum to target score or proba,
     if both proba and score are present they match,
     and that there are no "remaining" features.

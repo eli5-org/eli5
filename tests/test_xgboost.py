@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import pytest
 import numpy as np
 import scipy.sparse as sp
@@ -45,7 +42,7 @@ def test_explain_booster(newsgroups_train):
     vec = CountVectorizer()
     X = vec.fit_transform(docs)
     booster = xgboost.train(
-        params={'objective': 'multi:softprob', 'silent': True, 'max_depth': 3,
+        params={'objective': 'multi:softprob', 'max_depth': 3,
                 'num_class': len(target_names)},
         dtrain=xgboost.DMatrix(X, label=y, missing=np.nan),
         num_boost_round=10)
@@ -75,7 +72,7 @@ def test_explain_xgboost_regressor(boston_train):
 def test_explain_xgboost_booster(boston_train):
     xs, ys, feature_names = boston_train
     booster = xgboost.train(
-        params={'objective': 'reg:linear', 'silent': True},
+        params={'objective': 'reg:squarederror'},
         dtrain=xgboost.DMatrix(xs, label=ys),
     )
     res = explain_weights(booster)
@@ -97,9 +94,7 @@ def test_explain_prediction_clf_binary(
     explain_kwargs = {}
     if use_booster:
         clf = xgboost.train(
-            params={'objective': 'binary:logistic',
-                    'silent': True,
-                    'max_depth': 2},
+            params={'objective': 'binary:logistic', 'max_depth': 2},
             dtrain=xgboost.DMatrix(xs, label=ys, missing=missing),
             num_boost_round=100,
         )
@@ -159,7 +154,6 @@ def test_explain_prediction_clf_multitarget(
         clf = xgboost.train(
             params={'objective': 'multi:softprob',
                     'num_class': len(target_names),
-                    'silent': True,
                     'max_depth': 2},
             dtrain=xgboost.DMatrix(xs, label=ys, missing=np.nan),
             num_boost_round=100,
@@ -185,12 +179,14 @@ def test_explain_prediction_clf_multitarget(
         t.proba for t in res.targets)[-2:]
 
 
-def test_explain_prediction_clf_xor():
-    true_xs = [[np.random.randint(2), np.random.randint(2)] for _ in range(100)]
-    xs = np.array([[np.random.normal(x, 0.2), np.random.normal(y, 0.2)]
+@pytest.mark.parametrize('seed', [1, 2, 3])
+def test_explain_prediction_clf_xor(seed):
+    rng = np.random.RandomState(seed)
+    true_xs = [[rng.randint(2), rng.randint(2)] for _ in range(100)]
+    xs = np.array([[rng.normal(x, 0.2), rng.normal(y, 0.2)]
                    for x, y in true_xs])
     ys = np.array([x == y for x, y in true_xs])
-    clf = XGBClassifier(n_estimators=100, max_depth=2)
+    clf = XGBClassifier(n_estimators=100, max_depth=2, tree_method='exact')
     clf.fit(xs, ys)
     res = explain_prediction(clf, np.array([1, 1]))
     format_as_all(res, clf)
@@ -248,7 +244,7 @@ def test_explain_prediction_reg(boston_train):
 def test_explain_prediction_reg_booster(boston_train):
     X, y, feature_names = boston_train
     booster = xgboost.train(
-        params={'objective': 'reg:linear', 'silent': True, 'max_depth': 2},
+        params={'objective': 'reg:squarederror', 'max_depth': 2},
         dtrain=xgboost.DMatrix(X, label=y),
     )
     assert_trained_linear_regression_explained(
