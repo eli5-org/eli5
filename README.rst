@@ -87,12 +87,5 @@ License is MIT.
 Check `docs <https://eli5.readthedocs.io/>`_ for more.
 
 .. note::
-    This is the same project as https://github.com/TeamHG-Memex/eli5/,
-    but due to temporary github access issues, 0.11 release is prepared in
-    https://github.com/eli5-org/eli5 (this repo).
-
-----
-
-.. image:: https://hyperiongray.s3.amazonaws.com/define-hg.svg
-	:target: https://www.hyperiongray.com/?pk_campaign=github&pk_kwd=eli5
-	:alt: define hyperiongray
+    This project was previously developed at https://github.com/TeamHG-Memex/eli5/
+    with support from `Hyperion Gray <https://www.hyperiongray.com>`_.
