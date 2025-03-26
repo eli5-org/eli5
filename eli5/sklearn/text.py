@@ -1,11 +1,7 @@
-from __future__ import absolute_import
-from typing import Any, Union, Callable, Dict, List, Optional, Set, Tuple
+from typing import Callable, Optional
 
 from sklearn.pipeline import FeatureUnion
-try:
-    from sklearn.feature_extraction.text import _VectorizerMixin as VectorizerMixin
-except ImportError:  # Changed in scikit-learn 0.22
-    from sklearn.feature_extraction.text import VectorizerMixin
+from sklearn.feature_extraction.text import _VectorizerMixin as VectorizerMixin
 
 from eli5.base import (
     DocWeightedSpans, WeightedSpans, FeatureWeights, FeatureWeight,
@@ -15,8 +11,7 @@ from eli5.sklearn.unhashing import InvertableHashingVectorizer
 from eli5.sklearn._span_analyzers import build_span_analyzer
 
 
-def get_weighted_spans(doc, vec, feature_weights):
-    # type: (Any, Any, FeatureWeights) -> Optional[WeightedSpans]
+def get_weighted_spans(doc, vec, feature_weights: FeatureWeights) -> Optional[WeightedSpans]:
     """ If possible, return a dict with preprocessed document and a list
     of spans with weights, corresponding to features in the document.
     """
@@ -33,8 +28,7 @@ def get_weighted_spans(doc, vec, feature_weights):
     return None
 
 
-def add_weighted_spans(doc, vec, vectorized, target_expl):
-    # type: (Any, Any, bool, TargetExplanation) -> None
+def add_weighted_spans(doc, vec, vectorized: bool, target_expl: TargetExplanation) -> None:
     """
     Compute and set ``target_expl.weighted_spans`` attribute, when possible.
     """
@@ -47,15 +41,14 @@ def add_weighted_spans(doc, vec, vectorized, target_expl):
         target_expl.weighted_spans = weighted_spans
 
 
-FoundFeatures = Dict[Tuple[str, int], float]
+FoundFeatures = dict[tuple[str, int], float]
 
 
 def _get_doc_weighted_spans(doc,
                             vec,
-                            feature_weights,  # type: FeatureWeights
-                            feature_fn=None   # type: Optional[Callable[[str], str]]
-                            ):
-    # type: (...) -> Optional[Tuple[FoundFeatures, DocWeightedSpans]]
+                            feature_weights: FeatureWeights,
+                            feature_fn: Optional[Callable[[str], str]] = None,
+                            ) -> Optional[tuple[FoundFeatures, DocWeightedSpans]]:
     if isinstance(vec, InvertableHashingVectorizer):
         vec = vec.vec
 
@@ -88,10 +81,9 @@ def _get_doc_weighted_spans(doc,
     )
 
 
-def _get_feature_weights_dict(feature_weights,  # type: FeatureWeights
-                              feature_fn        # type: Optional[Callable[[str], str]]
-                              ):
-    # type: (...) -> Dict[str, Tuple[float, Tuple[str, int]]]
+def _get_feature_weights_dict(feature_weights: FeatureWeights,
+                              feature_fn: Optional[Callable[[str], str]],
+                              ) -> dict[str, tuple[float, tuple[str, int]]]:
     """ Return {feat_name: (weight, (group, idx))} mapping. """
     return {
         # (group, idx) is an unique feature identifier, e.g. ('pos', 2)
@@ -112,8 +104,8 @@ def _get_features(feature, feature_fn=None):
     return features
 
 
-def _get_weighted_spans_from_union(doc, vec_union, feature_weights):
-    # type: (Any, FeatureUnion, FeatureWeights) -> Optional[WeightedSpans]
+def _get_weighted_spans_from_union(
+        doc, vec_union: FeatureUnion, feature_weights: FeatureWeights) -> Optional[WeightedSpans]:
     docs_weighted_spans = []
     named_found_features = []
     for vec_name, vec in vec_union.transformer_list:
@@ -142,12 +134,13 @@ def _get_weighted_spans_from_union(doc, vec_union, feature_weights):
         return None
 
 
-def _get_other(feature_weights, named_found_features):
-    # type: (FeatureWeights, List[Tuple[str, FoundFeatures]]) -> FeatureWeights
+def _get_other(
+        feature_weights: FeatureWeights, named_found_features: list[tuple[str, FoundFeatures]],
+        ) -> FeatureWeights:
     # search for items that were not accounted at all.
-    other_items = []  # type: List[FeatureWeight]
-    accounted_keys = set()  # type: Set[Tuple[str, int]]
-    all_found_features = set()  # type: Set[Tuple[str, int]]
+    other_items: list[FeatureWeight] = []
+    accounted_keys: set[tuple[str, int]] = set()
+    all_found_features: set[tuple[str, int]] = set()
     for _, found_features in named_found_features:
         all_found_features.update(found_features)
 
