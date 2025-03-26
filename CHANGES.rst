@@ -1,9 +1,10 @@
 Changelog
 =========
 
-0.14.0 (?)
+0.14.0 (2025-03-26)
 -------------------
 
+* add support for scikit-learn 1.6+
 * drop support for python 3.6, 3.7, 3.8
 * add support for python 3.11, 3.12, 3.13
 
