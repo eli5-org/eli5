@@ -4,8 +4,8 @@ Overview
 Installation
 ------------
 
-ELI5 works in Python 2.7 and Python 3.4+. Currently it requires
-scikit-learn 0.18+. You can install ELI5 using pip::
+ELI5 works in Python 3.9+. Currently it requires
+scikit-learn 1.6+. You can install ELI5 using pip::
 
     pip install eli5
 
@@ -33,6 +33,8 @@ following machine learning frameworks and packages:
 
 * :ref:`library-keras` - explain predictions of image classifiers
   via Grad-CAM visualizations.
+  **Note:** currently only TensorFlow 1.x is supported,
+  which requires older python versions and ELI5 0.13 or earlier.
 
 * :ref:`library-xgboost` - show feature importances and explain predictions
   of XGBClassifier, XGBRegressor and xgboost.Booster.
