@@ -20,12 +20,9 @@
 import os
 import sys
 import re
-sys.path.insert(0, os.path.abspath('../..'))
+from unittest.mock import MagicMock
 
-try:
-    from unittest.mock import MagicMock
-except ImportError:  # python 2
-    from mock import MagicMock
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 class Mock(MagicMock):
@@ -55,7 +52,7 @@ MOCK_MODULES = [
     'keras.layers',
     'keras.preprocessing.image',
     # 'pandas',
-    'PIL',
+    # 'PIL',
     'matplotlib',
     'matplotlib.pyplot',
     'matplotlib.cm',
@@ -172,13 +169,6 @@ todo_include_todos = False
 
 
 # -- Options for HTML output ----------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-import sphinx_rtd_theme
-html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 napoleon_google_docstring = False
 napoleon_use_param = False
