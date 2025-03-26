@@ -5,7 +5,7 @@ Welcome to ELI5's documentation!
    :target: https://pypi.python.org/pypi/eli5
    :alt: PyPI Version
 
-.. image:: https://github.com/eli5-org/eli5/workflows/build/badge.svg?branch=master
+.. image:: https://github.com/eli5-org/eli5/actions/workflows/python-package.yml/badge.svg?branch=master
    :target: https://github.com/eli5-org/eli5/actions
    :alt: Build Status
 
