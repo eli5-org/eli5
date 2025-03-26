@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # ELI5 documentation build configuration file, created by
 # sphinx-quickstart on Mon Nov 14 21:54:37 2016.
@@ -67,6 +66,13 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 def setup(app):
     # see https://github.com/snide/sphinx_rtd_theme/issues/117
     app.add_css_file("rtfd_overrides.css")
+    # see https://github.com/spatialaudio/nbsphinx/issues/549
+    app.connect('env-before-read-docs', set_line_length_limit)
+
+
+def set_line_length_limit(app, env, docnames):
+    env.settings['line_length_limit'] = 1_000_000
+
 
 suppress_warnings = ['image.nonlocal_uri']
 
