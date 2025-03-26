@@ -1,8 +1,7 @@
+attrs > 17.1.0
+jinja2 >= 3.0.0
 numpy >= 1.9.0
 scipy
-singledispatch >= 3.4.0.3
-scikit-learn >= 1.0
-attrs > 16.0.0
-jinja2 >= 3.0.0
-pip >= 8.1
-setuptools >= 20.7
+scikit-learn >= 1.6.0
+graphviz
+tabulate>=0.7.7

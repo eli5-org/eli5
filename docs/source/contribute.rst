@@ -6,7 +6,7 @@ ELI5 uses MIT license; contributions are welcome!
 * Source code: https://github.com/TeamHG-Memex/eli5
 * Issue tracker: https://github.com/TeamHG-Memex/eli5/issues
 
-ELI5 supports Python 2.7 and Python 3.4+
+ELI5 supports Python 3.9+.
 To run tests make sure tox_ Python package is installed, then run
 
 ::

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # ELI5 documentation build configuration file, created by
 # sphinx-quickstart on Mon Nov 14 21:54:37 2016.
@@ -20,12 +19,9 @@
 import os
 import sys
 import re
-sys.path.insert(0, os.path.abspath('../..'))
+from unittest.mock import MagicMock
 
-try:
-    from unittest.mock import MagicMock
-except ImportError:  # python 2
-    from mock import MagicMock
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 class Mock(MagicMock):
@@ -55,7 +51,7 @@ MOCK_MODULES = [
     'keras.layers',
     'keras.preprocessing.image',
     # 'pandas',
-    'PIL',
+    # 'PIL',
     'matplotlib',
     'matplotlib.pyplot',
     'matplotlib.cm',
@@ -70,6 +66,13 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 def setup(app):
     # see https://github.com/snide/sphinx_rtd_theme/issues/117
     app.add_css_file("rtfd_overrides.css")
+    # see https://github.com/spatialaudio/nbsphinx/issues/549
+    app.connect('env-before-read-docs', set_line_length_limit)
+
+
+def set_line_length_limit(app, env, docnames):
+    env.settings['line_length_limit'] = 1_000_000
+
 
 suppress_warnings = ['image.nonlocal_uri']
 
@@ -176,9 +179,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-import sphinx_rtd_theme
 html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 napoleon_google_docstring = False
 napoleon_use_param = False

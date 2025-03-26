@@ -2,7 +2,6 @@ sphinx
 sphinx_rtd_theme
 
 ipython
-scipy
-numpy > 1.9.0
 pandas
-scikit-learn >= 1.6.0
+Pillow
+-r ../requirements.txt
