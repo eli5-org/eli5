@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from itertools import groupby
-from typing import List, Optional, Tuple
+from html import escape
+from typing import Optional
 
 import numpy as np
 from jinja2 import Environment, PackageLoader
@@ -32,16 +31,15 @@ template_env.filters.update(dict(
 ))
 
 
-def format_as_html(explanation,  # type: Explanation
-                   include_styles=True,  # type: bool
-                   force_weights=True,  # type: bool
+def format_as_html(explanation: Explanation,
+                   include_styles=True,
+                   force_weights=True,
                    show=fields.ALL,
-                   preserve_density=None,  # type: Optional[bool]
-                   highlight_spaces=None,  # type: Optional[bool]
-                   horizontal_layout=True,  # type: bool
-                   show_feature_values=False  # type: bool
-                   ):
-    # type: (...) -> str
+                   preserve_density: Optional[bool] = None,
+                   highlight_spaces: Optional[bool] = None,
+                   horizontal_layout=True,
+                   show_feature_values=False,
+                   ) -> str:
     """ Format explanation as html.
     Most styles are inline, but some are included separately in <style> tag,
     you can omit them by passing ``include_styles=False`` and call
@@ -130,8 +128,7 @@ to the probability. Feature values are shown if "show_feature_values" is True.\
 '''.replace('\n', ' ')
 
 
-def format_html_styles():
-    # type: () -> str
+def format_html_styles() -> str:
     """ Format just the styles,
     use with ``format_as_html(explanation, include_styles=False)``.
     """
@@ -139,10 +136,9 @@ def format_html_styles():
 
 
 def render_targets_weighted_spans(
-        targets,  # type: List[TargetExplanation]
-        preserve_density,  # type: Optional[bool]
-    ):
-    # type: (...) -> List[Optional[str]]
+        targets: list[TargetExplanation],
+        preserve_density: Optional[bool],
+    ) -> list[Optional[str]]:
     """ Return a list of rendered weighted spans for targets.
     Function must accept a list in order to select consistent weight
     ranges across all targets.
@@ -150,22 +146,19 @@ def render_targets_weighted_spans(
     prepared_weighted_spans = prepare_weighted_spans(
         targets, preserve_density)
 
-    def _fmt_pws(pws):
-        # type: (PreparedWeightedSpans) -> str
+    def _fmt_pws(pws: PreparedWeightedSpans) -> str:
         name = ('<b>{}:</b> '.format(pws.doc_weighted_spans.vec_name)
                 if pws.doc_weighted_spans.vec_name else '')
         return '{}{}'.format(name, render_weighted_spans(pws))
 
-    def _fmt_pws_list(pws_lst):
-        # type: (List[PreparedWeightedSpans]) -> str
+    def _fmt_pws_list(pws_lst: list[PreparedWeightedSpans]) -> str:
         return '<br/>'.join(_fmt_pws(pws) for pws in pws_lst)
 
     return [_fmt_pws_list(pws_lst) if pws_lst else None
             for pws_lst in prepared_weighted_spans]
 
 
-def render_weighted_spans(pws):
-    # type: (PreparedWeightedSpans) -> str
+def render_weighted_spans(pws: PreparedWeightedSpans) -> str:
     # TODO - for longer documents, an option to remove text
     # without active features
     return ''.join(
@@ -177,11 +170,10 @@ def render_weighted_spans(pws):
             key=lambda x: x[1]))
 
 
-def _colorize(token,  # type: str
-              weight,  # type: float
-              weight_range,  # type: float
-              ):
-    # type: (...) -> str
+def _colorize(token: str,
+              weight: float,
+              weight_range: float,
+              ) -> str:
     """ Return token wrapped in a span with some styles
     (calculated from weight and weight_range) applied.
     """
@@ -208,8 +200,7 @@ def _colorize(token,  # type: str
         )
 
 
-def _weight_opacity(weight, weight_range):
-    # type: (float, float) -> str
+def _weight_opacity(weight: float, weight_range: float) -> str:
     """ Return opacity value for given weight as a string.
     """
     min_opacity = 0.8
@@ -220,11 +211,10 @@ def _weight_opacity(weight, weight_range):
     return '{:.2f}'.format(min_opacity + (1 - min_opacity) * rel_weight)
 
 
-_HSL_COLOR = Tuple[float, float, float]
+_HSL_COLOR = tuple[float, float, float]
 
 
-def weight_color_hsl(weight, weight_range, min_lightness=0.8):
-    # type: (float, float, float) -> _HSL_COLOR
+def weight_color_hsl(weight: float, weight_range: float, min_lightness=0.8) -> _HSL_COLOR:
     """ Return HSL color components for given weight,
     where the max absolute weight is given by weight_range.
     """
@@ -235,21 +225,18 @@ def weight_color_hsl(weight, weight_range, min_lightness=0.8):
     return hue, saturation, lightness
 
 
-def format_hsl(hsl_color):
-    # type: (_HSL_COLOR) -> str
+def format_hsl(hsl_color: _HSL_COLOR) -> str:
     """ Format hsl color as css color string.
     """
     hue, saturation, lightness = hsl_color
     return 'hsl({}, {:.2%}, {:.2%})'.format(hue, saturation, lightness)
 
 
-def _hue(weight):
-    # type: (float) -> float
+def _hue(weight: float) -> float:
     return 120 if weight > 0 else 0
 
 
-def get_weight_range(weights):
-    # type: (FeatureWeights) -> float
+def get_weight_range(weights: FeatureWeights) -> float:
     """ Max absolute feature for pos and neg weights.
     """
     return max_or_0(abs(fw.weight)
@@ -258,11 +245,10 @@ def get_weight_range(weights):
 
 
 def remaining_weight_color_hsl(
-        ws,  # type: List[FeatureWeight]
-        weight_range,  # type: float
-        pos_neg,  # type: str
-    ):
-    # type: (...) -> _HSL_COLOR
+        ws: list[FeatureWeight],
+        weight_range: float,
+        pos_neg: str,
+    ) -> _HSL_COLOR:
     """ Color for "remaining" row.
     Handles a number of edge cases: if there are no weights in ws or weight_range
     is zero, assume the worst (most intensive positive or negative color).
@@ -278,8 +264,7 @@ def remaining_weight_color_hsl(
     return weight_color_hsl(weight, weight_range)
 
 
-def _format_unhashed_feature(feature, weight, hl_spaces):
-    # type: (...) -> str
+def _format_unhashed_feature(feature, weight, hl_spaces) -> str:
     """ Format unhashed feature: show first (most probable) candidate,
     display other candidates in title attribute.
     """
@@ -295,8 +280,7 @@ def _format_unhashed_feature(feature, weight, hl_spaces):
         return html
 
 
-def _format_feature(feature, weight, hl_spaces):
-    # type: (...) -> str
+def _format_feature(feature, weight, hl_spaces) -> str:
     """ Format any feature.
     """
     if isinstance(feature, FormattedFeatureName):
@@ -308,14 +292,12 @@ def _format_feature(feature, weight, hl_spaces):
         return _format_single_feature(feature, weight, hl_spaces=hl_spaces)
 
 
-def _format_single_feature(feature, weight, hl_spaces):
-    # type: (str, float, bool) -> str
+def _format_single_feature(feature: str, weight: float, hl_spaces: bool) -> str:
     feature = html_escape(feature)
     if not hl_spaces:
         return feature
 
-    def replacer(n_spaces, side):
-        # type: (int, str) -> str
+    def replacer(n_spaces: int, side: str) -> str:
         m = '0.1em'
         margins = {'left': (m, 0), 'right': (0, m), 'center': (m, m)}[side]
         style = '; '.join([
@@ -331,18 +313,12 @@ def _format_single_feature(feature, weight, hl_spaces):
     return replace_spaces(feature, replacer)
 
 
-def _format_decision_tree(treedict):
-    # type: (...) -> str
+def _format_decision_tree(treedict) -> str:
     if treedict.graphviz and _graphviz.is_supported():
         return _graphviz.dot2svg(treedict.graphviz)
     else:
         return tree2text(treedict)
 
 
-def html_escape(text):
-    # type: (str) -> str
-    try:
-        from html import escape
-    except ImportError:
-        from cgi import escape  # type: ignore
+def html_escape(text) -> str:
     return escape(text, quote=True)

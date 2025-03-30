@@ -1,15 +1,16 @@
 from collections import Counter
-from typing import List, Optional
+from typing import Optional
 
 import numpy as np
 
-from eli5.base import TargetExplanation, WeightedSpans, DocWeightedSpans
+from eli5.base import TargetExplanation, DocWeightedSpans
 from eli5.base_utils import attrs
 from eli5.utils import max_or_0
 
 
-def get_char_weights(doc_weighted_spans, preserve_density=None):
-    # type: (DocWeightedSpans, Optional[bool]) -> np.ndarray
+def get_char_weights(
+        doc_weighted_spans: DocWeightedSpans, preserve_density: Optional[bool] = None,
+    ) -> np.ndarray:
     """ Return character weights for a text document with highlighted features.
     If preserve_density is True, then color for longer fragments will be
     less intensive than for shorter fragments, so that "sum" of intensities
@@ -35,11 +36,10 @@ def get_char_weights(doc_weighted_spans, preserve_density=None):
 @attrs
 class PreparedWeightedSpans(object):
     def __init__(self,
-                 doc_weighted_spans,  # type: DocWeightedSpans
-                 char_weights,  # type: np.ndarray
-                 weight_range,  # type: float
+                 doc_weighted_spans: DocWeightedSpans,
+                 char_weights: np.ndarray,
+                 weight_range: float,
                  ):
-        # type: (...) -> None
         self.doc_weighted_spans = doc_weighted_spans
         self.char_weights = char_weights
         self.weight_range = weight_range
@@ -55,25 +55,24 @@ class PreparedWeightedSpans(object):
         return False
 
 
-def prepare_weighted_spans(targets,  # type: List[TargetExplanation]
-                           preserve_density=None,  # type: Optional[bool]
-                           ):
-    # type: (...) -> List[Optional[List[PreparedWeightedSpans]]]
+def prepare_weighted_spans(targets: list[TargetExplanation],
+                           preserve_density: Optional[bool] = None,
+                           ) -> list[Optional[list[PreparedWeightedSpans]]]:
     """ Return weighted spans prepared for rendering.
     Calculate a separate weight range for each different weighted
     span (for each different index): each target has the same number
     of weighted spans.
     """
-    targets_char_weights = [
+    targets_char_weights: list[Optional[list[np.ndarray]]] = [
         [get_char_weights(ws, preserve_density=preserve_density)
          for ws in t.weighted_spans.docs_weighted_spans]
          if t.weighted_spans else None
-         for t in targets]  # type: List[Optional[List[np.ndarray]]]
+         for t in targets]
     max_idx = max_or_0(len(ch_w or []) for ch_w in targets_char_weights)
 
-    targets_char_weights_not_None = [
+    targets_char_weights_not_None: list[list[np.ndarray]] = [
         cw for cw in targets_char_weights
-        if cw is not None]  # type: List[List[np.ndarray]]
+        if cw is not None]
 
     spans_weight_ranges = [
         max_or_0(
