@@ -10,6 +10,8 @@ from eli5.explain import explain_prediction
 LOGPROBS_ESTIMATOR = 'llm_logprobs'
 
 
+# TODO do one for chat_completion
+
 @explain_prediction.register(ChoiceLogprobs)
 def explain_prediction_openai_logprobs(logprobs: ChoiceLogprobs, doc=None):
     """ Creates an explanation of the logprobs
@@ -27,14 +29,14 @@ def explain_prediction_openai_logprobs(logprobs: ChoiceLogprobs, doc=None):
         spans.append((
             f'{idx}-{lp.token}',  # each token is a unique feature with it's own weight
             [(idx, idx + token_len)],
-            # TODO add support for interpreting weights as probabilities
-            2 * math.exp(lp.logprob) - 1))
+            math.exp(lp.logprob)))
         idx += token_len
     weighted_spans = WeightedSpans([
         DocWeightedSpans(
             document=text,
             spans=spans,
             preserve_density=False,
+            with_probabilities=True,
         )
     ])
     target_explanation = TargetExplanation(target=text, weighted_spans=weighted_spans)
