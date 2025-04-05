@@ -9,9 +9,13 @@ OpenAI_ provides a client library for calling Large Language Models (LLMs).
 
 eli5 supports :func:`eli5.explain_prediction` for
 ``ChatCompletion``, ``ChoiceLogprobs`` and ``openai.Client`` objects,
-highlighting tokens proportionally to the log probability.
+highlighting tokens proportionally to the log probability,
+which can help to see where model is less confident in it's predictions.
 More likely tokens are highligted in green,
-while unlikely tokens are highlighted in red.
+while unlikely tokens are highlighted in red:
+
+.. image:: ../static/llm-explain-logprobs.png
+  :alt: LLM token probabilities visualized
 
 Explaining with a client, invoking the model with ``logprobs`` enabled:
 ::
@@ -48,6 +52,10 @@ you may call :func:`eli5.explain_prediction` with
     )
     eli5.explain_prediction(chat_completion)  # or
     eli5.explain_prediction(chat_completion.choices[0].logprobs)
+
+
+See the :ref:`tutorial <explain-llm-logprobs-tutorial>` for a more detailed usage
+example.
 
 .. note::
     While token probabilities reflect model uncertainty in many cases,
