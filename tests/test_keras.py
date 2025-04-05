@@ -38,12 +38,14 @@ conv_layer = Conv2D(10, (3, 3))
 def simple_seq():
     """A simple sequential model for images."""
     model = Sequential([
-        Activation('linear', input_shape=(32, 32, 1)), # index 0, input
+        Input((32, 32, 1)),
+        Activation('linear'),                          # index 0, input
         conv_layer,                                    # index 1, conv
         Conv2D(20, (3, 3)),                            # index 2, conv2
         GlobalAveragePooling2D(),                      # index 3, gap
         # output shape is (None, 20)
     ])
+    model(Input((32, 32, 1)))
     print('Summary of model:')
     model.summary()
     # rename layers
@@ -101,7 +103,7 @@ def test_validate_doc(simple_seq):
 
 def test_validate_doc_custom():
     # model with custom (not rank 4) input shape
-    model = Sequential([Dense(1, input_shape=(2, 3))])
+    model = Sequential(Input((2, 3)), [Dense(1)])
     # not matching shape
     with pytest.raises(ValueError):
         _validate_doc(model, np.zeros((5, 3)))
