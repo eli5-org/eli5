@@ -1,7 +1,7 @@
 import math
 
 import openai
-from openai.types.chat.chat_completion import ChoiceLogprobs
+from openai.types.chat.chat_completion import ChoiceLogprobs, ChatCompletion
 
 from eli5.base import Explanation, TargetExplanation, WeightedSpans, DocWeightedSpans
 from eli5.explain import explain_prediction
@@ -9,8 +9,6 @@ from eli5.explain import explain_prediction
 
 LOGPROBS_ESTIMATOR = 'llm_logprobs'
 
-
-# TODO do one for chat_completion
 
 @explain_prediction.register(ChoiceLogprobs)
 def explain_prediction_openai_logprobs(logprobs: ChoiceLogprobs, doc=None):
@@ -46,26 +44,15 @@ def explain_prediction_openai_logprobs(logprobs: ChoiceLogprobs, doc=None):
     )
 
 
-@explain_prediction.register(openai.Client)
-def explain_prediction_openai_client(
-        client: openai.Client,
-        doc: str | list[dict],
-        *,
-        model: str,
-        **kwargs,
-        ):
+@explain_prediction.register(ChatCompletion)
+def explain_prediction_openai_completion(
+        chat_completion: ChoiceLogprobs, doc=None):
+    """ Creates an explanation of the ChatCompletion's logprobs
+    highlighting them proportionally to the log probability.
+    More likely tokens are highligted in green,
+    while unlikely tokens are highlighted in red.
+    ``doc`` argument is ignored.
     """
-    Calls OpenAI client, obtaining response for ``doc`` (a string, or a list of messages),
-    with logprobs enabled. Other keyword arguments are passed to OpenAI client, with
-    ``model`` keyword argument required.
-    """
-    if isinstance(doc, str):
-        messages = [{"role": "user", "content": doc}]
-    else:
-        messages = doc
-    kwargs['logprobs'] = True
-    chat_completion = client.chat.completions.create(
-        messages=messages, model=model, **kwargs)
     targets = []
     for choice in chat_completion.choices:
         target, = explain_prediction_openai_logprobs(choice.logprobs).targets
@@ -76,3 +63,30 @@ def explain_prediction_openai_client(
         targets=targets,
     )
     return explanation
+
+
+@explain_prediction.register(openai.Client)
+def explain_prediction_openai_client(
+        client: openai.Client,
+        doc: str | list[dict],
+        *,
+        model: str,
+        **kwargs,
+        ):
+    """
+    Calls OpenAI client, obtaining response for ``doc`` (a string, or a list of messages),
+    with logprobs enabled, and explains the prediction,
+    highlighting tokens proportionally to the log probability.
+    More likely tokens are highligted in green,
+    while unlikely tokens are highlighted in red.
+    . Other keyword arguments are passed to OpenAI client, with
+    ``model`` keyword argument required.
+    """
+    if isinstance(doc, str):
+        messages = [{"role": "user", "content": doc}]
+    else:
+        messages = doc
+    kwargs['logprobs'] = True
+    chat_completion = client.chat.completions.create(
+        messages=messages, model=model, **kwargs)
+    return explain_prediction_openai_completion(chat_completion)
