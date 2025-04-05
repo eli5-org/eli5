@@ -54,6 +54,7 @@ It provides support for the following machine learning frameworks and packages:
 * sklearn-crfsuite_. ELI5 allows to check weights of sklearn_crfsuite.CRF
   models.
 
+* OpenAI_ python client. ELI5 allows to explain LLM predictions with token probabilities.
 
 ELI5 also implements several algorithms for inspecting black-box models
 (see `Inspecting Black-Box Estimators`_):
@@ -81,6 +82,7 @@ and formatting on a client.
 .. _Catboost: https://github.com/catboost/catboost
 .. _Permutation importance: https://eli5.readthedocs.io/en/latest/blackbox/permutation_importance.html
 .. _Inspecting Black-Box Estimators: https://eli5.readthedocs.io/en/latest/blackbox/index.html
+.. _OpenAI: https://github.com/openai/openai-python
 
 License is MIT.
 
