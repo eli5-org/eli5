@@ -16,7 +16,7 @@ def explain_prediction_openai_logprobs(logprobs: ChoiceLogprobs, doc=None):
     """ Creates an explanation of the logprobs
     (available as ``.choices[idx].logprobs`` on a ChatCompletion object),
     highlighting them proportionally to the log probability.
-    More likely tokens are highligted in green,
+    More likely tokens are highlighted in green,
     while unlikely tokens are highlighted in red.
     ``doc`` argument is ignored.
     """
@@ -52,7 +52,7 @@ def explain_prediction_openai_completion(
         chat_completion: ChatCompletion, doc=None):
     """ Creates an explanation of the ChatCompletion's logprobs
     highlighting them proportionally to the log probability.
-    More likely tokens are highligted in green,
+    More likely tokens are highlighted in green,
     while unlikely tokens are highlighted in red.
     ``doc`` argument is ignored.
     """
