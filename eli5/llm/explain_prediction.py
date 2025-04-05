@@ -19,6 +19,8 @@ def explain_prediction_openai_logprobs(logprobs: ChoiceLogprobs, doc=None):
     while unlikely tokens are highlighted in red.
     ``doc`` argument is ignored.
     """
+    if logprobs.content is None:
+        raise ValueError('Predictions must be obtained with logprobs enabled')
     text = ''.join(x.token for x in logprobs.content)
     spans = []
     idx = 0
@@ -46,7 +48,7 @@ def explain_prediction_openai_logprobs(logprobs: ChoiceLogprobs, doc=None):
 
 @explain_prediction.register(ChatCompletion)
 def explain_prediction_openai_completion(
-        chat_completion: ChoiceLogprobs, doc=None):
+        chat_completion: ChatCompletion, doc=None):
     """ Creates an explanation of the ChatCompletion's logprobs
     highlighting them proportionally to the log probability.
     More likely tokens are highligted in green,
@@ -55,6 +57,8 @@ def explain_prediction_openai_completion(
     """
     targets = []
     for choice in chat_completion.choices:
+        if choice.logprobs is None:
+            raise ValueError('Predictions must be obtained with logprobs enabled')
         target, = explain_prediction_openai_logprobs(choice.logprobs).targets
         target.target = choice
         targets.append(target)
@@ -88,5 +92,7 @@ def explain_prediction_openai_client(
         messages = doc
     kwargs['logprobs'] = True
     chat_completion = client.chat.completions.create(
-        messages=messages, model=model, **kwargs)
+        messages=messages,  # type: ignore
+        model=model,
+        **kwargs)
     return explain_prediction_openai_completion(chat_completion)

@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union, Optional, Sequence
 
 import numpy as np
 
@@ -152,7 +152,7 @@ class DocWeightedSpans:
     """
     def __init__(self,
                  document: str,
-                 spans: list[WeightedSpan],
+                 spans: Sequence[WeightedSpan],
                  preserve_density: Optional[bool] = None,
                  with_probabilities: Optional[bool] = None,
                  vec_name: Optional[str] = None,

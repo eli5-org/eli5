@@ -2,10 +2,7 @@ import math
 import pytest
 from unittest.mock import Mock
 
-import eli5
-from eli5.base import Explanation
-from eli5.formatters.html import format_as_html
-
+pytest.importorskip('openai')
 from openai.types.chat.chat_completion import (
     ChoiceLogprobs,
     ChatCompletion,
@@ -14,6 +11,10 @@ from openai.types.chat.chat_completion import (
     Choice,
 )
 from openai import Client
+
+import eli5
+from eli5.base import Explanation
+from eli5.formatters.html import format_as_html
 
 
 @pytest.fixture
