@@ -4,4 +4,5 @@ sphinx_rtd_theme
 ipython
 pandas
 Pillow
+openai
 -r ../requirements.txt
