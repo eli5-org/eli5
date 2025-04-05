@@ -358,6 +358,6 @@ OneVsRestClassifier
 OneVsRestClassifier_ by dispatching to the explanation function for
 OvR base estimator, and then calling this function for the
 OneVsRestClassifier instance. This works in many cases, but not for all.
-Please report issues to https://github.com/TeamHG-Memex/eli5/issues.
+Please report issues to https://github.com/eli5-org/eli5/issues.
 
 .. _OneVsRestClassifier: http://scikit-learn.org/stable/modules/generated/sklearn.multiclass.OneVsRestClassifier.html

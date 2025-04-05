@@ -11,7 +11,7 @@ has not too many features, but is still interesting enough.
 We are using `XGBoost <https://xgboost.readthedocs.io/en/latest/>`__
 0.81 and data downloaded from https://www.kaggle.com/c/titanic/data (it
 is also bundled in the eli5 repo:
-https://github.com/TeamHG-Memex/eli5/blob/master/notebooks/titanic-train.csv).
+https://github.com/eli5-org/eli5/blob/master/notebooks/titanic-train.csv).
 
 1. Training data
 ----------------

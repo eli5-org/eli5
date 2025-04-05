@@ -43,7 +43,7 @@ To understand how to use ``eli5.lime`` with text data check the
 :ref:`TextExplainer tutorial <lime-tutorial>`. API reference is available
 :mod:`here <eli5.lime>`. Currently eli5 doesn't provide a lot of helpers
 for LIME + non-text data, but there is an IPyhton
-`notebook <https://github.com/TeamHG-Memex/eli5/blob/master/notebooks/LIME%20and%20synthetic%20data.ipynb>`__
+`notebook <https://github.com/eli5-org/eli5/blob/master/notebooks/LIME%20and%20synthetic%20data.ipynb>`__
 with an example of applying LIME for such tasks.
 
 Caveats

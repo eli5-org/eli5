@@ -7,7 +7,7 @@ sklearn-crfsuite_ is a sequence classification library. It provides
 a higher-level API for python-crfsuite_; python-crfsuite_ is a Python binding
 for CRFSuite_ C++ library.
 
-.. _sklearn-crfsuite: https://github.com/TeamHG-Memex/sklearn-crfsuite
+.. _sklearn-crfsuite: https://github.com/scrapinghub/sklearn-crfsuite
 .. _python-crfsuite: https://github.com/scrapinghub/python-crfsuite
 .. _CRFSuite: https://github.com/chokkan/crfsuite
 

@@ -3,8 +3,8 @@ Contributing
 
 ELI5 uses MIT license; contributions are welcome!
 
-* Source code: https://github.com/TeamHG-Memex/eli5
-* Issue tracker: https://github.com/TeamHG-Memex/eli5/issues
+* Source code: https://github.com/eli5-org/eli5
+* Issue tracker: https://github.com/eli5-org/eli5/issues
 
 ELI5 supports Python 3.9+.
 To run tests make sure tox_ Python package is installed, then run

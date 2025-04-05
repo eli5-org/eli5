@@ -9,8 +9,8 @@ Welcome to ELI5's documentation!
    :target: https://github.com/eli5-org/eli5/actions
    :alt: Build Status
 
-.. image:: https://codecov.io/github/TeamHG-Memex/eli5/coverage.svg?branch=master
-   :target: https://codecov.io/github/TeamHG-Memex/eli5?branch=master
+.. image:: https://codecov.io/github/eli5-org/eli5/coverage.svg?branch=master
+   :target: https://codecov.io/github/eli5-org/eli5?branch=master
    :alt: Code Coverage
 
 ELI5_ is a Python library which allows to visualize and debug
@@ -32,4 +32,4 @@ explain black-box models.
 
 License is MIT.
 
-.. _ELI5: https://github.com/TeamHG-Memex/eli5
+.. _ELI5: https://github.com/eli5-org/eli5
