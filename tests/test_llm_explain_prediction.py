@@ -3,6 +3,7 @@ import pytest
 from unittest.mock import Mock
 
 pytest.importorskip('openai')
+pytest.importorskip('transformers')
 from openai.types.chat.chat_completion import (
     ChoiceLogprobs,
     ChatCompletion,
@@ -11,6 +12,7 @@ from openai.types.chat.chat_completion import (
     Choice,
 )
 from openai import Client
+import transformers
 
 import eli5
 from eli5.base import Explanation
@@ -40,20 +42,28 @@ def example_logprobs():
 
 @pytest.fixture
 def example_completion(example_logprobs):
+    return create_completion(
+        model='gpt-4o-2024-08-06',
+        logprobs=example_logprobs,
+        message=ChatCompletionMessage(
+            content=''.join(x.token for x in example_logprobs.content),
+            role='assistant',
+        ),
+    )
+
+
+def create_completion(model, logprobs, message):
     return ChatCompletion(
         id='chatcmpl-x',
         created=1743590849,
-        model='gpt-4o-2024-08-06',
+        model=model,
         object='chat.completion',
         choices=[
             Choice(
-                logprobs=example_logprobs,
+                logprobs=logprobs,
                 finish_reason='stop',
                 index=0,
-                message=ChatCompletionMessage(
-                    content=''.join(x.token for x in example_logprobs.content),
-                    role='assistant',
-                ),
+                message=message,
             )
         ],
     )
@@ -100,7 +110,35 @@ class MockClient(Client):
 def test_explain_prediction_openai_client(monkeypatch, example_completion):
     client = MockClient(example_completion)
 
-    explanation = eli5.explain_prediction(client, doc="Hello world", model="gpt-4o")
+    explanation = eli5.explain_prediction(client, doc="Hello world world", model="gpt-4o")
+    _assert_explanation_structure_and_html(explanation)
+
+    client.chat.completions.create.assert_called_once()
+
+
+def test_explain_prediction_openai_client_mlx(monkeypatch):
+    model = "mlx-community/Mistral-7B-Instruct-v0.3-4bit"
+    tokenizer = transformers.AutoTokenizer.from_pretrained(model)
+
+    text = 'Hello world world'
+    tokens = tokenizer.encode(text, add_special_tokens=False)
+    assert len(tokens) == 3
+    logprobs = ChoiceLogprobs(
+        token_logprobs=[
+            math.log(0.9),
+            math.log(0.2),
+            math.log(0.4),
+        ],
+        tokens=tokens,
+    )
+    completion = create_completion(
+        model=model,
+        logprobs=logprobs,
+        message=ChatCompletionMessage(content=text, role='assistant'),
+    )
+    client = MockClient(completion)
+
+    explanation = eli5.explain_prediction(client, doc=text, model=model)
     _assert_explanation_structure_and_html(explanation)
 
     client.chat.completions.create.assert_called_once()

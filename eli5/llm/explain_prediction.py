@@ -1,8 +1,10 @@
 import math
+import warnings
 from typing import Union
 
 import openai
-from openai.types.chat.chat_completion import ChoiceLogprobs, ChatCompletion
+from openai.types.chat.chat_completion import (
+    ChatCompletion, ChatCompletionTokenLogprob, ChoiceLogprobs)
 
 from eli5.base import Explanation, TargetExplanation, WeightedSpans, DocWeightedSpans
 from eli5.explain import explain_prediction
@@ -49,7 +51,7 @@ def explain_prediction_openai_logprobs(logprobs: ChoiceLogprobs, doc=None):
 
 @explain_prediction.register(ChatCompletion)
 def explain_prediction_openai_completion(
-        chat_completion: ChatCompletion, doc=None):
+        completion: ChatCompletion, doc=None):
     """ Creates an explanation of the ChatCompletion's logprobs
     highlighting them proportionally to the log probability.
     More likely tokens are highlighted in green,
@@ -57,7 +59,7 @@ def explain_prediction_openai_completion(
     ``doc`` argument is ignored.
     """
     targets = []
-    for choice in chat_completion.choices:
+    for choice in completion.choices:
         if choice.logprobs is None:
             raise ValueError('Predictions must be obtained with logprobs enabled')
         target, = explain_prediction_openai_logprobs(choice.logprobs).targets
@@ -92,8 +94,48 @@ def explain_prediction_openai_client(
     else:
         messages = doc
     kwargs['logprobs'] = True
-    chat_completion = client.chat.completions.create(
+    completion = client.chat.completions.create(
         messages=messages,  # type: ignore
         model=model,
         **kwargs)
-    return explain_prediction_openai_completion(chat_completion)
+    for choice in completion.choices:
+        logprobs = choice.logprobs
+        if logprobs is None:
+            raise ValueError('logprobs not found, likely API does not support them')
+        if logprobs.content is None:
+            _recover_logprobs_content(logprobs, model)
+            if logprobs.content is None:
+                raise ValueError(f'logprobs.content is empty: {logprobs}')
+    return explain_prediction_openai_completion(completion)
+
+
+def _recover_logprobs_content(logprobs: ChoiceLogprobs, model: str):
+    """ Some servers don't populate logprobs.content, try to recover it.
+    """
+    if not (logprobs.token_logprobs and logprobs.tokens):
+        return
+    try:
+        import tokenizers
+    except ImportError:
+        warnings.warn('tokenizers library required to recover logprobs.content')
+        return
+    try:
+        tokenizer = tokenizers.Tokenizer.from_pretrained(model)
+    except Exception:
+        warnings.warn(f'could not load tokenizer for {model} with tokenizers library')
+        return
+    assert len(logprobs.token_logprobs) == len(logprobs.tokens)
+    # get tokens as strings with spaces, is there any better way?
+    text = tokenizer.decode(logprobs.tokens)
+    encoded = tokenizer.encode(text, add_special_tokens=False)
+    text_tokens = [text[start:end] for (start, end) in encoded.offsets]
+    logprobs.content = []
+    for logprob, token in zip(logprobs.token_logprobs, text_tokens):
+        logprobs.content.append(
+            ChatCompletionTokenLogprob(
+                token=token,
+                bytes=list(map(int, token.encode('utf8'))),
+                logprob=logprob,
+                top_logprobs=[],  # we could recover that too
+            )
+        )
