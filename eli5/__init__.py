@@ -93,3 +93,12 @@ try:
 except ImportError:
     # keras is not available
     pass
+
+try:
+    from .llm.explain_prediction import (
+        explain_prediction_openai_logprobs,
+        explain_prediction_openai_client
+    )
+except ImportError:
+    # openai not available
+    pass

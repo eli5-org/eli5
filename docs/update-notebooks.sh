@@ -79,3 +79,16 @@ mv ../notebooks/keras-image-classifiers_files/ \
     source/_notebooks/
 sed -i 's&.. image:: keras-image-classifiers_files/&.. image:: ../_notebooks/keras-image-classifiers_files/&g' \
     source/_notebooks/keras-image-classifiers.rst
+
+
+# LLM logprobs explain prediction tutorial
+jupyter nbconvert \
+        --to rst \
+        --stdout \
+        '../notebooks/explain_llm_logprobs.ipynb' \
+        > source/_notebooks/explain_llm_logprobs.rst
+
+sed -i '' 's/``eli5.explain_prediction``/:func:`eli5.explain_prediction`/g' \
+    source/_notebooks/explain_llm_logprobs.rst
+sed -i '' 's/\/docs\/source//g' \
+    source/_notebooks/explain_llm_logprobs.rst

@@ -12,5 +12,5 @@ Supported Libraries
    catboost
    lightning
    sklearn_crfsuite
+   openai
    keras
-

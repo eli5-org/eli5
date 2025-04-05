@@ -50,6 +50,8 @@ following machine learning frameworks and packages:
 * :ref:`library-sklearn-crfsuite`. ELI5 allows to check weights of
   sklearn_crfsuite.CRF models.
 
+* :ref:`library-openai`. ELI5 allows to explain LLM predictions with token probabilities.
+
 ELI5 also implements several algorithms for inspecting black-box models
 (see :ref:`eli5-black-box`):
 

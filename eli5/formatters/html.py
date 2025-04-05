@@ -4,6 +4,7 @@ from typing import Optional
 
 import numpy as np
 from jinja2 import Environment, PackageLoader
+from scipy.special import betainc
 
 from eli5 import _graphviz
 from eli5.base import (Explanation, TargetExplanation, FeatureWeights,
@@ -164,7 +165,8 @@ def render_weighted_spans(pws: PreparedWeightedSpans) -> str:
     return ''.join(
         _colorize(''.join(t for t, _ in tokens_weights),
                   weight,
-                  pws.weight_range)
+                  pws.weight_range,
+                  pws.doc_weighted_spans.with_probabilities)
         for weight, tokens_weights in groupby(
             zip(pws.doc_weighted_spans.document, pws.char_weights),
             key=lambda x: x[1]))
@@ -173,12 +175,24 @@ def render_weighted_spans(pws: PreparedWeightedSpans) -> str:
 def _colorize(token: str,
               weight: float,
               weight_range: float,
+              with_probabilities: Optional[bool],
               ) -> str:
     """ Return token wrapped in a span with some styles
     (calculated from weight and weight_range) applied.
     """
     token = html_escape(token)
-    if np.isclose(weight, 0.):
+    if with_probabilities:
+        return (
+            '<span '
+            'style="background-color: {color}" '
+            'title="{weight:.3f}"'
+            '>{token}</span>'.format(
+                color=format_hsl(
+                    probability_color_hsl(weight, weight_range)),
+                weight=weight,
+                token=token)
+        )
+    elif np.isclose(weight, 0.):
         return (
             '<span '
             'style="opacity: {opacity}"'
@@ -223,6 +237,28 @@ def weight_color_hsl(weight: float, weight_range: float, min_lightness=0.8) -> _
     rel_weight = (abs(weight) / weight_range) ** 0.7
     lightness = 1.0 - (1 - min_lightness) * rel_weight
     return hue, saturation, lightness
+
+
+def probability_color_hsl(probability: float, probability_range: float) -> _HSL_COLOR:
+    """ Return HSL color components for given probability,
+    where the max absolute probability is given by probability_range
+    (should always be 1 at the moment).
+    """
+    hue = transformed_probability(probability / probability_range) * 120
+    saturation = 1
+    lightness = 0.5
+    return hue, saturation, lightness
+
+
+def transformed_probability(prob: float, alpha: float = 0.4) -> float:
+    """
+    Transforms a probability in [0, 1] using the Beta(alpha, alpha) CDF.
+    This function is symmetric about (0.5, 0.5) and raises sharply near 0 and 1,
+    highlighting differences in low and high probabilities.
+    The parameter 'alpha' controls the steepness.
+    """
+    prob = max(0.0, min(1.0, prob))
+    return betainc(alpha, alpha, prob)
 
 
 def format_hsl(hsl_color: _HSL_COLOR) -> str:

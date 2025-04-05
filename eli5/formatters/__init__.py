@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Functions to convert explanations to human-digestible formats.
 
