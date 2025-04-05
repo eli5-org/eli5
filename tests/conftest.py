@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from os.path import dirname
 from os.path import join
 import csv
@@ -27,7 +26,7 @@ def _get_newsgroups(binary=False, remove_chrome=False, test=False, size=SIZE):
     subset = 'test' if test else 'train'
     data = fetch_20newsgroups(subset=subset, categories=categories,
                               shuffle=True, random_state=42,
-                              remove=remove)
+                              remove=remove, n_retries=5, delay=5.0)
     assert data.target_names == categories
     return data.data[:size], data.target[:size], data.target_names
 
@@ -50,6 +49,7 @@ def newsgroups_train_big():
 @pytest.fixture(scope="session")
 def newsgroups_train_binary_big():
     return _get_newsgroups(binary=True, remove_chrome=True, size=1000)
+
 
 class Bunch(dict):
     """Container object for datasets: dictionary-like object that

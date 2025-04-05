@@ -10,4 +10,5 @@ Tutorials
    ./black-box-text-classifiers
    ./xgboost-titanic
    ./sklearn_crfsuite
+   ./explain_llm_logprobs
    ./keras-image-classifiers
