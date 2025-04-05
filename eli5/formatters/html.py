@@ -357,7 +357,4 @@ def _format_decision_tree(treedict) -> str:
 
 
 def html_escape(text) -> str:
-    text = escape(text, quote=True)
-    text = text.replace('\n', '<br>')
-    text = text.replace(' ', '&nbsp')
-    return text
+    return escape(text, quote=True)
