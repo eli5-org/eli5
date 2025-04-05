@@ -1,4 +1,5 @@
 import math
+from typing import Union
 
 import openai
 from openai.types.chat.chat_completion import ChoiceLogprobs, ChatCompletion
@@ -72,7 +73,7 @@ def explain_prediction_openai_completion(
 @explain_prediction.register(openai.Client)
 def explain_prediction_openai_client(
         client: openai.Client,
-        doc: str | list[dict],
+        doc: Union[str, list[dict]],
         *,
         model: str,
         **kwargs,
