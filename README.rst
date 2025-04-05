@@ -73,7 +73,7 @@ and formatting on a client.
 
 .. _lightning: https://github.com/scikit-learn-contrib/lightning
 .. _scikit-learn: https://github.com/scikit-learn/scikit-learn
-.. _sklearn-crfsuite: https://github.com/TeamHG-Memex/sklearn-crfsuite
+.. _sklearn-crfsuite: https://github.com/scrapinghub/sklearn-crfsuite
 .. _LIME: https://eli5.readthedocs.io/en/latest/blackbox/lime.html
 .. _TextExplainer: https://eli5.readthedocs.io/en/latest/tutorials/black-box-text-classifiers.html
 .. _xgboost: https://github.com/dmlc/xgboost

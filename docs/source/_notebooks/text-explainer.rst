@@ -2059,7 +2059,7 @@ which seems to work OK for token-based explanations. But a good sampling
 strategy which works for many real-world tasks could be a research topic
 on itself. If you’ve got some experience with it we’d love to hear from
 you - please share your findings in eli5 issue tracker (
-https://github.com/TeamHG-Memex/eli5/issues )!
+https://github.com/eli5-org/eli5/issues )!
 
 Customizing TextExplainer: classifier
 -------------------------------------

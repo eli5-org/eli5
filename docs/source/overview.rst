@@ -69,8 +69,8 @@ DataFrame objects.
 
 .. _lightning: https://github.com/scikit-learn-contrib/lightning
 .. _scikit-learn: https://github.com/scikit-learn/scikit-learn
-.. _sklearn-crfsuite: https://github.com/TeamHG-Memex/sklearn-crfsuite
-.. _ELI5: https://github.com/TeamHG-Memex/eli5
+.. _sklearn-crfsuite: https://github.com/scrapinghub/sklearn-crfsuite
+.. _ELI5: https://github.com/eli5-org/eli5
 .. _xgboost: https://github.com/dmlc/xgboost
 
 
@@ -113,7 +113,7 @@ if you're using one of the scikit-learn_ vectorizers with char ngrams:
 .. image:: static/char-ngrams.png
 
 To learn more, follow the :ref:`Tutorials`, check example IPython
-`notebooks <https://github.com/TeamHG-Memex/eli5/tree/master/notebooks>`_
+`notebooks <https://github.com/eli5-org/eli5/tree/master/notebooks>`_
 and read documentation specific to your framework in the
 :ref:`supported-libraries` section.
 

@@ -4,7 +4,7 @@ Named Entity Recognition using sklearn-crfsuite
 
 In this notebook we train a basic CRF model for Named Entity Recognition
 on CoNLL2002 data (following
-https://github.com/TeamHG-Memex/sklearn-crfsuite/blob/master/docs/CoNLL2002.ipynb)
+https://github.com/eli5-org/sklearn-crfsuite/blob/master/docs/CoNLL2002.ipynb)
 and check its weights to see what it learned.
 
 To follow this tutorial you need NLTK > 3.x and sklearn-crfsuite Python
