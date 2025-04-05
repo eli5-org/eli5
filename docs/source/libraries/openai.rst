@@ -11,7 +11,7 @@ eli5 supports :func:`eli5.explain_prediction` for
 ``ChatCompletion``, ``ChoiceLogprobs`` and ``openai.Client`` objects,
 highlighting tokens proportionally to the log probability,
 which can help to see where model is less confident in it's predictions.
-More likely tokens are highligted in green,
+More likely tokens are highlighted in green,
 while unlikely tokens are highlighted in red:
 
 .. image:: ../static/llm-explain-logprobs.png

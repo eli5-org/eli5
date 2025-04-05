@@ -82,7 +82,7 @@ def explain_prediction_openai_client(
     Calls OpenAI client, obtaining response for ``doc`` (a string, or a list of messages),
     with logprobs enabled, and explains the prediction,
     highlighting tokens proportionally to the log probability.
-    More likely tokens are highligted in green,
+    More likely tokens are highlighted in green,
     while unlikely tokens are highlighted in red.
     . Other keyword arguments are passed to OpenAI client, with
     ``model`` keyword argument required.
