@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union, Optional, Sequence
 
 import numpy as np
 
@@ -135,7 +135,7 @@ class WeightedSpans:
 WeightedSpan = tuple[
     Feature,
     list[tuple[int, int]],  # list of spans (start, end) for this feature
-    float,  # feature weight
+    float,  # feature weight or probability
 ]
 
 
@@ -147,16 +147,20 @@ class DocWeightedSpans:
     :document:). :preserve_density: determines how features are colored
     when doing formatting - it is better set to True for char features
     and to False for word features.
+    :with_probabilities: would interpret weights as probabilities from 0 to 1,
+    using a more suitable color scheme.
     """
     def __init__(self,
                  document: str,
-                 spans: list[WeightedSpan],
+                 spans: Sequence[WeightedSpan],
                  preserve_density: Optional[bool] = None,
+                 with_probabilities: Optional[bool] = None,
                  vec_name: Optional[str] = None,
                  ):
         self.document = document
         self.spans = spans
         self.preserve_density = preserve_density
+        self.with_probabilities = with_probabilities
         self.vec_name = vec_name
 
 
