@@ -1,6 +1,6 @@
 import math
 import warnings
-from typing import Union
+from typing import Optional, Union
 
 import openai
 from openai.types.chat.chat_completion import (
@@ -99,21 +99,27 @@ def explain_prediction_openai_client(
         model=model,
         **kwargs)
     for choice in completion.choices:
-        logprobs = choice.logprobs
-        if logprobs is None:
+        _recover_logprobs(choice.logprobs, model)
+        if choice.logprobs is None:
             raise ValueError('logprobs not found, likely API does not support them')
-        if logprobs.content is None:
-            _recover_logprobs_content(logprobs, model)
-            if logprobs.content is None:
-                raise ValueError(f'logprobs.content is empty: {logprobs}')
+        if choice.logprobs.content is None:
+            raise ValueError(f'logprobs.content is empty: {choice.logprobs}')
     return explain_prediction_openai_completion(completion)
 
 
-def _recover_logprobs_content(logprobs: ChoiceLogprobs, model: str):
+def _recover_logprobs(logprobs: Optional[ChoiceLogprobs], model: str):
     """ Some servers don't populate logprobs.content, try to recover it.
     """
-    if not (logprobs.token_logprobs and logprobs.tokens):
+    if logprobs is None:
         return
+    if logprobs.content is not None:
+        return
+    if not (
+            getattr(logprobs, 'token_logprobs', None) and
+            getattr(logprobs, 'tokens', None)):
+        return
+    assert hasattr(logprobs, 'token_logprobs')  # for mypy
+    assert hasattr(logprobs, 'tokens')  # for mypy
     try:
         import tokenizers
     except ImportError:
