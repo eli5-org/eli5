@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.15.0 (2025-04-06)
+-------------------
+
+* support explain_prediction with OpenAI client, highlighting token logprobs
+
 0.14.0 (2025-03-26)
 -------------------
 
