@@ -11,6 +11,9 @@ about its predictions:
 
    LLM token probabilities visualized with eli5.explain_prediction
 
+1. OpenAI models
+----------------
+
 To follow this tutorial you need the ``openai`` library installed and
 working.
 
@@ -64,10 +67,10 @@ properties from a free-form product description:
     json
     {
         "materials": ["metal"],
-        "type": "table lamp",
+        "type": "task lighting",
         "color": "silky matte grey",
         "price": 150.00,
-        "summary": "Stay is a flexible and elegant table lamp designed by Maria Berntsen."
+        "summary": "Stay table lamp with adjustable arm and head for optimal task lighting."
     }
     
 
@@ -311,8 +314,8 @@ We can obtain the original prediction from the explanation object via
 ``explanation.targets[0].target.message.content`` to get the prediction
 text.
 
-Limitations
------------
+2. Limitations
+--------------
 
 Even though above the model confidence matched our expectations, it’s
 not always the case. For example, if we use “Chain of Thought”
@@ -510,6 +513,121 @@ temperatures:
     </span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">    &quot;summary&quot;:</span><span style="background-color: hsl(119.79798858786083, 100.00%, 50.00%)" title="1.000"> &quot;</span><span style="background-color: hsl(42.18613142960962, 100.00%, 50.00%)" title="0.243">A</span><span style="background-color: hsl(48.5069901855025, 100.00%, 50.00%)" title="0.328"> flexible</span><span style="background-color: hsl(84.06293837662605, 100.00%, 50.00%)" title="0.831"> and</span><span style="background-color: hsl(70.03994967794443, 100.00%, 50.00%)" title="0.651"> elegant</span><span style="background-color: hsl(44.76893738561992, 100.00%, 50.00%)" title="0.276"> table</span><span style="background-color: hsl(118.7464729386104, 100.00%, 50.00%)" title="1.000"> lamp</span><span style="background-color: hsl(75.83965598890977, 100.00%, 50.00%)" title="0.732"> designed</span><span style="background-color: hsl(88.8152937503531, 100.00%, 50.00%)" title="0.879"> by</span><span style="background-color: hsl(94.34577827036763, 100.00%, 50.00%)" title="0.924"> Maria</span><span style="background-color: hsl(119.79798858786083, 100.00%, 50.00%)" title="1.000"> Ber</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">ntsen</span><span style="background-color: hsl(73.0426329990445, 100.00%, 50.00%)" title="0.694">.&quot;
     </span><span style="background-color: hsl(119.75916752725652, 100.00%, 50.00%)" title="1.000">}
     </span><span style="background-color: hsl(109.40354053582503, 100.00%, 50.00%)" title="0.991">```</span></p>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+3. Open Source and other models
+-------------------------------
+
+If an API endpoint can provide ``logprobs`` in the right format, then it
+should work. However few APIs or libraries do provide it, even for open
+source models. One library which is know to work is ``mlx_lm`` (Mac OS
+only), e.g. if you start the server like this:
+
+::
+
+   mlx_lm.server --model mlx-community/Mistral-7B-Instruct-v0.3-4bit
+
+Then you can explain predictions with a custom client:
+
+.. code:: ipython3
+
+    client_custom = openai.OpenAI(base_url="http://localhost:8080/v1", api_key="dummy")
+    eli5.explain_prediction(
+        client_custom,
+        prompt + ' Price should never be zero.',
+        model="mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+    )
+
+
+
+
+.. raw:: html
+
+    
+        <style>
+        table.eli5-weights tr:hover {
+            filter: brightness(85%);
+        }
+    </style>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <p style="margin-bottom: 2.5em; margin-top:0; white-space: pre-wrap;"><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">{
+    </span><span style="background-color: hsl(102.26933456703064, 100.00%, 50.00%)" title="0.969"> </span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000"> &quot;materials&quot;: [&quot;</span><span style="background-color: hsl(94.45469472360817, 100.00%, 50.00%)" title="0.925">sil</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">ky matte grey metal</span><span style="background-color: hsl(106.55663140845363, 100.00%, 50.00%)" title="0.984">&quot;],</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">
+      &quot;type&quot;:</span><span style="background-color: hsl(67.65625435391846, 100.00%, 50.00%)" title="0.616"> &quot;</span><span style="background-color: hsl(54.98115667185111, 100.00%, 50.00%)" title="0.423">Not</span><span style="background-color: hsl(99.15673841086969, 100.00%, 50.00%)" title="0.954"> specified</span><span style="background-color: hsl(60.184714790030306, 100.00%, 50.00%)" title="0.503"> in</span><span style="background-color: hsl(89.21337460784397, 100.00%, 50.00%)" title="0.882"> the</span><span style="background-color: hsl(78.55493818915068, 100.00%, 50.00%)" title="0.767"> description</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">&quot;,
+      &quot;color&quot;: &quot;</span><span style="background-color: hsl(75.83477075768666, 100.00%, 50.00%)" title="0.732">Not</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000"> specified in the description&quot;,
+      &quot;price&quot;:</span><span style="background-color: hsl(106.55663140845363, 100.00%, 50.00%)" title="0.984"> </span><span style="background-color: hsl(66.38465137200743, 100.00%, 50.00%)" title="0.597">9</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">9.99,</span><span style="background-color: hsl(70.37163543696023, 100.00%, 50.00%)" title="0.656">
+    </span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">  &quot;summary&quot;: &quot;</span><span style="background-color: hsl(87.74310691905805, 100.00%, 50.00%)" title="0.869">St</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">ay</span><span style="background-color: hsl(96.62538179271525, 100.00%, 50.00%)" title="0.939"> is</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000"> a</span><span style="background-color: hsl(50.86740763861728, 100.00%, 50.00%)" title="0.362"> flexible</span><span style="background-color: hsl(74.98611970505678, 100.00%, 50.00%)" title="0.720"> and</span><span style="background-color: hsl(53.693017832784676, 100.00%, 50.00%)" title="0.404"> beautiful</span><span style="background-color: hsl(86.3702071513559, 100.00%, 50.00%)" title="0.855"> Dan</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">ish</span><span style="background-color: hsl(78.55493818915068, 100.00%, 50.00%)" title="0.767">-</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">designed</span><span style="background-color: hsl(83.859705332877, 100.00%, 50.00%)" title="0.829"> table</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000"> lamp</span><span style="background-color: hsl(83.859705332877, 100.00%, 50.00%)" title="0.829"> with</span><span style="background-color: hsl(63.98782501663244, 100.00%, 50.00%)" title="0.561"> a</span><span style="background-color: hsl(57.717412015697704, 100.00%, 50.00%)" title="0.465"> discre</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">et</span><span style="background-color: hsl(102.26933456703064, 100.00%, 50.00%)" title="0.969"> switch</span><span style="background-color: hsl(73.36326933304912, 100.00%, 50.00%)" title="0.698"> and</span><span style="background-color: hsl(52.049284214496396, 100.00%, 50.00%)" title="0.380"> adjust</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">able</span><span style="background-color: hsl(68.98323009885026, 100.00%, 50.00%)" title="0.636"> arm</span><span style="background-color: hsl(90.80119410884282, 100.00%, 50.00%)" title="0.896"> and</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000"> head</span><span style="background-color: hsl(78.55493818915068, 100.00%, 50.00%)" title="0.767">,</span><span style="background-color: hsl(65.7679832651431, 100.00%, 50.00%)" title="0.588"> ideal</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000"> for</span><span style="background-color: hsl(69.66933255201431, 100.00%, 50.00%)" title="0.646"> office</span><span style="background-color: hsl(106.55663140845363, 100.00%, 50.00%)" title="0.984"> task</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000"> lighting</span><span style="background-color: hsl(102.26933456703064, 100.00%, 50.00%)" title="0.969">.&quot;</span><span style="background-color: hsl(120.0, 100.00%, 50.00%)" title="1.000">
+    }</span></p>
     
     
     
