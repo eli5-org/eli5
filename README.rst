@@ -22,10 +22,10 @@ ELI5
 ELI5 is a Python package which helps to debug machine learning
 classifiers and explain their predictions.
 
-.. image:: https://github.com/eli5-org/eli5/blob/master/docs/source/static/readme-show-prediction.png
+.. image:: https://raw.githubusercontent.com/eli5-org/eli5/refs/heads/master/docs/source/static/readme-show-prediction.png
    :alt: explain_prediction for text data
 
-.. image:: https://github.com/eli5-org/eli5/blob/master/docs/source/static/readme-show-weights.png
+.. image:: https://raw.githubusercontent.com/eli5-org/eli5/refs/heads/master/docs/source/static/readme-show-weights.png
    :alt: explain_weights for text data
 
 It provides support for the following machine learning frameworks and packages:
