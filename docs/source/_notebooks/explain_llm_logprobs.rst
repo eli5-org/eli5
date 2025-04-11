@@ -669,3 +669,11 @@ Then you can explain predictions with a custom client:
 
 
 
+
+Consider checking other libraries which support explaining predictions
+of open source LLMs:
+
+- `optillm <https://github.com/codelion/optillm>`__, e.g. see
+  `codelion/optillm#168 <https://github.com/codelion/optillm/discussions/168#discussioncomment-12399569>`__
+- you can also visualize the ouputs using the `logprobs
+  visualizer <https://huggingface.co/spaces/codelion/LogProbsVisualizer>`__
