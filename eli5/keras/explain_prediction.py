@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from typing import Union, Optional, Callable, Tuple, List, TYPE_CHECKING
 if TYPE_CHECKING:
     import PIL
@@ -23,8 +21,8 @@ from eli5.explain import explain_prediction
 from .gradcam import gradcam, gradcam_backend
 
 
-DESCRIPTION_KERAS = """Grad-CAM visualization for image classification; 
-output is explanation object that contains input image 
+DESCRIPTION_KERAS = """Grad-CAM visualization for image classification;
+output is explanation object that contains input image
 and heatmap image for a target.
 """
 
@@ -158,7 +156,7 @@ def explain_prediction_keras_image(model,
     :type image: PIL.Image.Image, optional
 
 
-    See :func:`eli5.keras.explain_prediction.explain_prediction_keras` 
+    See :func:`eli5.keras.explain_prediction.explain_prediction_keras`
     for a description of ``model``, ``doc``, ``targets``, and ``layer`` parameters.
 
 
@@ -206,7 +204,7 @@ def explain_prediction_keras_image(model,
 
 def _maybe_image(model, doc):
     # type: (Model, np.ndarray) -> bool
-    """Decide whether we are dealing with a image-based explanation 
+    """Decide whether we are dealing with a image-based explanation
     based on heuristics on ``model`` and ``doc``."""
     return _maybe_image_input(doc) and _maybe_image_model(model)
 
@@ -267,7 +265,7 @@ def _validate_doc(model, doc):
         # check that we have only one image (batch size 1)
         single_batch = (1,) + input_sh[1:]
         if doc_sh != single_batch:
-            raise ValueError('Batch size does not match (must be 1). ' 
+            raise ValueError('Batch size does not match (must be 1). '
                              'doc must be of shape: {}, '
                              'got: {}'.format(single_batch, doc_sh))
     else:
@@ -318,13 +316,12 @@ def _search_layer_backwards(model, condition):
             # linear search succeeded
             return layer
     # linear search ended with no results
-    raise ValueError('Could not find a suitable target layer automatically.')        
+    raise ValueError('Could not find a suitable target layer automatically.')
 
 
-def _is_suitable_activation_layer(model, layer):
-    # type: (Model, Layer) -> bool
+def _is_suitable_activation_layer(model: Model, layer: Layer) -> bool:
     """
-    Check whether the layer ``layer`` matches what is required 
+    Check whether the layer ``layer`` inside a built model matches what is required
     by ``model`` to do Grad-CAM on ``layer``.
     Returns a boolean.
 
@@ -332,11 +329,13 @@ def _is_suitable_activation_layer(model, layer):
         * Rank of the layer's output tensor.
     """
     # TODO: experiment with this, using many models and images, to find what works best
-    # Some ideas: 
+    # Some ideas:
     # check layer type, i.e.: isinstance(l, keras.layers.Conv2D)
     # check layer name
 
     # a check that asks "can we resize this activation layer over the image?"
-    rank = len(layer.output_shape)
-    required_rank = len(model.input_shape)
+    rank = len(layer.output.shape)
+    if len(model.inputs) != 1:
+        return False
+    required_rank = len(model.inputs[0].shape)
     return rank == required_rank
