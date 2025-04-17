@@ -337,6 +337,12 @@ def _is_suitable_activation_layer(model, layer):
     # check layer name
 
     # a check that asks "can we resize this activation layer over the image?"
-    rank = len(layer.output_shape)
+    # Support Keras 3.x where Layer.output_shape may be removed; use layer.output.shape
+    if hasattr(layer, 'output_shape'):
+        output_shape = layer.output_shape
+    else:
+        # layer.output is a tensor; its .shape gives the output shape
+        output_shape = layer.output.shape
+    rank = len(output_shape)
     required_rank = len(model.input_shape)
     return rank == required_rank

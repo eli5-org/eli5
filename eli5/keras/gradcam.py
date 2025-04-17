@@ -7,6 +7,7 @@ import keras
 import keras.backend as K
 from keras.models import Model
 from keras.layers import Layer
+import tensorflow as tf
 
 
 def gradcam(weights, activations):
@@ -70,67 +71,57 @@ def gradcam(weights, activations):
     return lmap
 
 
-def gradcam_backend(model, # type: Model
-    doc, # type: np.ndarray
-    targets, # type: Optional[List[int]]
-    activation_layer # type: Layer
-    ):
+def gradcam_backend(model,  # type: Model
+                    doc,  # type: np.ndarray
+                    targets,  # type: Optional[List[int]]
+                    activation_layer  # type: Layer
+                    ):
     # type: (...) -> Tuple[np.ndarray, np.ndarray, np.ndarray, int, float]
     """
-    Compute the terms and by-products required by the Grad-CAM formula.
-    
-    Parameters
-    ----------
-    model : keras.models.Model
-        Differentiable network.
-
-    doc : numpy.ndarray
-        Input to the network.
-
-    targets : list, optional
-        Index into the network's output,
-        indicating the output node that will be
-        used as the "loss" during differentiation.
-
-    activation_layer : keras.layers.Layer
-        Keras layer instance to differentiate with respect to.
-    
-
-    See :func:`eli5.keras.explain_prediction` for description of the 
-    ``model``, ``doc``, ``targets`` parameters.
-
-    Returns
-    -------
-    (weights, activations, gradients, predicted_idx, predicted_val) : (numpy.ndarray, ..., int, float)
-        Values of variables.
+    Compute Grad-CAM outputs: weights, activation maps, gradients,
+    predicted index and predicted value using TensorFlow eager execution.
     """
-    # score for class in targets
-    predicted_idx = _get_target_prediction(targets, model)
-    predicted_val = K.gather(model.output[0,:], predicted_idx) # access value by index
-
-    # output of target activation layer, i.e. activation maps of a convolutional layer
-    activation_output = activation_layer.output 
-
-    # score for class w.r.p.t. activation layer
-    grads = _calc_gradient(predicted_val, [activation_output])
-
-    # Global Average Pooling of gradients to get the weights
-    # note that axes are in range [-rank(x), rank(x)) (we start from 1, not 0)
-    # TODO: decide whether this should go in gradcam_backend() or gradcam()
-    weights = K.mean(grads, axis=(1, 2))
-
-    evaluate = K.function([model.input], 
-        [weights, activation_output, grads, predicted_val, predicted_idx]
-    )
-    # evaluate the graph / do actual computations
-    weights, activations, grads, predicted_val, predicted_idx = evaluate([doc])
-    
-    # put into suitable form
-    weights = weights[0]
-    predicted_val = predicted_val[0]
-    predicted_idx = predicted_idx[0]
-    activations = activations[0, ...]
-    grads = grads[0, ...]
+    # Prepare the input tensor
+    doc_tensor = tf.convert_to_tensor(doc)
+    # Ensure the model.output is defined (e.g., for Sequential models)
+    _ = model(doc_tensor)
+    # Model mapping inputs to activations and predictions
+    # Build model mapping inputs to desired activation outputs and final predictions
+    # Use model.outputs[0] to support Sequential models in Keras 3.x
+    grad_model = Model(inputs=model.inputs,
+                       outputs=[activation_layer.output, model.outputs[0]])
+    # Record operations for automatic differentiation
+    with tf.GradientTape() as tape:
+        # Forward pass
+        conv_outputs, predictions = grad_model(doc_tensor)
+        # Watch activations for gradient calculation
+        tape.watch(conv_outputs)
+        # Determine target class index
+        if targets is None:
+            pred_index = tf.argmax(predictions[0])
+        else:
+            if not isinstance(targets, list):
+                raise TypeError(f'Invalid targets: {targets}')
+            if len(targets) != 1:
+                raise ValueError(f'More than one prediction target is not supported: {targets}')
+            target = targets[0]
+            _validate_target(target, model.output_shape)
+            pred_index = tf.constant(target, dtype=tf.int32)
+        # Select the score for the target class
+        class_channel = predictions[:, pred_index]
+    # Compute gradients of the class score w.r.t. convolutional outputs
+    grads = tape.gradient(class_channel, conv_outputs)
+    # Global average pooling of gradients to obtain weights
+    pooled_grads = tf.reduce_mean(grads, axis=(1, 2))[0]
+    # Extract values for the first (and only) sample
+    conv_outputs = conv_outputs[0]
+    grads = grads[0]
+    # Convert to numpy arrays
+    weights = pooled_grads.numpy()
+    activations = conv_outputs.numpy()
+    grads = grads.numpy()
+    predicted_idx = int(pred_index.numpy())
+    predicted_val = float(predictions[0, pred_index].numpy())
     return weights, activations, grads, predicted_idx, predicted_val
 
 
@@ -141,25 +132,17 @@ def _calc_gradient(ys, xs):
     (must be singleton)
     and apply grad normalization.
     """
-    # differentiate ys (scalar) with respect to each variable in xs
-    grads = K.gradients(ys, xs)
-
-    # grads gives a python list with a tensor (containing the derivatives) for each xs
-    # to use grads with other operations and with K.function
-    # we need to work with the actual tensors and not the python list
-    grads, = grads # grads should be a singleton list (because xs is a singleton)
-
-    # validate that the gradients were calculated successfully (no None's)
-    # https://github.com/jacobgil/keras-grad-cam/issues/17#issuecomment-423057265
-    # https://github.com/tensorflow/tensorflow/issues/783#issuecomment-175824168
-    if grads is None:
-        raise ValueError('Gradient calculation resulted in None values. '
-                         'Check that the model is differentiable and try again. '
-                         'ys: {}. xs: {}. grads: {}'.format(
-                            ys, xs, grads))
-
-    # this seems to make the heatmap less noisy
-    grads =  K.l2_normalize(grads) 
+    # Differentiate ys (scalar) w.r.t. each variable in xs using TensorFlow v1 gradients
+    try:
+        grads_list = tf.compat.v1.gradients(ys, xs)
+    except Exception as e:
+        raise ValueError(f'Gradient calculation failed: {e}')
+    # Expect a single gradient tensor
+    if not grads_list or grads_list[0] is None:
+        raise ValueError(f'Gradient calculation resulted in None values. ys: {ys}. xs: {xs}.')
+    grads = grads_list[0]
+    # Normalize gradients (L2)
+    grads = tf.math.l2_normalize(grads)
     return grads
 
 
