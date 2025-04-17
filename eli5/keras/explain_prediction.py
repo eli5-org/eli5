@@ -321,8 +321,7 @@ def _search_layer_backwards(model, condition):
     raise ValueError('Could not find a suitable target layer automatically.')        
 
 
-def _is_suitable_activation_layer(model, layer):
-    # type: (Model, Layer) -> bool
+def _is_suitable_activation_layer(model: Model, layer: Layer) -> bool:
     """
     Check whether the layer ``layer`` matches what is required 
     by ``model`` to do Grad-CAM on ``layer``.
@@ -337,12 +336,8 @@ def _is_suitable_activation_layer(model, layer):
     # check layer name
 
     # a check that asks "can we resize this activation layer over the image?"
-    # Support Keras 3.x where Layer.output_shape may be removed; use layer.output.shape
-    if hasattr(layer, 'output_shape'):
-        output_shape = layer.output_shape
-    else:
-        # layer.output is a tensor; its .shape gives the output shape
-        output_shape = layer.output.shape
+    # Use the tensor shape of the layer's output
+    output_shape = layer.output.shape
     rank = len(output_shape)
     required_rank = len(model.input_shape)
     return rank == required_rank
