@@ -9,21 +9,25 @@ import tensorflow as tf
 
 def gradcam(weights: np.ndarray, activations: np.ndarray) -> np.ndarray:
     """
-    Generate a localization map (heatmap) using Gradient-weighted Class Activation Mapping (Grad-CAM).
+    Generate a localization map (heatmap) using Gradient-weighted Class Activation Mapping
+    (Grad-CAM) (https://arxiv.org/pdf/1610.02391.pdf).
+
+    The values for the parameters can be obtained from
+    :func:`eli5.keras.gradcam.gradcam_backend`.
 
     This function computes a weighted combination of activation maps and applies a ReLU,
     then normalizes the result to [0, 1].
 
     Parameters
     ----------
-    weights : np.ndarray
+    weights : numpy.ndarray
         1D array of channel weights (α_k), typically obtained by global average pooling of gradients.
-    activations : np.ndarray
+    activations : numpy.ndarray
         3D activation maps A^k with shape (H, W, C) from the target convolutional layer.
 
     Returns
     -------
-    lmap : np.ndarray
+    lmap : numpy.ndarray
         2D localization map of shape (H, W), with values in [0, 1].
 
     Notes
@@ -33,9 +37,9 @@ def gradcam(weights: np.ndarray, activations: np.ndarray) -> np.ndarray:
 
     Credits
     -------
-    * Jacob Gildenblat: https://github.com/jacobgil/keras-grad-cam
-    * PowerOfCreation implementation fixes: https://github.com/PowerOfCreation/keras-grad-cam
-    * Keras-Vis contributors: https://github.com/raghakot/keras-vis
+    * Jacob Gildenblat for "https://github.com/jacobgil/keras-grad-cam".
+    * Author of "https://github.com/PowerOfCreation/keras-grad-cam" for fixes to Jacob's implementation.
+    * Kotikalapudi, Raghavendra and contributors for "https://github.com/raghakot/keras-vis".
     """
     # For reusability, this function should only use numpy operations
     # Instead of backend library operations
@@ -93,9 +97,8 @@ def gradcam_backend(
     activation_layer : keras.layers.Layer
         Convolutional layer whose output activations contribute to Grad-CAM.
 
-    See Also
-    --------
-    eli5.keras.explain_prediction
+    See :func:`eli5.keras.explain_prediction` for description of the
+    ``model``, ``doc``, ``targets`` parameters.
 
     Returns
     -------
