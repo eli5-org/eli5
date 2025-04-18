@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from typing import Optional
 
 import numpy as np
-import keras
 import keras.backend as K
 from keras.models import Model
 from keras.layers import Layer
@@ -179,33 +176,7 @@ def _calc_gradient(ys: tf.Tensor, xs: list[tf.Tensor]) -> tf.Tensor:
     return tf.math.l2_normalize(grads[0])
 
 
-def _get_target_prediction(targets, model):
-    # type: (Optional[list], Model) -> K.variable
-    """
-    Get a prediction ID based on ``targets``, 
-    from the model ``model`` (with a rank 2 tensor for its final layer).
-    Returns a rank 1 K.variable tensor.
-    """
-    if isinstance(targets, list):
-        # take the first prediction from the list
-        if len(targets) == 1:
-            target = targets[0]
-            _validate_target(target, model.output_shape)
-            predicted_idx = K.constant([target], dtype='int64')
-        else:
-            raise ValueError('More than one prediction target '
-                             'is currently not supported ' 
-                             '(found a list that is not length 1): '
-                             '{}'.format(targets))
-    elif targets is None:
-        predicted_idx = K.argmax(model.output, axis=-1)
-    else:
-        raise TypeError('Invalid argument "targets" (must be list or None): %s' % targets)
-    return predicted_idx
-
-
-def _validate_target(target, output_shape):
-    # type: (int, tuple) -> None
+def _validate_target(target: int, output_shape: tuple) -> None:
     """
     Check whether ``target``, 
     an integer index into the model's output

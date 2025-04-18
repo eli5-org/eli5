@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from typing import Union, Optional, Callable, Tuple, List, TYPE_CHECKING
+from typing import Union, Optional, Callable, TYPE_CHECKING
 if TYPE_CHECKING:
     import PIL
 
 import numpy as np
-import keras
-import keras.backend as K
 from keras.models import Model
 from keras.layers import Layer
 from keras.layers import (
@@ -30,13 +26,12 @@ and heatmap image for a target.
 
 # note that keras.models.Sequential subclasses keras.models.Model
 @explain_prediction.register(Model)
-def explain_prediction_keras(model, # type: Model
-                             doc, # type: np.ndarray
-                             targets=None, # type: Optional[list]
-                             layer=None, # type: Optional[Union[int, str, Layer]]
+def explain_prediction_keras(model: Model,
+                             doc: np.ndarray,
+                             targets: Optional[list] = None,
+                             layer: Optional[Union[int, str, Layer]] = None,
                              image=None,
-                             ):
-    # type: (...) -> Explanation
+                             ) -> Explanation:
     """
     Explain the prediction of a Keras classifier with the Grad-CAM technique.
 
@@ -133,7 +128,7 @@ def explain_prediction_keras_not_supported(model, doc):
 
 def explain_prediction_keras_image(model,
                                    doc,
-                                   image=None, # type: Optional['PIL.Image.Image']
+                                   image: Optional['PIL.Image.Image'] = None,
                                    targets=None,
                                    layer=None,
                                    ):
@@ -204,23 +199,20 @@ def explain_prediction_keras_image(model,
     )
 
 
-def _maybe_image(model, doc):
-    # type: (Model, np.ndarray) -> bool
+def _maybe_image(model: Model, doc: np.ndarray) -> bool:
     """Decide whether we are dealing with a image-based explanation 
     based on heuristics on ``model`` and ``doc``."""
     return _maybe_image_input(doc) and _maybe_image_model(model)
 
 
-def _maybe_image_input(doc):
-    # type: (np.ndarray) -> bool
+def _maybe_image_input(doc: np.ndarray) -> bool:
     """Decide whether ``doc`` represents an image input."""
     rank = len(doc.shape)
     # image with channels or without (spatial only)
     return rank == 4 or rank == 3
 
 
-def _maybe_image_model(model):
-    # type: (Model) -> bool
+def _maybe_image_model(model: Model) -> bool:
     """Decide whether ``model`` is used for images."""
     # FIXME: replace try-except with something else
     try:
@@ -239,22 +231,19 @@ image_model_layers = (Conv2D,
                       )
 
 
-def _is_possible_image_model_layer(model, layer):
-    # type: (Model, Layer) -> bool
+def _is_possible_image_model_layer(model: Model, layer: Layer) -> bool:
     """Check that the given ``layer`` is usually used for images."""
     return isinstance(layer, image_model_layers)
 
 
-def _extract_image(doc):
-    # type: (np.ndarray) -> 'PIL.Image.Image'
+def _extract_image(doc: np.ndarray) -> 'PIL.Image.Image':
     """Convert ``doc`` tensor to image."""
     im_arr, = doc  # rank 4 batch -> rank 3 single image
     image = array_to_img(im_arr)
     return image
 
 
-def _validate_doc(model, doc):
-    # type: (Model, np.ndarray) -> None
+def _validate_doc(model: Model, doc: np.ndarray) -> None:
     """
     Check that the input ``doc`` is suitable for ``model``.
     """
@@ -277,8 +266,7 @@ def _validate_doc(model, doc):
                              'input: {}, doc: {}'.format(input_sh, doc_sh))
 
 
-def _get_activation_layer(model, layer):
-    # type: (Model, Union[None, int, str, Layer]) -> Layer
+def _get_activation_layer(model: Model, layer: Union[None, int, str, Layer]) -> Layer:
     """
     Get an instance of the desired activation layer in ``model``,
     as specified by ``layer``.
@@ -306,8 +294,7 @@ def _get_activation_layer(model, layer):
         raise ValueError('Can not perform Grad-CAM on the retrieved activation layer')
 
 
-def _search_layer_backwards(model, condition):
-    # type: (Model, Callable[[Model, Layer], bool]) -> Layer
+def _search_layer_backwards(model: Model, condition: Callable[[Model, Layer], bool]) -> Layer:
     """
     Search for a layer in ``model``, backwards (starting from the output layer),
     checking if the layer is suitable with the callable ``condition``,

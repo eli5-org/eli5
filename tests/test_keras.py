@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Keras unit tests"""
 
 import pytest
@@ -24,11 +22,7 @@ from eli5.keras.explain_prediction import (
     _validate_doc,
     _get_activation_layer,
 )
-from eli5.keras.gradcam import (
-    _get_target_prediction,
-    _calc_gradient,
-    gradcam,
-)
+from eli5.keras.gradcam import gradcam
 
 
 # We need to put this layer in a fixture object AND access it in a parametrization
@@ -107,23 +101,6 @@ def test_validate_doc_custom():
         _validate_doc(model, np.zeros((5, 3)))
 
  
-def test_get_target_prediction_invalid(simple_seq):
-    # only list of targets is currently supported
-    with pytest.raises(TypeError):
-        _get_target_prediction('somestring', simple_seq)
-    # only one target prediction is currently supported
-    with pytest.raises(ValueError):
-        _get_target_prediction([1, 2], simple_seq)
-
-    # these are dispatched to _validate_target
-    # only an integer index target is currently supported
-    with pytest.raises(TypeError):
-        _get_target_prediction(['someotherstring'], simple_seq)
-    # target index must correctly reference one of the nodes in the final layer
-    with pytest.raises(ValueError):
-        _get_target_prediction([20], simple_seq)
-
-
 def test_explain_prediction_score(simple_seq):
     expl = explain_prediction(simple_seq, np.zeros((1, 32, 32, 1)))
     assert expl.targets[0].score is not None
