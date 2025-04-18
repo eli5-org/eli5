@@ -1,3 +1,0 @@
-numpy>=1.14.3
-tensorflow<2.0
-Keras<=2.3.1
