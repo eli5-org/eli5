@@ -77,7 +77,7 @@ mv ../notebooks/keras-image-classifiers.rst \
 rm -r source/_notebooks/keras-image-classifiers_files
 mv ../notebooks/keras-image-classifiers_files/ \
     source/_notebooks/
-sed -i 's&.. image:: keras-image-classifiers_files/&.. image:: ../_notebooks/keras-image-classifiers_files/&g' \
+sed -i '' 's/image:: keras-image-classifiers_files/image:: ..\/_notebooks\/keras-image-classifiers_files/g' \
     source/_notebooks/keras-image-classifiers.rst
 
 
