@@ -3,12 +3,10 @@
 Keras
 =====
 
-Keras_ is "a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano". 
+Keras_ is a high-level neural networks API, written in Python and capable of running on top of TensorFlow and other backends.
 
 Keras can be used for many Machine Learning tasks, and it has support for both popular
 and experimental neural network architectures.
-
-Note: only TensorFlow 1.x is supported, recommended Keras version is 2.3.1 or earlier, and eli5 version 0.13 or earlier, as you can't install TensorFlow 1.x on Python 3.9+ which is required for eli5 0.14+
 
 .. _Keras: https://keras.io/
 
