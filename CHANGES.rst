@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.16.0 (2024-04-??)
+0.16.0 (2024-04-20)
 -------------------
 
 * support explain_prediction with Grad-CAM for Keras 3.x, TF 2.x image classifiers
