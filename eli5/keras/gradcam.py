@@ -157,28 +157,6 @@ def gradcam_backend(
     return weights, activations, grads, predicted_idx, predicted_val
 
 
-def _calc_gradient(ys: tf.Tensor, xs: list[tf.Tensor]) -> tf.Tensor:
-    """
-    Compute the gradient of a tensor w.r.t. given inputs and apply L2 normalization.
-
-    Parameters
-    ----------
-    ys : tf.Tensor
-        Tensor (typically scalar score) whose gradient is computed.
-    xs : list of tf.Tensor
-        List of tensors to differentiate with respect to (singleton list).
-
-    Returns
-    -------
-    tf.Tensor
-        L2-normalized gradient tensor with same shape as xs[0].
-    """
-    grads = tf.gradients(ys, xs)
-    if not grads or grads[0] is None:
-        raise ValueError(f"Gradient calculation resulted in None values. ys: {ys}, xs: {xs}.")
-    return tf.math.l2_normalize(grads[0])
-
-
 def _validate_target(target: int, output_shape: tuple) -> None:
     """
     Check whether ``target``, 
