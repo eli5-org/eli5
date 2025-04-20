@@ -1,49 +1,45 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from typing import Union, Optional, Tuple, List
+from typing import Optional
 
 import numpy as np
-import keras
 import keras.backend as K
 from keras.models import Model
 from keras.layers import Layer
+import tensorflow as tf
 
 
-def gradcam(weights, activations):
-    # type: (np.ndarray, np.ndarray) -> np.ndarray
+def gradcam(weights: np.ndarray, activations: np.ndarray) -> np.ndarray:
     """
-    Generate a localization map (heatmap) using Gradient-weighted Class Activation Mapping 
+    Generate a localization map (heatmap) using Gradient-weighted Class Activation Mapping
     (Grad-CAM) (https://arxiv.org/pdf/1610.02391.pdf).
-    
+
     The values for the parameters can be obtained from
     :func:`eli5.keras.gradcam.gradcam_backend`.
+
+    This function computes a weighted combination of activation maps and applies a ReLU,
+    then normalizes the result to [0, 1].
 
     Parameters
     ----------
     weights : numpy.ndarray
-        Activation weights, vector with one weight per map, 
-        rank 1.
-
+        1D array of channel weights (α_k), typically obtained by global average pooling of gradients.
     activations : numpy.ndarray
-        Forward activation map values, vector of matrices, 
-        rank 3.
-    
+        3D activation maps A^k with shape (H, W, C) from the target convolutional layer.
+
     Returns
     -------
     lmap : numpy.ndarray
-        A Grad-CAM localization map,
-        rank 2, with values normalized in the interval [0, 1].
+        2D localization map of shape (H, W), with values in [0, 1].
 
     Notes
     -----
-    We currently make two assumptions in this implementation
-        * We are dealing with images as our input to ``model``.
-        * We are doing a classification. ``model``'s output is a class scores or probabilities vector.
+    Assumptions:
+      * Input is an image and model output is class scores or probabilities.
 
     Credits
-        * Jacob Gildenblat for "https://github.com/jacobgil/keras-grad-cam".
-        * Author of "https://github.com/PowerOfCreation/keras-grad-cam" for fixes to Jacob's implementation.
-        * Kotikalapudi, Raghavendra and contributors for "https://github.com/raghakot/keras-vis".
+    -------
+    * Jacob Gildenblat for "https://github.com/jacobgil/keras-grad-cam".
+    * Author of "https://github.com/PowerOfCreation/keras-grad-cam" for fixes to Jacob's implementation.
+    * Kotikalapudi, Raghavendra and contributors for "https://github.com/raghakot/keras-vis".
     """
     # For reusability, this function should only use numpy operations
     # Instead of backend library operations
@@ -70,126 +66,98 @@ def gradcam(weights, activations):
     return lmap
 
 
-def gradcam_backend(model, # type: Model
-    doc, # type: np.ndarray
-    targets, # type: Optional[List[int]]
-    activation_layer # type: Layer
-    ):
-    # type: (...) -> Tuple[np.ndarray, np.ndarray, np.ndarray, int, float]
+def gradcam_backend(
+    model: Model,
+    doc: np.ndarray,
+    targets: Optional[list[int]],
+    activation_layer: Layer,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, int, float]:
     """
-    Compute the terms and by-products required by the Grad-CAM formula.
-    
+    Compute and return the components needed for Grad-CAM visualization.
+
+    This function evaluates the activation maps, computes gradients of the
+    target class score with respect to those activations, and derives channel
+    weights by global average pooling of the gradients:
+
+        α^c_k = mean_{i,j}( ∂y^c / ∂A^k_{ij} )
+
+    The final Grad-CAM localization map is given by:
+
+        L^c_{Grad-CAM} = ReLU( Σ_k α^c_k A^k )
+
     Parameters
     ----------
     model : keras.models.Model
-        Differentiable network.
-
+        Differentiable image classification model.
     doc : numpy.ndarray
-        Input to the network.
-
-    targets : list, optional
-        Index into the network's output,
-        indicating the output node that will be
-        used as the "loss" during differentiation.
-
+        Input array with batch dimension (shape (1, H, W, C)).
+    targets : list of int or None
+        List of length one specifying the class index to explain. If None,
+        the top predicted class is used.
     activation_layer : keras.layers.Layer
-        Keras layer instance to differentiate with respect to.
-    
+        Convolutional layer whose output activations contribute to Grad-CAM.
 
-    See :func:`eli5.keras.explain_prediction` for description of the 
+    See :func:`eli5.keras.explain_prediction` for description of the
     ``model``, ``doc``, ``targets`` parameters.
 
     Returns
     -------
-    (weights, activations, gradients, predicted_idx, predicted_val) : (numpy.ndarray, ..., int, float)
-        Values of variables.
+    weights : numpy.ndarray
+        Array of channel weights α^c_k (shape (C,)).
+    activations : numpy.ndarray
+        Activation maps A^k (shape (H, W, C)).
+    grads : numpy.ndarray
+        Gradients ∂y^c / ∂A^k (shape (H, W, C)).
+    predicted_idx : int
+        Class index used for computing the gradients.
+    predicted_val : float
+        Model score y^c for the target class.
     """
-    # score for class in targets
-    predicted_idx = _get_target_prediction(targets, model)
-    predicted_val = K.gather(model.output[0,:], predicted_idx) # access value by index
-
-    # output of target activation layer, i.e. activation maps of a convolutional layer
-    activation_output = activation_layer.output 
-
-    # score for class w.r.p.t. activation layer
-    grads = _calc_gradient(predicted_val, [activation_output])
-
-    # Global Average Pooling of gradients to get the weights
-    # note that axes are in range [-rank(x), rank(x)) (we start from 1, not 0)
-    # TODO: decide whether this should go in gradcam_backend() or gradcam()
-    weights = K.mean(grads, axis=(1, 2))
-
-    evaluate = K.function([model.input], 
-        [weights, activation_output, grads, predicted_val, predicted_idx]
-    )
-    # evaluate the graph / do actual computations
-    weights, activations, grads, predicted_val, predicted_idx = evaluate([doc])
-    
-    # put into suitable form
-    weights = weights[0]
-    predicted_val = predicted_val[0]
-    predicted_idx = predicted_idx[0]
-    activations = activations[0, ...]
-    grads = grads[0, ...]
+    # Prepare the input tensor
+    doc_tensor = tf.convert_to_tensor(doc)
+    # Ensure the model.output is defined (e.g., for Sequential models)
+    _ = model(doc_tensor)
+    # Model mapping inputs to activations and predictions
+    # Build model mapping inputs to desired activation outputs and final predictions
+    # Use model.outputs[0] to support Sequential models in Keras 3.x
+    grad_model = Model(inputs=model.inputs,
+                       outputs=[activation_layer.output, model.outputs[0]])
+    # Record operations for automatic differentiation
+    with tf.GradientTape() as tape:
+        # Forward pass
+        conv_outputs, predictions = grad_model(doc_tensor)
+        # Watch activations for gradient calculation
+        tape.watch(conv_outputs)
+        # Determine target class index
+        if targets is None:
+            pred_index = tf.argmax(predictions[0])
+        else:
+            if not isinstance(targets, list):
+                raise TypeError(f'Invalid targets: {targets}')
+            if len(targets) != 1:
+                raise ValueError(f'More than one prediction target is not supported: {targets}')
+            target = targets[0]
+            _validate_target(target, model.output_shape)
+            pred_index = tf.constant(target, dtype=tf.int32)
+        # Select the score for the target class
+        class_channel = predictions[:, pred_index]
+    # Compute gradients of the class score w.r.t. convolutional outputs
+    grads = tape.gradient(class_channel, conv_outputs)
+    # Global average pooling of gradients to obtain weights
+    pooled_grads = tf.reduce_mean(grads, axis=(1, 2))[0]
+    # Extract values for the first (and only) sample
+    conv_outputs = conv_outputs[0]
+    grads = grads[0]
+    # Convert to numpy arrays
+    weights = pooled_grads.numpy()
+    activations = conv_outputs.numpy()
+    grads = grads.numpy()
+    predicted_idx = int(pred_index.numpy())
+    predicted_val = float(predictions[0, pred_index].numpy())
     return weights, activations, grads, predicted_idx, predicted_val
 
 
-def _calc_gradient(ys, xs):
-    # (K.variable, list) -> K.variable
-    """
-    Return the gradient of scalar ``ys`` with respect to each of list ``xs``,
-    (must be singleton)
-    and apply grad normalization.
-    """
-    # differentiate ys (scalar) with respect to each variable in xs
-    grads = K.gradients(ys, xs)
-
-    # grads gives a python list with a tensor (containing the derivatives) for each xs
-    # to use grads with other operations and with K.function
-    # we need to work with the actual tensors and not the python list
-    grads, = grads # grads should be a singleton list (because xs is a singleton)
-
-    # validate that the gradients were calculated successfully (no None's)
-    # https://github.com/jacobgil/keras-grad-cam/issues/17#issuecomment-423057265
-    # https://github.com/tensorflow/tensorflow/issues/783#issuecomment-175824168
-    if grads is None:
-        raise ValueError('Gradient calculation resulted in None values. '
-                         'Check that the model is differentiable and try again. '
-                         'ys: {}. xs: {}. grads: {}'.format(
-                            ys, xs, grads))
-
-    # this seems to make the heatmap less noisy
-    grads =  K.l2_normalize(grads) 
-    return grads
-
-
-def _get_target_prediction(targets, model):
-    # type: (Optional[list], Model) -> K.variable
-    """
-    Get a prediction ID based on ``targets``, 
-    from the model ``model`` (with a rank 2 tensor for its final layer).
-    Returns a rank 1 K.variable tensor.
-    """
-    if isinstance(targets, list):
-        # take the first prediction from the list
-        if len(targets) == 1:
-            target = targets[0]
-            _validate_target(target, model.output_shape)
-            predicted_idx = K.constant([target], dtype='int64')
-        else:
-            raise ValueError('More than one prediction target '
-                             'is currently not supported ' 
-                             '(found a list that is not length 1): '
-                             '{}'.format(targets))
-    elif targets is None:
-        predicted_idx = K.argmax(model.output, axis=-1)
-    else:
-        raise TypeError('Invalid argument "targets" (must be list or None): %s' % targets)
-    return predicted_idx
-
-
-def _validate_target(target, output_shape):
-    # type: (int, tuple) -> None
+def _validate_target(target: int, output_shape: tuple) -> None:
     """
     Check whether ``target``, 
     an integer index into the model's output

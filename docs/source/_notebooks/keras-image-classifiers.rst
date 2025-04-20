@@ -1,23 +1,22 @@
-
 Explaining Keras image classifier predictions with Grad-CAM
 ===========================================================
 
 If we have a model that takes in an image as its input, and outputs
-class scores, i.e. probabilities that a certain object is present in the
+class scores, i.e. probabilities that a certain object is present in the
 image, then we can use ELI5 to check what is it in the image that made
 the model predict a certain class score. We do that using a method
-called 'Grad-CAM' (https://arxiv.org/abs/1610.02391).
+called ‘Grad-CAM’ (https://arxiv.org/abs/1610.02391).
 
 We will be using images from ImageNet (http://image-net.org/), and
 classifiers from ``keras.applications``.
 
-This has been tested with Python 3.7.3, Keras 2.2.4, and Tensorflow
-1.13.1.
+This has been tested with Python 3.12.9, Keras 3.9.2, and Tensorflow
+2.19.0.
 
 1. Loading our model and data
 -----------------------------
 
-To start out, let's get our modules in place
+To start out, let’s get our modules in place
 
 .. code:: ipython3
 
@@ -35,12 +34,6 @@ To start out, let's get our modules in place
     from keras.applications import mobilenet_v2
     
     import eli5
-
-
-.. parsed-literal::
-
-    Using TensorFlow backend.
-
 
 And load our image classifier (a light-weight model from
 ``keras.applications``).
@@ -89,7 +82,7 @@ Loading our sample image:
 
 
 We see that this image will need some preprocessing to have the correct
-dimensions! Let's resize it:
+dimensions! Let’s resize it:
 
 .. code:: ipython3
 
@@ -103,7 +96,7 @@ dimensions! Let's resize it:
 
 .. parsed-literal::
 
-    <PIL.Image.Image image mode=RGB size=224x224 at 0x7FBF0DDE5A20>
+    <PIL.Image.Image image mode=RGB size=224x224 at 0x15CFEC4A0>
 
 
 
@@ -157,7 +150,7 @@ Looking good. Now we need to convert the image to a numpy array.
     <class 'numpy.ndarray'> (1, 224, 224, 3)
 
 
-Let's convert back the array to an image just to check what we are
+Let’s convert back the array to an image just to check what we are
 inputting
 
 .. code:: ipython3
@@ -170,7 +163,7 @@ inputting
 
 .. parsed-literal::
 
-    <PIL.Image.Image image mode=RGB size=224x224 at 0x7FBF0CF760F0>
+    <PIL.Image.Image image mode=RGB size=224x224 at 0x15CD8C980>
 
 
 
@@ -179,10 +172,10 @@ inputting
 
 Ready to go!
 
-2. Explaining our model's prediction
+2. Explaining our model’s prediction
 ------------------------------------
 
-Let's classify our image and see where the network 'looks' when making
+Let’s classify our image and see where the network ‘looks’ when making
 that classification:
 
 .. code:: ipython3
@@ -194,6 +187,7 @@ that classification:
 
 .. parsed-literal::
 
+    [1m1/1[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 392ms/step
     <class 'numpy.ndarray'> (1, 1000)
 
 
@@ -211,7 +205,7 @@ that classification:
 
 .. parsed-literal::
 
-    [[('n02108422', 'bull_mastiff', 0.80967486), ('n02108089', 'boxer', 0.098359644), ('n02123045', 'tabby', 0.0066504036), ('n02123159', 'tiger_cat', 0.0048087277), ('n02110958', 'pug', 0.0039409986)]]
+    [[('n02108422', 'bull_mastiff', np.float32(0.8096749)), ('n02108089', 'boxer', np.float32(0.09835984)), ('n02123045', 'tabby', np.float32(0.0066503943)), ('n02123159', 'tiger_cat', np.float32(0.004808728)), ('n02110958', 'pug', np.float32(0.003941001))]]
     [243 242 281 282 254]
 
 
@@ -219,7 +213,7 @@ Indeed there is a dog in that picture The class ID (index into the
 output layer) ``243`` stands for ``bull mastiff`` in ImageNet with 1000
 classes (https://gist.github.com/yrevar/942d3a0ac09ec9e5eb3a ).
 
-But how did the network know that? Let's check where the model "looked"
+But how did the network know that? Let’s check where the model “looked”
 for a dog with ELI5:
 
 .. code:: ipython3
@@ -238,9 +232,9 @@ for a dog with ELI5:
 The dog region is highlighted. Makes sense!
 
 When explaining image based models, we can optionally pass the image
-associated with the input as a Pillow image object. If we don't, the
+associated with the input as a Pillow image object. If we don’t, the
 image will be created from ``doc``. This may not work with custom models
-or inputs, in which case it's worth passing the image explicitly.
+or inputs, in which case it’s worth passing the image explicitly.
 
 .. code:: ipython3
 
@@ -292,8 +286,8 @@ Currently only one class can be explained at a time.
 .. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_26_1.png
 
 
-That's quite noisy! Perhaps the model is weak at classifying 'window
-screens'! On the other hand the nonsense 'turtle' example could be
+That’s quite noisy! Perhaps the model is weak at classifying ‘window
+screens’! On the other hand the nonsense ‘turtle’ example could be
 excused.
 
 Note that we need to wrap ``show_prediction()`` with
@@ -307,60 +301,131 @@ Under the hood Grad-CAM takes a hidden layer inside the network and
 differentiates it with respect to the output scores. We have the ability
 to choose which hidden layer we do our computations on.
 
-Let's check what layers the network consists of:
+Let’s check what layers the network consists of, printing the first few
+and the last few layers:
 
 .. code:: ipython3
 
-    # we could use model.summary() here, but the model has over 100 layers. 
-    # we will only look at the first few and last few layers
-    
-    head = model.layers[:5]
-    tail = model.layers[-8:]
-    
-    def pretty_print_layers(layers):
-        for l in layers:
-            info = [l.name, type(l).__name__, l.output_shape, l.count_params()]
-            pretty_print(info)
-    
-    def pretty_print(lst):
-        s = ',\t'.join(map(str, lst))
-        print(s)
-    
-    pretty_print(['name', 'type', 'output shape', 'param. no'])
-    print('-'*100)
-    pretty_print([model.input.name, type(model.input), model.input_shape, 0])
-    pretty_print_layers(head)
-    print()
-    print('...')
-    print()
-    pretty_print_layers(tail)
+    model.summary(layer_range=['input_layer', 'Conv1_relu'], line_length=100)
+    model.summary(layer_range=['block_16_depthwise_relu', 'predictions'], line_length=100)
 
 
-.. parsed-literal::
 
-    name,	type,	output shape,	param. no
-    ----------------------------------------------------------------------------------------------------
-    input_1:0,	<class 'tensorflow.python.framework.ops.Tensor'>,	(None, 224, 224, 3),	0
-    input_1,	InputLayer,	(None, 224, 224, 3),	0
-    Conv1_pad,	ZeroPadding2D,	(None, 225, 225, 3),	0
-    Conv1,	Conv2D,	(None, 112, 112, 32),	864
-    bn_Conv1,	BatchNormalization,	(None, 112, 112, 32),	128
-    Conv1_relu,	ReLU,	(None, 112, 112, 32),	0
-    
-    ...
-    
-    block_16_depthwise_relu,	ReLU,	(None, 7, 7, 960),	0
-    block_16_project,	Conv2D,	(None, 7, 7, 320),	307200
-    block_16_project_BN,	BatchNormalization,	(None, 7, 7, 320),	1280
-    Conv_1,	Conv2D,	(None, 7, 7, 1280),	409600
-    Conv_1_bn,	BatchNormalization,	(None, 7, 7, 1280),	5120
-    out_relu,	ReLU,	(None, 7, 7, 1280),	0
-    global_average_pooling2d_1,	GlobalAveragePooling2D,	(None, 1280),	0
-    Logits,	Dense,	(None, 1000),	1281000
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "mobilenetv2_1.00_224"</span>
+    </pre>
 
 
-Rough print but okay. Let's pick a few convolutional layers that are
-'far apart' and do Grad-CAM on them:
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃<span style="font-weight: bold"> Layer (type)                </span>┃<span style="font-weight: bold"> Output Shape            </span>┃<span style="font-weight: bold">        Param # </span>┃<span style="font-weight: bold"> Connected to            </span>┃
+    ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━┩
+    │ input_layer (<span style="color: #0087ff; text-decoration-color: #0087ff">InputLayer</span>)    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">224</span>, <span style="color: #00af00; text-decoration-color: #00af00">224</span>, <span style="color: #00af00; text-decoration-color: #00af00">3</span>)     │              <span style="color: #00af00; text-decoration-color: #00af00">0</span> │ -                       │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ Conv1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)              │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">112</span>, <span style="color: #00af00; text-decoration-color: #00af00">112</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)    │            <span style="color: #00af00; text-decoration-color: #00af00">864</span> │ input_layer[<span style="color: #00af00; text-decoration-color: #00af00">0</span>][<span style="color: #00af00; text-decoration-color: #00af00">0</span>]       │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ bn_Conv1                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">112</span>, <span style="color: #00af00; text-decoration-color: #00af00">112</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)    │            <span style="color: #00af00; text-decoration-color: #00af00">128</span> │ Conv1[<span style="color: #00af00; text-decoration-color: #00af00">0</span>][<span style="color: #00af00; text-decoration-color: #00af00">0</span>]             │
+    │ (<span style="color: #0087ff; text-decoration-color: #0087ff">BatchNormalization</span>)        │                         │                │                         │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ Conv1_relu (<span style="color: #0087ff; text-decoration-color: #0087ff">ReLU</span>)           │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">112</span>, <span style="color: #00af00; text-decoration-color: #00af00">112</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)    │              <span style="color: #00af00; text-decoration-color: #00af00">0</span> │ bn_Conv1[<span style="color: #00af00; text-decoration-color: #00af00">0</span>][<span style="color: #00af00; text-decoration-color: #00af00">0</span>]          │
+    └─────────────────────────────┴─────────────────────────┴────────────────┴─────────────────────────┘
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">3,538,984</span> (13.50 MB)
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">3,504,872</span> (13.37 MB)
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">34,112</span> (133.25 KB)
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "mobilenetv2_1.00_224"</span>
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃<span style="font-weight: bold"> Layer (type)                </span>┃<span style="font-weight: bold"> Output Shape            </span>┃<span style="font-weight: bold">        Param # </span>┃<span style="font-weight: bold"> Connected to            </span>┃
+    ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━┩
+    │ block_16_depthwise_relu     │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">960</span>)       │              <span style="color: #00af00; text-decoration-color: #00af00">0</span> │ block_16_depthwise_BN[<span style="color: #00af00; text-decoration-color: #00af00">…</span> │
+    │ (<span style="color: #0087ff; text-decoration-color: #0087ff">ReLU</span>)                      │                         │                │                         │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ block_16_project (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">320</span>)       │        <span style="color: #00af00; text-decoration-color: #00af00">307,200</span> │ block_16_depthwise_rel… │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ block_16_project_BN         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">320</span>)       │          <span style="color: #00af00; text-decoration-color: #00af00">1,280</span> │ block_16_project[<span style="color: #00af00; text-decoration-color: #00af00">0</span>][<span style="color: #00af00; text-decoration-color: #00af00">0</span>]  │
+    │ (<span style="color: #0087ff; text-decoration-color: #0087ff">BatchNormalization</span>)        │                         │                │                         │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ Conv_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)             │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">1280</span>)      │        <span style="color: #00af00; text-decoration-color: #00af00">409,600</span> │ block_16_project_BN[<span style="color: #00af00; text-decoration-color: #00af00">0</span>]… │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ Conv_1_bn                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">1280</span>)      │          <span style="color: #00af00; text-decoration-color: #00af00">5,120</span> │ Conv_1[<span style="color: #00af00; text-decoration-color: #00af00">0</span>][<span style="color: #00af00; text-decoration-color: #00af00">0</span>]            │
+    │ (<span style="color: #0087ff; text-decoration-color: #0087ff">BatchNormalization</span>)        │                         │                │                         │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ out_relu (<span style="color: #0087ff; text-decoration-color: #0087ff">ReLU</span>)             │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">7</span>, <span style="color: #00af00; text-decoration-color: #00af00">1280</span>)      │              <span style="color: #00af00; text-decoration-color: #00af00">0</span> │ Conv_1_bn[<span style="color: #00af00; text-decoration-color: #00af00">0</span>][<span style="color: #00af00; text-decoration-color: #00af00">0</span>]         │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ global_average_pooling2d    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">1280</span>)            │              <span style="color: #00af00; text-decoration-color: #00af00">0</span> │ out_relu[<span style="color: #00af00; text-decoration-color: #00af00">0</span>][<span style="color: #00af00; text-decoration-color: #00af00">0</span>]          │
+    │ (<span style="color: #0087ff; text-decoration-color: #0087ff">GlobalAveragePooling2D</span>)    │                         │                │                         │
+    ├─────────────────────────────┼─────────────────────────┼────────────────┼─────────────────────────┤
+    │ predictions (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">1000</span>)            │      <span style="color: #00af00; text-decoration-color: #00af00">1,281,000</span> │ global_average_pooling… │
+    └─────────────────────────────┴─────────────────────────┴────────────────┴─────────────────────────┘
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">3,538,984</span> (13.50 MB)
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">3,504,872</span> (13.37 MB)
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">34,112</span> (133.25 KB)
+    </pre>
+
+
+
+
+Let’s pick a few convolutional layers that are ‘far apart’ and do
+Grad-CAM on them:
 
 .. code:: ipython3
 
@@ -375,7 +440,7 @@ Rough print but okay. Let's pick a few convolutional layers that are
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_31_1.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_32_1.png
 
 
 .. parsed-literal::
@@ -384,7 +449,7 @@ Rough print but okay. Let's pick a few convolutional layers that are
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_31_3.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_32_3.png
 
 
 .. parsed-literal::
@@ -393,12 +458,12 @@ Rough print but okay. Let's pick a few convolutional layers that are
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_31_5.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_32_5.png
 
 
 These results should make intuitive sense for Convolutional Neural
-Networks. Initial layers detect 'low level' features, ending layers
-detect 'high level' features!
+Networks. Initial layers detect ‘low level’ features, ending layers
+detect ‘high level’ features!
 
 The ``layer`` parameter accepts a layer instance, index, name, or None
 (get layer automatically) as its arguments. This is where Grad-CAM
@@ -425,20 +490,20 @@ Examining the structure of the ``Explanation`` object:
 
 .. parsed-literal::
 
-    Explanation(estimator='mobilenetv2_1.00_224', description='Grad-CAM visualization for image classification; \noutput is explanation object that contains input image \nand heatmap image for a target.\n', error='', method='Grad-CAM', is_regression=False, targets=[TargetExplanation(target=243, feature_weights=None, proba=None, score=0.80967486, weighted_spans=None, heatmap=array([[0.        , 0.34700435, 0.8183038 , 0.8033579 , 0.90060294,
-            0.11643614, 0.01095222],
-           [0.01533252, 0.3834133 , 0.80703807, 0.85117225, 0.95316563,
-            0.28513838, 0.        ],
-           [0.00708034, 0.20260051, 0.77189916, 0.77733763, 0.99999996,
-            0.30238836, 0.        ],
-           [0.        , 0.04289413, 0.4495872 , 0.30086699, 0.2511554 ,
-            0.06771996, 0.        ],
-           [0.0148367 , 0.        , 0.        , 0.        , 0.        ,
-            0.00579786, 0.01928998],
+    Explanation(estimator='mobilenetv2_1.00_224', description='Grad-CAM visualization for image classification; \noutput is explanation object that contains input image \nand heatmap image for a target.\n', error='', method='Grad-CAM', is_regression=False, targets=[TargetExplanation(target=243, feature_weights=None, proba=None, score=0.8096752166748047, weighted_spans=None, heatmap=array([[0.        , 0.34700352, 0.81830257, 0.80335682, 0.90060196,
+            0.11643584, 0.01095215],
+           [0.01533248, 0.3834124 , 0.80703724, 0.85117104, 0.95316517,
+            0.28513848, 0.        ],
+           [0.00708034, 0.20260012, 0.77189809, 0.77733623, 0.99999865,
+            0.30238799, 0.        ],
+           [0.        , 0.04289391, 0.44958652, 0.3008664 , 0.25115574,
+            0.06772013, 0.        ],
+           [0.01483664, 0.        , 0.        , 0.        , 0.        ,
+            0.0057982 , 0.01929006],
            [0.        , 0.        , 0.        , 0.        , 0.        ,
-            0.        , 0.05308531],
+            0.        , 0.05308538],
            [0.        , 0.        , 0.        , 0.        , 0.        ,
-            0.01124764, 0.06864655]]))], feature_importances=None, decision_tree=None, highlight_spaces=None, transition_features=None, image=<PIL.Image.Image image mode=RGB size=224x224 at 0x7FBEFD7F4080>)
+            0.01124753, 0.06864622]]))], feature_importances=None, decision_tree=None, highlight_spaces=None, transition_features=None, image=<PIL.Image.Image image mode=RGB size=224x224 at 0x178A9D6D0>)
 
 
 We can check the score (raw value) or probability (normalized score) of
@@ -452,7 +517,7 @@ the neuron for the predicted class, and get the class ID itself:
 
 .. parsed-literal::
 
-    (243, 0.80967486, None)
+    (243, 0.8096752166748047, None)
 
 
 We can also access the original image and the Grad-CAM heatmap:
@@ -467,25 +532,25 @@ We can also access the original image and the Grad-CAM heatmap:
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_41_0.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_42_0.png
 
 
 .. parsed-literal::
 
-    [[0.         0.34700435 0.8183038  0.8033579  0.90060294 0.11643614
-      0.01095222]
-     [0.01533252 0.3834133  0.80703807 0.85117225 0.95316563 0.28513838
+    [[0.         0.34700352 0.81830257 0.80335682 0.90060196 0.11643584
+      0.01095215]
+     [0.01533248 0.3834124  0.80703724 0.85117104 0.95316517 0.28513848
       0.        ]
-     [0.00708034 0.20260051 0.77189916 0.77733763 0.99999996 0.30238836
+     [0.00708034 0.20260012 0.77189809 0.77733623 0.99999865 0.30238799
       0.        ]
-     [0.         0.04289413 0.4495872  0.30086699 0.2511554  0.06771996
+     [0.         0.04289391 0.44958652 0.3008664  0.25115574 0.06772013
       0.        ]
-     [0.0148367  0.         0.         0.         0.         0.00579786
-      0.01928998]
+     [0.01483664 0.         0.         0.         0.         0.0057982
+      0.01929006]
      [0.         0.         0.         0.         0.         0.
-      0.05308531]
-     [0.         0.         0.         0.         0.         0.01124764
-      0.06864655]]
+      0.05308538]
+     [0.         0.         0.         0.         0.         0.01124753
+      0.06864622]]
 
 
 Visualizing the heatmap:
@@ -497,14 +562,14 @@ Visualizing the heatmap:
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_43_0.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_44_0.png
 
 
-That's only 7x7! This is the spatial dimensions of the
+That’s only 7x7! This is the spatial dimensions of the
 activation/feature maps in the last layers of the network. What Grad-CAM
 produces is only a rough approximation.
 
-Let's resize the heatmap (we have to pass the heatmap and the image with
+Let’s resize the heatmap (we have to pass the heatmap and the image with
 the required dimensions as Pillow images, and the filter for
 resampling):
 
@@ -515,10 +580,10 @@ resampling):
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_45_0.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_46_0.png
 
 
-Now it's clear what is being highlighted. We just need to apply some
+Now it’s clear what is being highlighted. We just need to apply some
 colors and overlay the heatmap over the original image, exactly what
 ``eli5.format_as_image()`` does!
 
@@ -529,7 +594,7 @@ colors and overlay the heatmap over the original image, exactly what
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_47_0.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_48_0.png
 
 
 6. Extra arguments to ``format_as_image()``
@@ -546,7 +611,7 @@ colors and overlay the heatmap over the original image, exactly what
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_50_0.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_51_0.png
 
 
 The ``alpha_limit`` argument controls the maximum opacity that the
@@ -567,7 +632,7 @@ Another optional argument is ``resampling_filter``. The default is
 The original Grad-CAM paper (https://arxiv.org/pdf/1610.02391.pdf)
 suggests that we should use the output of the layer before softmax when
 doing Grad-CAM (use raw score values, not probabilities). Currently ELI5
-simply takes the model as-is. Let's try and swap the softmax (logits)
+simply takes the model as-is. Let’s try and swap the softmax (logits)
 layer of our current model with a linear (no activation) layer, and
 check the explanation:
 
@@ -583,8 +648,8 @@ check the explanation:
     l.activation = keras.activations.linear # swap activation
     
     # save and load back the model as a trick to reload the graph
-    model.save('tmp_model_save_rmsoftmax') # note that this creates a file of the model
-    model = keras.models.load_model('tmp_model_save_rmsoftmax')
+    model.save('tmp_model_save_rmsoftmax.keras') # note that this creates a file of the model
+    model = keras.models.load_model('tmp_model_save_rmsoftmax.keras')
     
     print('without softmax')
     display(eli5.show_prediction(model, doc))
@@ -596,7 +661,7 @@ check the explanation:
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_53_1.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_54_1.png
 
 
 .. parsed-literal::
@@ -605,7 +670,7 @@ check the explanation:
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_53_3.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_54_3.png
 
 
 We see some slight differences. The activations are brighter. Do
@@ -616,7 +681,7 @@ consider swapping out softmax if explanations for your model seem off.
 
 According to the paper at https://arxiv.org/abs/1711.06104, if an
 explanation method such as Grad-CAM is any good, then explaining
-different models should yield different results. Let's verify that by
+different models should yield different results. Let’s verify that by
 loading another model and explaining a classification of the same image:
 
 .. code:: ipython3
@@ -643,7 +708,7 @@ loading another model and explaining a classification of the same image:
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_56_1.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_57_1.png
 
 
 .. parsed-literal::
@@ -652,7 +717,7 @@ loading another model and explaining a classification of the same image:
 
 
 
-.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_56_3.png
+.. image:: ../_notebooks/keras-image-classifiers_files/keras-image-classifiers_57_3.png
 
 
 Wow ``show_prediction()`` is so robust!

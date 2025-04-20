@@ -25,6 +25,9 @@ classifiers and explain their predictions.
 .. image:: https://raw.githubusercontent.com/eli5-org/eli5/refs/heads/master/docs/source/static/readme-show-prediction.png
    :alt: explain_prediction for text data
 
+.. image:: https://raw.githubusercontent.com/eli5-org/eli5/refs/heads/master/docs/source/static/gradcam-catdog.png
+   :alt: explain_prediction for image data
+
 .. image:: https://raw.githubusercontent.com/eli5-org/eli5/refs/heads/master/docs/source/static/readme-show-weights.png
    :alt: explain_weights for text data
 
@@ -38,6 +41,8 @@ It provides support for the following machine learning frameworks and packages:
   accordingly. Pipeline and FeatureUnion are supported.
   It also allows to debug scikit-learn pipelines which contain
   HashingVectorizer, by undoing hashing.
+
+* Keras_ - explain predictions of image classifiers via Grad-CAM visualizations.
 
 * xgboost_ - show feature importances and explain predictions of XGBClassifier,
   XGBRegressor and xgboost.Booster.
@@ -80,6 +85,7 @@ and formatting on a client.
 .. _xgboost: https://github.com/dmlc/xgboost
 .. _LightGBM: https://github.com/Microsoft/LightGBM
 .. _Catboost: https://github.com/catboost/catboost
+.. _Keras: https://keras.io/
 .. _Permutation importance: https://eli5.readthedocs.io/en/latest/blackbox/permutation_importance.html
 .. _Inspecting Black-Box Estimators: https://eli5.readthedocs.io/en/latest/blackbox/index.html
 .. _OpenAI: https://github.com/openai/openai-python
